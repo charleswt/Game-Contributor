@@ -3,14 +3,14 @@ import { expressMiddleware } from '@apollo/server/express4';
 import cookiesMiddleware from 'universal-cookie-express';
 import { authMiddleware } from './utils/auth';
 import { ApolloServer } from '@apollo/server';
-import {typeDefs, resolvers} from './schemas'
+import {typeDefs, resolvers} from './gql'
 import db from './config/connect';
 import path from 'path';
 // import cors from 'cors';
 import 'dotenv/config';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = (process.env.PORT) || 4000;
 
 const server = new ApolloServer({
   typeDefs,

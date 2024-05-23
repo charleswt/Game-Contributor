@@ -1,0 +1,3 @@
+where GC DROP TABLE
+
+CREATE TABLE GC 
