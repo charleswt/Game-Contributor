@@ -26,6 +26,15 @@
         "universal-cookie-express": "^7.1.4"
     },
     "devDependencies": {
-        "nodemon": "^2.0.3"
+        "@types/bcrypt": "^5.0.2",
+        "@types/cookie-parser": "^1.4.7",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/jsonwebtoken": "^9.0.6",
+        "@types/node": "^20.12.12",
+        "@types/pg": "^8.11.6",
+        "nodemon": "^2.0.3",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.4.5"
     }
 }
