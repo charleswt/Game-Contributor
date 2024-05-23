@@ -1,0 +1,20 @@
+{
+    "name": "Game-Contributor",
+    "description": "description",
+    "authors": "Charles Tiffany",
+    "version": "1.0.0",
+    "main": "pathToMain",
+    "scripts": {
+        "gulp": "cd ./client && npm run gulp",
+        "start": "npm run build && cd server && node server.ts",
+        "server": "cd server && npm run server",
+        "install": "npm run install:server && npm run install:client",
+        "install:server": "cd server && npm install",
+        "install:client": "cd client && npm install",
+        "client": "cd client && npm start",
+        "seed": "cd server && npm run seed"
+    },
+    "dependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
