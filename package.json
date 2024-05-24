@@ -6,6 +6,7 @@
     "main": "pathToMain",
     "scripts": {
         "gulp": "cd ./client && npm run gulp",
+        "start:dev": "concurrently \"npm run build && cd server && node server.ts\"\"\"",
         "start": "npm run build && cd server && node server.ts",
         "server": "cd server && npm run server",
         "install": "npm run install:server && npm run install:client",
