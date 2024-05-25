@@ -3,18 +3,25 @@ import { expressMiddleware } from '@apollo/server/express4';
 import cookiesMiddleware from 'universal-cookie-express';
 import { authMiddleware } from './utils/auth';
 import { ApolloServer } from '@apollo/server';
-import {typeDefs, resolvers} from './gql'
+import { typeDefs, resolvers } from './gql';
 import db from './config/connect';
 import path from 'path';
-// import cors from 'cors';
 import 'dotenv/config';
 
+declare module 'express' {
+  interface Request {
+    token?: string;
+    universalCookies?: { get: (name: string) => string | undefined };
+    user?: { username: string; _id: string };
+  }
+}
+
 const app = express();
-const PORT = (process.env.PORT) || 4000;
+const PORT = process.env.PORT || 4000;
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
 });
 
 const startApolloServer = async () => {
@@ -22,10 +29,13 @@ const startApolloServer = async () => {
 
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
-  app.use(cookiesMiddleware()).use((req: Request, res: Response, next: NextFunction) => {
-    req.token = req.universalCookies.get('token_auth');
+  app.use(cookiesMiddleware());
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    req.token = req.universalCookies?.get('token_auth');
     next();
   });
+
+  app.use(authMiddleware);
 
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
@@ -33,7 +43,14 @@ const startApolloServer = async () => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   });
 
-  app.use('/graphql', expressMiddleware(server, { context: authMiddleware }));
+  app.use(
+    '/graphql',
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        return { user: req.user };
+      },
+    })
+  );
 
   app.listen(PORT, () => {
     console.log(`API server running on port ${PORT}!`);

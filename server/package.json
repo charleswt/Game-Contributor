@@ -3,12 +3,12 @@
     "description": "description",
     "authors": "author",
     "version": "1.0.0",
-    "main": "server.js",
+    "main": "server.ts",
     "scripts": {
-        "start": "node server.js",
-        "dev:start": "nodemon server.js --ignore client",
+        "start": "node server.ts",
+        "start:dev": "nodemon server.ts --ignore client",
         "watch": "nodemon",
-        "seed": "node config/seed.js"
+        "seed": "node config/seed.ts"
     },
     "dependencies": {
         "@apollo/server": "^4.7.1",
