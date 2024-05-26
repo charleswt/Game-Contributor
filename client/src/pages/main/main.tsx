@@ -1,7 +1,10 @@
 import React from 'react'
+import '../../../public/css/style.css'
 
 export default function Main(): any{
     return (
-        <div>This Is The Main Page</div>
+        <main>
+            <div>hello</div>
+        </main>
     )
 }
