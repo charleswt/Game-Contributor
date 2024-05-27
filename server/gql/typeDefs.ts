@@ -45,7 +45,7 @@ type Friend {
   request: Boolean!
 }
 
-type UserCompany {
+type CompanyUser {
   user: User
   company: Company
 }
