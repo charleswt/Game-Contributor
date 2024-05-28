@@ -1,5 +1,6 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcrypt' ;
 
 const exp = '3h';
 const secret = process.env.SECRET || 'example';
@@ -35,4 +36,15 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 
 export const packToken = (userData: UserData): string => {
     return jwt.sign({ data: userData }, secret, { expiresIn: exp });
+};
+
+export const hashPassword = async (password: string): Promise<string> => {
+    const saltRounds = 13;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+};
+
+export const comparePasswordHash = async (password: string, hashedPassword: string): Promise<boolean> => {
+    const match = await bcrypt.compare(password, hashedPassword);
+    return match;
 };
