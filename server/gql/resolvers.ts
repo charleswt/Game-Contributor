@@ -586,6 +586,7 @@ const resolvers = {
         const comment: Comment = {
           userId: newComment.user_id,
           content: newComment.content,
+          createdAt: newComment.created_at
         };
 
         return comment;
