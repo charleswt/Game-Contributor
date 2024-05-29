@@ -22,5 +22,9 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/utils/queries.js",
+    "src/utils/mutations.js"
   ]
 }

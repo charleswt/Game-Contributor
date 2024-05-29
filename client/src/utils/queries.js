@@ -53,8 +53,19 @@ query user($id: String!) {
 export const GET_ME = gql`
 query me {
     me {
-        user
-        company
+        user {
+        id
+        profileImage
+        firstName
+        lastName
+        username
+        email
+        }
+        company {
+            id
+            companyName
+            userId
+        }
     }
 }
 `;

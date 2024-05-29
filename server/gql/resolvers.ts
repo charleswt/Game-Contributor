@@ -641,7 +641,7 @@ const resolvers = {
       }
     },
 
-    createFriend: async (_: any, input: Friend): Promise<Friend> => {
+    createFriendship: async (_: any, input: Friend): Promise<Friend> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");

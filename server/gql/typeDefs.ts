@@ -61,7 +61,7 @@ type Query {
   users: [User!]!
   user(id: ID!): User!
   me: CompanyUser
-  companyUsers: [User!]]!
+  companyUsers: [User!]!
   companyUser(id: ID!): CompanyUser
   posts: [Post!]!
   userPosts(id: ID!): [Post!]
@@ -74,7 +74,7 @@ type Query {
 
 type Mutation {
   createUser(firstName: String!, lastName: String!, username: String!, email: String!, password: String!): Auth
-  (companycreateCompanyName: String!, userId: ID!): Company
+  createCompany(companyName: String!, userId: ID!): Company
   createPost(userId: ID!, content: String!): Post
   createComment(postId: ID!, userId: ID!, content: String!): Comment
   createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
