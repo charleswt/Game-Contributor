@@ -16,7 +16,7 @@ export const GET_PUBLISHED_CODE = gql`
 query publishedCode {
     publishedCode {
         id
-        user
+        userId
         companyUser
         code
         createdAt

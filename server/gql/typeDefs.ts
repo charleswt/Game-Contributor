@@ -12,36 +12,36 @@ type User {
 type Company {
   id: ID!
   companyName: String!
-  userId: string!
+  userId: ID!
 }
 
 type Post {
   id: ID!
-  user: User
+  userId: ID!
   content: String!
   createdAt: String!
 }
 
 type Comment {
   id: ID!
-  post: Post!
-  user: User!
+  postId: ID!
+  userId: ID!
   content: String!
   createdAt: String!
 }
 
 type PublishedCode {
   id: ID!
-  user: User!
-  companyUser: CompanyUser!
+  userId: ID!
+  companyUserId: ID!
   code: String!
   createdAt: String!
 }
 
 type Friend {
   id: ID!
-  user1: User!
-  user2: User!
+  user1: ID!
+  user2: ID!
   request: Boolean!
 }
 
@@ -74,11 +74,11 @@ type Query {
 
 type Mutation {
   createUser(firstName: String!, lastName: String!, username: String!, email: String!, password: String!): Auth
-  createCompany(companyName: String!, userId: ID!): Company
+  (companycreateCompanyName: String!, userId: ID!): Company
   createPost(userId: ID!, content: String!): Post
   createComment(postId: ID!, userId: ID!, content: String!): Comment
   createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
-  createFriend(userId1: ID!, userId2: ID!): Friend
+  createFriendship(userId1: ID!, userId2: ID!): Friend
   login(usernameOrEmail: String!, password: String!): Auth
 }
 `
