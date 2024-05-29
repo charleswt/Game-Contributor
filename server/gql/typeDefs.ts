@@ -12,7 +12,7 @@ type User {
 type Company {
   id: ID!
   companyName: String!
-  user: User!
+  userId: string!
 }
 
 type Post {
