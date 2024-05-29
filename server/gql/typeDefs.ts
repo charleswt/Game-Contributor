@@ -57,17 +57,17 @@ type Auth {
 
 type Query {
   publishedCodes: [PublishedCode!]!
-  publishedCode(id: ID!): PublishedCode
+  publishedCode(id: ID!): PublishedCode!
   users: [User!]!
-  user(id: ID!): User
-  companyUsers: [CompanyUser!]!
+  user(id: ID!): User!
+  me: CompanyUser
+  companyUsers: [User!]]!
   companyUser(id: ID!): CompanyUser
   posts: [Post!]!
+  userPosts(id: ID!): [Post!]
   post(id: ID!): Post
   comments: [Comment!]!
   comment(id: ID!): Comment
-  companies: [Company!]!
-  company(id: ID!): Company
   friends: [Friend!]!
   friend(id: ID!): Friend
 }

@@ -5,6 +5,7 @@ CREATE DATABASE GC;
 
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
+    company BOOLEAN NOT NULL DEFAULT FALSE,
     profile_image VARCHAR(255),
     first_name VARCHAR(32) NOT NULL UNIQUE,
     last_name VARCHAR(32) NOT NULL UNIQUE,
