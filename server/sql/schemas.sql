@@ -3,6 +3,14 @@ CREATE DATABASE GC;
 
 \c GC
 
+DROP TABLE IF EXISTS "user" CASCADE;
+DROP TABLE IF EXISTS company CASCADE;
+DROP TABLE IF EXISTS posts CASCADE;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS published_code;
+DROP TABLE IF EXISTS friend;
+
+
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
     company BOOLEAN NOT NULL DEFAULT FALSE,
@@ -26,8 +34,7 @@ CREATE TABLE posts (
     user_id INT,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES "user"(id),
-    FOREIGN KEY (company_user_id) REFERENCES company_user(id)
+    FOREIGN KEY (user_id) REFERENCES "user"(id)
 );
 
 CREATE TABLE comments (
@@ -43,11 +50,11 @@ CREATE TABLE comments (
 CREATE TABLE published_code (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    company_user_id INT NOT NULL,
+    company_id INT NOT NULL,
     code TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES "user"(id),
-    FOREIGN KEY (company_user_id) REFERENCES company_user(id)
+    FOREIGN KEY (company_id) REFERENCES company(id)
 );
 
 CREATE TABLE friend (
