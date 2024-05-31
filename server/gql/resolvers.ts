@@ -297,8 +297,10 @@ const resolvers = {
         await client.query("COMMIT");
 
         return result.rows.map((row: any)=>({
+          id: row.id,
           userId: row.user_id,
-          content: row.content
+          content: row.content,
+          createdAt: row.created_at
         }))
       } catch (error) {
         await client.query("ROLLBACK");
