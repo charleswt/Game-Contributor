@@ -3,7 +3,7 @@
     "description": "description",
     "authors": "Charles Tiffany",
     "version": "1.0.0",
-    "main": "pathToMain",
+    "main": "/",
     "scripts": {
         "gulp": "cd ./client && npm run gulp",
         "start:dev": "concurrently \"cd server && npm run start:dev\" \"cd client && npm run start\"",
@@ -13,7 +13,6 @@
         "install": "npm run install:server && npm run install:client",
         "install:server": "cd server && npm install",
         "install:client": "cd client && npm install",
-        
         "seed": "cd server && npm run seed"
     },
     "dependencies": {

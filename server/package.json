@@ -1,5 +1,5 @@
 {
-    "name": "VidRoomS",
+    "name": "Game-Contributor",
     "description": "description",
     "authors": "author",
     "version": "1.0.0",
@@ -8,7 +8,7 @@
         "start": "node server.ts",
         "start:dev": "nodemon server.ts --ignore client",
         "watch": "nodemon",
-        "seed": "node config/seed.ts"
+        "seed": "ts-node ./sql/seed.ts"
     },
     "dependencies": {
         "@apollo/server": "^4.7.1",
