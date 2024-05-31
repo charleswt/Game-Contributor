@@ -107,7 +107,7 @@ export const GET_POSTS = gql`
 query posts {
     posts {
         id
-        user
+        userId
         content
         createdAt
     }

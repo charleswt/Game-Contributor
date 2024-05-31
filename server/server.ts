@@ -12,7 +12,7 @@ declare module 'express' {
   interface Request {
     token?: string;
     universalCookies?: { get: (name: string) => string | undefined };
-    user?: { username: string; _id: string };
+    user?: { id: string };
   }
 }
 
