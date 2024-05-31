@@ -10,6 +10,7 @@ interface CreateUserParams {
 }
 
 interface User {
+  id: string;
   company?: boolean;
   profileImage?: string | null;
   firstName: string;
@@ -36,14 +37,17 @@ interface Comment {
 }
 
 interface PublishedCode {
+  id: string;
   userId: string;
-  companyUserId: string;
+  companyId: string;
   code: string;
+  createdAt: string;
 }
 
 interface Friend {
   userId1: string;
   userId2: string;
+  request: boolean;
 }
 
 interface LoginInput {
@@ -77,7 +81,7 @@ const resolvers = {
         return result.rows.map((row: any) => ({
           id: row.id,
           userId: row.user_id,
-          companyUserId: row.company_user_id,
+          companyId: row.company_id,
           code: row.code,
           createdAt: row.created_at,
         }));
@@ -104,9 +108,11 @@ const resolvers = {
         await client.query("COMMIT");
 
         const publishedCode: PublishedCode = {
+          id: result.rows[0].id,
           userId: result.rows[0].user_id,
-          companyUserId: result.rows[0].company_user_id,
+          companyId: result.rows[0].company_id,
           code: result.rows[0].code,
+          createdAt: result.rows[0].created_at,
         };
 
         return publishedCode;
@@ -128,6 +134,7 @@ const resolvers = {
         await client.query("COMMIT");
 
         return result.rows.map((row: any) => ({
+          id: row.id,
           firstName: row.first_name,
           lastName: row.last_name,
           username: row.username,
@@ -153,6 +160,7 @@ const resolvers = {
         await client.query("COMMIT");
 
         const publishedCode: User = {
+          id: result.rows[0].id,
           firstName: result.rows[0].first_name,
           lastName: result.rows[0].last_name,
           username: result.rows[0].username,
@@ -184,6 +192,7 @@ const resolvers = {
         const userRow = userResult.rows[0];
 
         const user: User = {
+          id: userRow.id,
           firstName: userRow.first_name,
           lastName: userRow.last_name,
           username: userRow.username,
@@ -226,6 +235,7 @@ const resolvers = {
         await client.query("COMMIT");
 
         return result.rows.map((row: any) => ({
+          id: row.id,
           firstName: row.first_name,
           lastName: row.last_name,
           username: row.username,
@@ -255,6 +265,7 @@ const resolvers = {
         const userRow = userResult.rows[0];
 
         const user: User = {
+          id: userRow.id,
           firstName: userRow.first_name,
           lastName: userRow.last_name,
           username: userRow.username,
@@ -413,6 +424,7 @@ const resolvers = {
         return result.rows.map((row: any) => ({
           userId1: row.userId1,
           userId2: row.userId2,
+          request: row.request
         }));
       } catch (error) {
         await client.query("ROLLBACK");
@@ -476,6 +488,7 @@ const resolvers = {
         await client.query("COMMIT");
 
         const userData = {
+          id: newUser.id,
           firstName: newUser.first_name,
           lastName: newUser.last_name,
           username: newUser.username,
@@ -609,14 +622,14 @@ const resolvers = {
         await client.query("BEGIN");
 
         const insertPublishedCodeText = `
-          INSERT INTO "published_code" (user_id, company_user_id, code)
+          INSERT INTO "published_code" (user_id, company_id, code)
           VALUES ($1, $2, $3)
-          RETURNING user_id, company_user_id, code;
+          RETURNING user_id, company_id, code;
         `;
 
         const insertPublishedCodeValues = [
           input.userId,
-          input.companyUserId,
+          input.companyId,
           input.code,
         ];
 
@@ -629,9 +642,11 @@ const resolvers = {
         await client.query("COMMIT");
 
         const publishedCode: PublishedCode = {
+          id: newPublishedCode.id,
           userId: newPublishedCode.user_id,
-          companyUserId: newPublishedCode.company_user_id,
+          companyId: newPublishedCode.company_id,
           code: newPublishedCode.code,
+          createdAt: newPublishedCode.created_at
         };
 
         return publishedCode;
@@ -664,6 +679,7 @@ const resolvers = {
         const friend: Friend = {
           userId1: newFriend.user_id1,
           userId2: newFriend.user_id2,
+          request: newFriend.request
         };
 
         return friend;
@@ -703,17 +719,19 @@ const resolvers = {
         }
 
         const userData = {
+          id: user.id,
           firstName: user.first_name,
           lastName: user.last_name,
           username: user.username,
           email: user.email,
+          password: user.password
         };
 
         const token = packToken(user.id);
 
         await client.query("COMMIT");
 
-        return { token, user: { ...userData, password: "" } };
+        return { token, user: { ...userData} };
       } catch (error: any) {
         await client.query("ROLLBACK");
         throw new Error("Error during login: " + error.message);

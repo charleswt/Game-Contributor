@@ -40,8 +40,8 @@ type PublishedCode {
 
 type Friend {
   id: ID!
-  user1: ID!
-  user2: ID!
+  userId1: ID!
+  userId2: ID!
   request: Boolean!
 }
 
@@ -58,7 +58,7 @@ type Auth {
 type Query {
   publishedCodes: [PublishedCode!]!
   publishedCode(id: ID!): PublishedCode!
-  users: [User!]!
+  users: [User]
   user(id: ID!): User!
   me: CompanyUser
   companyUsers: [User!]!
