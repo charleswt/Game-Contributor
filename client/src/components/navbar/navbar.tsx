@@ -15,7 +15,7 @@ export default function Navbar(): any{
                     window.location.href = '/me':
                     window.location.href = '/login'
                     }>Me</li>
-                <li>Settings icon</li>
+                <img src="../../../public/images/settings.svg" alt="" height="60px" />
             </ul>
         </header>
     )

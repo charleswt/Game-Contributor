@@ -51,9 +51,8 @@ interface Friend {
 }
 
 interface LoginInput {
-  username?: string;
-  email?: string;
-  password: string;
+  usernameOrEmail: any;
+  password: any;
 }
 
 interface Auth {
@@ -204,7 +203,7 @@ const resolvers = {
         client.release();
       }
     },
-    me: async (_: any, context: any): Promise<{ user: User, company?: Company }>  => {
+    me: async (_: any, args: any, context: any): Promise<{ user: User, company?: Company }>  => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -489,7 +488,7 @@ const resolvers = {
   },
 
   Mutation: {
-    createUser: async (_: any, {input}: {input: CreateUserParams}): Promise<Auth> => {
+    createUser: async (_: any, input: CreateUserParams): Promise<Auth> => {
       console.log("here")
       const client = await pool.connect();
       console.log("here 2")
@@ -520,7 +519,7 @@ const resolvers = {
         const newUser = result.rows[0];
 
         await client.query("COMMIT");
-console.log("here 3")
+
         const userData = {
           id: newUser.id,
           firstName: newUser.first_name,
@@ -536,7 +535,7 @@ console.log("here 3")
           password: hashedPassword,
         };
 
-        return { token, user: { ...user, password: "" } };
+        return { token, user: { ...user } };
       } catch (error: any) {
         await client.query("ROLLBACK");
         throw new Error("Error creating user: " + error.message);
@@ -725,29 +724,30 @@ console.log("here 3")
       }
     },
 
-    login: async ({input}: {input: LoginInput}): Promise<Auth> => {
+    login: async (_:any, input: LoginInput): Promise<Auth> => {
       const client = await pool.connect();
-
-      try {
+      try {console.log(input);
         await client.query("BEGIN");
-
-        const queryText = input.username
-          ? 'SELECT * FROM "user" WHERE username = $1'
-          : 'SELECT * FROM "user" WHERE email = $1';
-        const queryValue = input.username ? input.username : input.email;
+        
+        console.log("here 1")
+        const queryText = 'SELECT * FROM "user" WHERE username = $1 OR email = $1'
+        const queryValue = input.usernameOrEmail;
+        
+        console.log("here 2")
 
         const result = await client.query(queryText, [queryValue]);
         const user = result.rows[0];
+        console.log("here 3")
 
         if (!user) {
           throw new Error("User not found");
         }
-
+        console.log("here 4")
         const isPasswordValid = await comparePasswordHash(
           input.password,
           user.password
         );
-
+        console.log("here 5")
         if (!isPasswordValid) {
           throw new Error("Invalid password");
         }

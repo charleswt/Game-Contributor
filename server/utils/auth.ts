@@ -10,11 +10,6 @@ interface AuthRequest extends Request {
     user?: any;
 }
 
-interface UserData {
-    username: string;
-    _id: string;
-}
-
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
     const token = req.token || req.headers.authorization;
 
@@ -23,8 +18,9 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     }
 
     try {
-        const { data } = jwt.verify(token, secret, { maxAge: exp }) as JwtPayload;
         
+        const { data } = jwt.verify(token, secret, { maxAge: exp }) as JwtPayload;
+        console.log(data)
         req.user = data;
     } catch (error) {
         console.error('Invalid token:', (error as Error).message);
@@ -34,8 +30,10 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     next();
 };
 
-export const packToken = (userData: UserData): string => {
-    return jwt.sign({ data: userData }, secret, { expiresIn: exp });
+export const packToken = (id: string): string => {
+    console.log(id)
+    return jwt.sign({ id }, secret, { expiresIn: exp });
+    
 };
 
 export const hashPassword = async (password: string): Promise<string> => {

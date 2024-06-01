@@ -7,8 +7,7 @@ import "../../../public/css/style.css";
 
 export default function Signup() {
   const [errorMessage, setErrorMessage] = useState("");
-  const [createUser] = useMutation(CREATE_USER);
-  const [login] = useMutation(LOGIN);
+  const [createUser, { error }] = useMutation(CREATE_USER);
   const [signUp, setSignUp] = useState({
     first: "",
     last: "",
@@ -63,8 +62,8 @@ export default function Signup() {
 
     if (!checkPasswords(signUp.password, signUp.password2))
       return setErrorMessage("Passwords must match.");
-    
-    const addedUser = await createUser({
+
+    const { data } = await createUser({
         variables: {
           firstName: signUp.first,
           lastName: signUp.last,
@@ -73,13 +72,11 @@ export default function Signup() {
           password: signUp.password,
         },
       });
-    if(addedUser){
-    const { data } = await login({
-        variables: { username: signUp.username,  password: signUp.password },
-    });
-    CookieAuth.login(data.login.token);
+      if(data){
+        CookieAuth.login(JSON.stringify(data.createUser.token));
+      }
 }
-}
+
 
   return (
     <div className="login">

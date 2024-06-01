@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { LOGIN } from '../../utils/mutations';
+import { GET_ME } from '../../utils/queries';
+import CookieAuth from '../../utils/auth'
 import '../../../public/css/style.css';
 
 export default function Login() {
   const [login, setLogin] = useState({ usernameOrEmail: '', password: '' });
+  const [loginUser, { error }] = useMutation(LOGIN);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -12,24 +18,49 @@ export default function Login() {
     }));
   };
 
+  async function handleSubmit() {
+    try {
+      const { data } = await loginUser({
+        variables: {
+          usernameOrEmail: login.usernameOrEmail,
+          password: login.password
+        },
+      });
+
+      if (data.login.token) {
+        console.log('Login successful:', data);
+      }
+
+      CookieAuth.login(JSON.stringify(data.login.token))
+      if(CookieAuth.getToken()){
+        window.location.href = '/main'
+      }
+    } catch (error) {
+      setErrorMessage('Error: Could not login. Please check your credentials.');
+      console.error('Login error:', error);
+    }
+  }
+
   return (
     <div className='login'>
       <h1>Login</h1>
       <div>Email or Username:</div>
-      <input 
-        type="text" 
-        name="usernameOrEmail" 
-        value={login.usernameOrEmail} 
-        onChange={handleInputChange} 
+      <input
+        type="text"
+        name="usernameOrEmail"
+        value={login.usernameOrEmail}
+        onChange={handleInputChange}
       />
       <div>Password</div>
-      <input 
-        type="password" 
-        name="password" 
-        value={login.password} 
-        onChange={handleInputChange} 
+      <input
+        type="password"
+        name="password"
+        value={login.password}
+        onChange={handleInputChange}
       />
-      <div>Dont't have an account?<a href="signup">Signup</a></div>
+      <button onClick={handleSubmit}>Submit</button>
+      <div>Don't have an account? <a href="signup">Sign Up</a></div>
+      {errorMessage && <h2>{errorMessage}</h2>}
     </div>
   );
-};
+}

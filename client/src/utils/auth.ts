@@ -10,7 +10,8 @@ type CookieAuthenticate = {
 
 class CookieAuth implements CookieAuthenticate {
     login(tokenId: string) {
-        return cookies.set('token_auth', tokenId);
+        cookies.set('token_auth', tokenId);
+        window.location.reload();
     }
     logout(){
         cookies.remove('auth_token');

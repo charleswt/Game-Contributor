@@ -17,10 +17,17 @@ header {
             transition: .12s;
             padding: .3rem;
             &:hover {
+                transition: .12;
                 background: rgba(255, 255, 169, 0.075);
                 border-radius: .3rem;
             }
         }
+        img {
+                transition: 1s;
+                &:hover {
+                    transform: rotate(360deg);
+                }
+            }
           input {
             &:focus {
                 background-image: none;
