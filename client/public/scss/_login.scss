@@ -1,0 +1,26 @@
+.login {
+    max-width: 500px;
+    width: 90%;
+    margin: auto;
+    display: flex;
+    color: white;
+    flex-direction: column;
+    margin-top: 10%;
+    h1 {
+        font-size: 2rem;
+    }
+    div {
+        margin: 1rem;
+    }
+    h2 {
+        color: red;
+        font-weight: 700;
+    }
+    button {
+        color: white;
+        background-color: rgba($color: #000000, $alpha: .0);
+        margin: 1rem;
+        width: max-content;
+        padding: .3rem;
+    }
+}

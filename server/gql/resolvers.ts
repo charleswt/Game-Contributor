@@ -68,7 +68,7 @@ const resolvers = {
       try {
         client.query("BEGIN");
         const selectPublishedCodesText =
-          'SELECT * "published_code" WHERE user_id = $1';
+          'SELECT * FROM "published_code" WHERE user_id = $1';
         const selectPublishedCodesValues = context.user.id;
 
         const result = await client.query(
@@ -97,7 +97,7 @@ const resolvers = {
       try {
         client.query("BEGIN");
         const selectPublishedCodesText =
-          'SELECT * "published_code" WHERE user_id = $1';
+          'SELECT * FROM "published_code" WHERE user_id = $1';
         const selectPublishedCodesValues = context.user.id;
 
         const result = await client.query(
@@ -127,7 +127,7 @@ const resolvers = {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-        const selectUserText = 'SELECT * "user"';
+        const selectUserText = 'SELECT * FROM "user"';
 
         const result = await client.query(selectUserText);
 
@@ -148,18 +148,46 @@ const resolvers = {
         client.release();
       }
     },
-    user:  async (_: any, id: any): Promise<User> => {
+    checkUserExists:  async (_: any, {usernameOrEmail}: { usernameOrEmail: string}): Promise<User> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-        const selectUserText = 'SELECT * "user" WHERE user_id = $1';
-        const selectUserValues = id;
+        const selectUserText = 'SELECT * FROM "user" WHERE email = $1 or username = $1';
+        const selectUserValues = [usernameOrEmail];
 
         const result = await client.query(selectUserText, selectUserValues);
 
         await client.query("COMMIT");
 
-        const publishedCode: User = {
+        const user: User = {
+          id: result.rows[0].id,
+          firstName: 'result.rows[0].first_name',
+          lastName: 'result.rows[0].last_name',
+          username: result.rows[0].username,
+          email: 'result.rows[0].email',
+          password: 'result.rows[0].password',
+        };
+
+        return user;
+      } catch (error) {
+        client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
+    user:  async (_: any, {id}: { id: string}): Promise<User> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        const selectUserText = 'SELECT * FROM "user" WHERE user_id = $1';
+        const selectUserValues = [id];
+
+        const result = await client.query(selectUserText, selectUserValues);
+
+        await client.query("COMMIT");
+
+        const user: User = {
           id: result.rows[0].id,
           firstName: result.rows[0].first_name,
           lastName: result.rows[0].last_name,
@@ -168,7 +196,7 @@ const resolvers = {
           password: result.rows[0].password,
         };
 
-        return publishedCode;
+        return user;
       } catch (error) {
         client.query("ROLLBACK");
         throw error;
@@ -461,12 +489,18 @@ const resolvers = {
   },
 
   Mutation: {
-    createUser: async (_: any, input: CreateUserParams): Promise<Auth> => {
+    createUser: async (_: any, {input}: {input: CreateUserParams}): Promise<Auth> => {
+      console.log("here")
       const client = await pool.connect();
+      console.log("here 2")
       try {
-        await client.query("BEGIN");
-
+        console.log("here 3")
+        await client.query("BEGIN");console.log(input)
+        console.log("here 4")
+        
         const hashedPassword = await hashPassword(input.password);
+        
+        console.log('here')  
 
         const insertUserText = `
           INSERT INTO "user" (first_name, last_name, username, email, password)
@@ -486,7 +520,7 @@ const resolvers = {
         const newUser = result.rows[0];
 
         await client.query("COMMIT");
-
+console.log("here 3")
         const userData = {
           id: newUser.id,
           firstName: newUser.first_name,
@@ -691,15 +725,15 @@ const resolvers = {
       }
     },
 
-    login: async (input: LoginInput): Promise<Auth> => {
+    login: async ({input}: {input: LoginInput}): Promise<Auth> => {
       const client = await pool.connect();
 
       try {
         await client.query("BEGIN");
 
         const queryText = input.username
-          ? "SELECT * FROM users WHERE username = $1"
-          : "SELECT * FROM users WHERE email = $1";
+          ? 'SELECT * FROM "user" WHERE username = $1'
+          : 'SELECT * FROM "user" WHERE email = $1';
         const queryValue = input.username ? input.username : input.email;
 
         const result = await client.query(queryText, [queryValue]);

@@ -39,8 +39,11 @@ export const packToken = (userData: UserData): string => {
 };
 
 export const hashPassword = async (password: string): Promise<string> => {
+    console.log('here 5')
     const saltRounds = 13;
+    console.log('here 6')
     const hashedPassword = await bcrypt.hash(password, saltRounds);
+    console.log(hashedPassword)
     return hashedPassword;
 };
 

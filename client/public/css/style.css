@@ -101,3 +101,30 @@ main {
   max-width: 1300px;
   width: 100%;
 }
+
+.login {
+  max-width: 500px;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  color: white;
+  flex-direction: column;
+  margin-top: 10%;
+}
+.login h1 {
+  font-size: 2rem;
+}
+.login div {
+  margin: 1rem;
+}
+.login h2 {
+  color: red;
+  font-weight: 700;
+}
+.login button {
+  color: white;
+  background-color: rgba(0, 0, 0, 0);
+  margin: 1rem;
+  width: max-content;
+  padding: 0.3rem;
+}

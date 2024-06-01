@@ -37,6 +37,16 @@ query users {
 }
 `;
 
+export const CHECK_USER_EXISTS = gql`
+query checkUserExists($usernameOrEmail: String!) {
+    checkUserExists(usernameOrEmail: $usernameOrEmail) {
+        id
+        username
+        email
+    }
+}
+`;
+
 export const GET_USER = gql`
 query user($id: String!) {
     user(id: $id) {
