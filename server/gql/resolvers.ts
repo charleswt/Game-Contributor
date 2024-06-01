@@ -205,17 +205,21 @@ const resolvers = {
     },
     me: async (_: any, args: any, context: any): Promise<{ user: User, company?: Company }>  => {
       const client = await pool.connect();
-      try {
+      try {console.log(JSON.stringify(context.user.id))
         await client.query("BEGIN");
-        const selectUserText = 'SELECT * FROM "user" WHERE user_id = $1';
-        const selectUserValues = [context.user.id];
-        const userResult = await client.query(selectUserText, selectUserValues);
+        const selectUserText = 'SELECT * FROM "user" WHERE id = $1';
+        const selectUserValues = [JSON.stringify(context.user.id)];
+        console.log('here')
+        const userResult = await client.query(selectUserText, selectUserValues).catch((error)=>{
+          throw error
+        })
 
         if (userResult.rows.length === 0) {
           throw new Error('User not found');
         }
 
         const userRow = userResult.rows[0];
+        
 
         const user: User = {
           id: userRow.id,
@@ -224,7 +228,7 @@ const resolvers = {
           username: userRow.username,
           email: userRow.email,
           password: userRow.password,
-        };
+        };console.log(user)
 
         let company: Company | undefined;
         
@@ -242,7 +246,7 @@ const resolvers = {
         }
 
         await client.query("COMMIT");
-
+        
         return { user, company };
       } catch (error) {
         await client.query("ROLLBACK");

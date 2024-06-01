@@ -46,7 +46,7 @@ type Friend {
 }
 
 type CompanyUser {
-  user: User
+  user: User!
   company: Company
 }
 

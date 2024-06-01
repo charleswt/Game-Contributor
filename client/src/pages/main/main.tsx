@@ -17,7 +17,6 @@ export default function Main() {
     useEffect(() => {
       if (data) {
         setPosts(data.posts);
-        console.log(data);
       }
     }, [data]);
   
@@ -30,7 +29,7 @@ export default function Main() {
       <main>
         <div>Hello</div>
         {loading ? (
-          <p>Loading...</p>
+          <div className="loader"></div>
         ) : (
           posts.length > 0 ? (
             posts.map((post: Posts) => (

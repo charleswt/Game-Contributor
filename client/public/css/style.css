@@ -109,6 +109,23 @@ main {
   width: 100%;
 }
 
+.loader {
+  display: flex;
+  margin: auto;
+  align-items: center;
+  width: 60px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side, #ffa516 94%, rgba(0, 0, 0, 0)) top/8px 8px no-repeat, conic-gradient(rgba(0, 0, 0, 0) 30%, #ffa516);
+  -webkit-mask: radial-gradient(farthest-side, rgba(0, 0, 0, 0) calc(100% - 8px), #000 0);
+  animation: l13 1s infinite linear;
+}
+
+@keyframes l13 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
 .login {
   max-width: 500px;
   width: 90%;
