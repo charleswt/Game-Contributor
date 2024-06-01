@@ -19,8 +19,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 
     try {
         
-        const { data } = jwt.verify(token, secret, { maxAge: exp }) as JwtPayload;
-        console.log(data)
+        const data = jwt.verify(token, secret, { maxAge: exp }) as JwtPayload;
         req.user = data;
     } catch (error) {
         console.error('Invalid token:', (error as Error).message);
@@ -31,17 +30,13 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 };
 
 export const packToken = (id: string): string => {
-    console.log(id)
     return jwt.sign({ id }, secret, { expiresIn: exp });
     
 };
 
 export const hashPassword = async (password: string): Promise<string> => {
-    console.log('here 5')
     const saltRounds = 13;
-    console.log('here 6')
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    console.log(hashedPassword)
     return hashedPassword;
 };
 

@@ -207,7 +207,6 @@ const resolvers = {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-
         const selectUserText = 'SELECT * FROM "user" WHERE user_id = $1';
         const selectUserValues = [context.user.id];
         const userResult = await client.query(selectUserText, selectUserValues);
@@ -489,17 +488,11 @@ const resolvers = {
 
   Mutation: {
     createUser: async (_: any, input: CreateUserParams): Promise<Auth> => {
-      console.log("here")
       const client = await pool.connect();
-      console.log("here 2")
       try {
-        console.log("here 3")
-        await client.query("BEGIN");console.log(input)
-        console.log("here 4")
+        await client.query("BEGIN");
         
         const hashedPassword = await hashPassword(input.password);
-        
-        console.log('here')  
 
         const insertUserText = `
           INSERT INTO "user" (first_name, last_name, username, email, password)
@@ -726,28 +719,22 @@ const resolvers = {
 
     login: async (_:any, input: LoginInput): Promise<Auth> => {
       const client = await pool.connect();
-      try {console.log(input);
+      try {
         await client.query("BEGIN");
         
-        console.log("here 1")
         const queryText = 'SELECT * FROM "user" WHERE username = $1 OR email = $1'
         const queryValue = input.usernameOrEmail;
-        
-        console.log("here 2")
 
         const result = await client.query(queryText, [queryValue]);
         const user = result.rows[0];
-        console.log("here 3")
 
         if (!user) {
           throw new Error("User not found");
         }
-        console.log("here 4")
         const isPasswordValid = await comparePasswordHash(
           input.password,
           user.password
         );
-        console.log("here 5")
         if (!isPasswordValid) {
           throw new Error("Invalid password");
         }

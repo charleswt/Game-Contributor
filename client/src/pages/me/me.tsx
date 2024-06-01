@@ -8,10 +8,12 @@ export default function Me(): any{
     const [me, setMe] = useState()
 
     useEffect(()=>{
-        if(!data){
+        if(data && !me){
            setMe(data) 
         }
+        console.log(me)
     },[loading, data])
+
     return (
         <main>
             <div>hello</div>
