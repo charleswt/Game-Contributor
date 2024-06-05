@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_ME, GET_COMMENTS } from '../../utils/queries';
+import { GET_ME, GET_COMMENTS, GET_ME_POSTS } from '../../utils/queries';
 import { CREATE_POST } from '../../utils/mutations';
 import '../../../public/css/style.css';
 
 interface User {
   id: string;
+  profilePicture?: string;
   firstName: string;
   lastName: string;
   username: string;
-  email: string;
 }
 
 interface Comment {
@@ -20,7 +20,10 @@ interface Comment {
 }
 
 interface Post {
+  id: string;
+  userId: string;
   content: string;
+  createdAt: string;
 }
 
 export default function Me(): any {
@@ -34,6 +37,9 @@ export default function Me(): any {
   const [postContent, setPostContent] = useState<string>('');
   const [showCreatePostPanel, setShowCreatePostPanel] = useState<boolean>(false);
 
+  const { loading: loadingPosts, data: postData } = useQuery(GET_ME_POSTS);
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
+
   useEffect(() => {
     if (!loading && data) {
       setMe(data.me.user);
@@ -41,9 +47,12 @@ export default function Me(): any {
     if (!commentLoading && commentData) {
       setComments(commentData.comments);
     }
-  }, [loading, data, commentLoading, commentData]);
+    if (!loadingPosts && postData) {
+      setUserPosts(postData.mePosts);
+    }
+  }, [loading, data, commentLoading, commentData, loadingPosts, postData]);
 
-  if (loading || commentLoading) {
+  if (loading || commentLoading || loadingPosts) {
     return <div className="loader"></div>;
   }
 
@@ -80,12 +89,11 @@ export default function Me(): any {
 
   return (
     <main>
-      <div>hello</div>
       {me ? (
-        <div>
-          <p>{me.firstName} {me.lastName}</p>
-          <p>Username: {me.username}</p>
-          <p>Email: {me.email}</p>
+        <div className='bg myProfile'>
+          <img src={me.profilePicture} alt="profile picture" />
+          <h1>{me.firstName} {me.lastName}</h1>
+          <p>@{me.username}</p>
         </div>
       ) : (
         <p>No Data</p>
@@ -100,7 +108,7 @@ export default function Me(): any {
 
       <div>
         <p>Your Comments</p>
-        {comments.length > 0 ? (
+        {comments? (
           comments.map((comment: Comment) => (
             <div key={comment.id}>
               <div>Post ID: {comment.postId}</div>
@@ -110,6 +118,20 @@ export default function Me(): any {
           ))
         ) : (
           <p>No Comments</p>
+        )}
+      </div>
+
+      <div>
+        <p>Your Posts</p>
+        {userPosts? (
+          userPosts.map((post: Post) => (
+            <div key={post.id}>
+              <div>User ID: {post.userId}</div>
+              <div>Content: {post.content}</div>
+            </div>
+          ))
+        ) : (
+          <p>No Posts</p>
         )}
       </div>
     </main>

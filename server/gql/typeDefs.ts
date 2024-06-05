@@ -72,7 +72,8 @@ type Query {
   companyUsers: [User!]!
   companyUser(id: ID!): CompanyUser
   posts: [PostWithUser!]!
-  userPosts(id: ID!): [Post!]
+  userPosts(id: String): [Post]
+  mePosts: [Post]
   post(id: ID!): Post
   comments: [Comment!]!
   comment(id: ID!): Comment

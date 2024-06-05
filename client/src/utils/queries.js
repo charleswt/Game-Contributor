@@ -131,10 +131,21 @@ export const GET_POSTS = gql`
 `;
 
 export const GET_USER_POSTS = gql`
-query userPosts($id: string) {
+query userPosts($id: ID) {
     userPosts(id: $id) {
         id
-        user
+        userId
+        content
+        createdAt
+    }
+}
+`;
+
+export const GET_ME_POSTS = gql`
+query mePosts {
+    mePosts {
+        id
+        userId
         content
         createdAt
     }

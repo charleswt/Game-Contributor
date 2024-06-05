@@ -218,11 +218,11 @@ const resolvers = {
     },
     me: async (_: any, args: any, context: any): Promise<{ user: User, company?: Company }>  => {
       const client = await pool.connect();
-      try {console.log(JSON.stringify(context.user.id))
+      try {
         await client.query("BEGIN");
         const selectUserText = 'SELECT * FROM "user" WHERE id = $1';
         const selectUserValues = [JSON.stringify(context.user.id)];
-        console.log('here')
+
         const userResult = await client.query(selectUserText, selectUserValues).catch((error)=>{
           throw error
         })
@@ -390,19 +390,43 @@ const resolvers = {
         client.release();
       }
     },
-    userPosts: async (_:any, { id }: { id: string }): Promise<Post[]>=>{
+    userPosts: async (_:any, { id }: { id?: string }): Promise<Post[]>=>{
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
         const selectPostsText = 'SELECT * FROM "posts" WHERE user_id = $1'
-        const selectPostsValues = [id]
+        const result =  await client.query(selectPostsText, [id]);
+
+        await client.query("COMMIT");
+
+        return result.rows.map((row: any)=>({
+          id: row.id,
+          userId: row.user_id,
+          content: row.content,
+          createdAt: row.created_at
+        }))
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
+    mePosts: async (_:any, args: any, context: any): Promise<Post[]>=>{
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        const selectPostsText = 'SELECT * FROM "posts" WHERE user_id = $1'
+        const selectPostsValues = [JSON.stringify(context.user.id)]
         const result =  await client.query(selectPostsText, selectPostsValues);
 
         await client.query("COMMIT");
 
         return result.rows.map((row: any)=>({
+          id: row.id,
           userId: row.user_id,
-          content: row.content
+          content: row.content,
+          createdAt: row.created_at
         }))
       } catch (error) {
         await client.query("ROLLBACK");

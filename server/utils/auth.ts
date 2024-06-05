@@ -1,7 +1,6 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt' ;
-import Cookies from 'universal-cookie'
 
 
 const exp = '3h';
