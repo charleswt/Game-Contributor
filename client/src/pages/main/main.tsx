@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { GET_POSTS } from '../../utils/queries';
+import { CREATE_COMMENT } from '../../utils/mutations';
+import CookieAuth from '../../utils/auth';
+import {jwtDecode} from 'jwt-decode';
 import '../../../public/css/style.css';
 
 interface User {
@@ -29,6 +32,8 @@ interface Post {
 export default function Main() {
   const { loading, data } = useQuery(GET_POSTS);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [createComment] = useMutation(CREATE_COMMENT);
+  const [commentContent, setCommentContent] = useState<string>();
 
   useEffect(() => {
     if (data) {
@@ -41,15 +46,39 @@ export default function Main() {
     return date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US');
   };
 
+
+  const handleCreateComment = async (postId: string) => {
+    try {
+      const tokenUserId: any = await jwtDecode(CookieAuth.getToken())
+      const userId = tokenUserId.id
+      
+      const { data } = await createComment({
+        variables: { userId, postId, content: commentContent }
+      });
+      if (data) {
+        setPosts(posts.map(post => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              comments: [...post.comments, data.createComment]
+            };
+          }
+          return post;
+        }));
+      }
+    } catch (error) {
+      console.error('Error creating comment:', error);
+    }
+  };
+
   return (
     <main>
-      <div>Hello</div>
       {loading ? (
         <div className="loader"></div>
       ) : (
         posts.length > 0 ? (
           posts.map((post: Post) => (
-            <div className='posts' key={post.id}>
+            <div className='posts bg' key={post.id}>
               <div className='postProfile' key={post.user.id}>
                 <p><img src={post.user.profileImage} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
@@ -57,7 +86,7 @@ export default function Main() {
                   @{post.user.username}
                 </a>
               </div>
-              <div className='postContent' key={post.id}>
+              <div className='postContent'>
                 <p>Content: {post.content}</p>
                 <p>Created At: {formatDate(post.createdAt)}</p>
               </div>
@@ -72,8 +101,21 @@ export default function Main() {
                     </div>
                   ))
                 ) : (
-                  <p>No Comments</p>
+                  ""
                 )}
+                <div>
+                  <textarea
+                    name="text"
+                    rows={4}
+                    cols={50}
+                    wrap="soft"
+                    maxLength={3000}
+                    style={{ overflow: 'hidden', resize: 'none' }}
+                    placeholder="Content Here..."
+                    onChange={(e) => setCommentContent(e.target.value)}
+                  />
+                  <button onClick={() => handleCreateComment(post.id)}>Post</button>
+                </div>
               </div>
             </div>
           ))

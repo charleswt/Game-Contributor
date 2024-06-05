@@ -44,9 +44,10 @@ type PostWithUser = {
 }
 
 interface Comment {
-  userId: string;
+  postId?: string;
+  userId?: string;
   content: string;
-  createdAt: string,
+  createdAt?: string,
 }
 
 interface PublishedCode {
@@ -714,12 +715,13 @@ const resolvers = {
         await client.query("BEGIN");
 
         const insertCommentText = `
-          INSERT INTO "comments" (user_id, content)
-          VALUES ($1, $2)
-          RETURNING user_id, content;
+          INSERT INTO "comments" (post_id, user_id, content)
+          VALUES ($1, $2, $3)
+          RETURNING post_id, user_id, content;
         `;
 
-        const insertCommentValues = [input.userId, input.content];
+        const insertCommentValues = [input.postId, input.postId, input.content];
+        console.log(insertCommentValues)
 
         const result = await client.query(
           insertCommentText,
