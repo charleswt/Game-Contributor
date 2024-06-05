@@ -7,9 +7,10 @@ import {
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
+import CookieAuth from './utils/auth'
+
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
-
 
 const link = createHttpLink({
   uri: '/graphql',

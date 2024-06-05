@@ -27,10 +27,10 @@ export const CREATE_COMPANY = gql`
 `;
 
 export const CREATE_POST = gql`
-  mutation createPost($userId: ID!, $content: String!) {
-    createPost(userId: $userId, content: $content) {
+  mutation createPost($content: String!) {
+    createPost(content: $content) {
       id
-      user
+      userId
       content
       createdAt
     }

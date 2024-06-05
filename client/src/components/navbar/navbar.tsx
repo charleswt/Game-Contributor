@@ -1,8 +1,7 @@
 import '../../../public/css/style.css'
 import CookieAuth from '../../utils/auth'
-if(CookieAuth.getToken()){
 
-}
+CookieAuth.checkExpiration()
 export default function Navbar(): any{
     return (
         <header>

@@ -1,0 +1,19 @@
+.createPost {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    button {
+        width: fit-content;
+        background-color: white;
+        padding: .3rem;
+        border-radius: 3rem;
+    }
+    textarea {
+        padding: .3rem;
+        max-width: 600px;
+        min-width: 350px;
+        height: fit-content;
+        word-wrap:break-word;
+        margin: .5rem 0;
+    }
+}

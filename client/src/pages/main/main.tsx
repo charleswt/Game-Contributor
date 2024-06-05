@@ -29,7 +29,7 @@ export default function Main() {
   }, [data]);
 
   const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp);
+    const date = new Date(JSON.parse(timestamp));
     return date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US');
   };
 
@@ -41,17 +41,21 @@ export default function Main() {
       ) : (
         posts.length > 0 ? (
           posts.map((post: Post) => (
-            <div key={post.id}>
-              <p>ID: {post.id}</p>
-              <p>Content: {post.content}</p>
-              <p>Created At: {formatDate(post.createdAt)}</p>
-              <div>
-                <p>User Details:</p>
-                <p>ID: {post.user.id}</p>
-                <p>Profile Image: <img src={post.user.profileImage} alt="Profile" /></p>
-                <p>Name: {post.user.firstName} {post.user.lastName}</p>
-                <p>Username: {post.user.username}</p>
+            <div className='posts' key={post.id}>
+
+              <div className='postProfile' key={post.user.id}>
+                <p><img src={post.user.profileImage} alt="Profile" /></p>
+                <p>{post.user.firstName} {post.user.lastName}</p>
+                <a onClick={()=>window.location.href = `/User/${post.user.id}`
+              }>@{post.user.username}</a>
               </div>
+              {/* /\ dont forget to add link to user profile on click /\ */}
+              <div className='postContent' key={post.id}>
+                <p>Content: {post.content}</p>
+                <p>Created At: {formatDate(post.createdAt)}</p>
+              </div>
+              
+              
             </div>
           ))
         ) : (

@@ -63,9 +63,13 @@ export default function Me(): any {
 
   const createPostPanel = () => (
     <div>
-      <div>Create Post</div>
-      <input
-        type="text"
+      <textarea
+        name="text"
+        rows={14}
+        cols={10}
+        wrap="soft"
+        maxLength={3000}
+        style={{ overflow: 'hidden', resize: 'none' }}
         placeholder="Content Here..."
         value={postContent}
         onChange={(e) => setPostContent(e.target.value)}
@@ -87,10 +91,10 @@ export default function Me(): any {
         <p>No Data</p>
       )}
 
-      <div className="createPost">
-        <div onClick={() => setShowCreatePostPanel(!showCreatePostPanel)}>
+      <div className="createPost bg">
+        <button onClick={() => setShowCreatePostPanel(!showCreatePostPanel)}>
           Create Post
-        </div>
+        </button>
         {showCreatePostPanel && createPostPanel()}
       </div>
 

@@ -83,7 +83,7 @@ type Query {
 type Mutation {
   createUser(firstName: String!, lastName: String!, username: String!, email: String!, password: String!): Auth
   createCompany(companyName: String!, userId: ID!): Company
-  createPost(userId: ID!, content: String!): Post
+  createPost(content: String!): Post
   createComment(postId: ID!, userId: ID!, content: String!): Comment
   createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
   createFriendship(userId1: ID!, userId2: ID!): Friend

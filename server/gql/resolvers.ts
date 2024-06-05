@@ -616,7 +616,7 @@ const resolvers = {
       }
     },
 
-    createPost: async (_: any, input: Post, context: any): Promise<Post> => {
+    createPost: async (_: any, input: Post, context: any): Promise<any> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -634,8 +634,11 @@ const resolvers = {
 
         await client.query("COMMIT");
 
-        const post: Post = {
+        const post = {
+          id: newPost.id,
+          userId: newPost.user_id,
           content: newPost.content,
+          createdAt: newPost.created_at
         };
         return post;
       } catch (error: any) {
