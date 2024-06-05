@@ -345,8 +345,8 @@ const resolvers = {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-    
-        const selectPostsWithUserText = `
+
+        const selectPostsWithUserAndCommentsText = `
           SELECT
             p.id AS post_id,
             p.content AS post_content,
@@ -356,33 +356,68 @@ const resolvers = {
             u.first_name AS user_first_name,
             u.last_name AS user_last_name,
             u.username AS user_username,
-            u.email AS user_email
+            u.email AS user_email,
+            c.id AS comment_id,
+            c.content AS comment_content,
+            c.created_at AS comment_created_at,
+            cu.id AS comment_user_id,
+            cu.first_name AS comment_user_first_name,
+            cu.last_name AS comment_user_last_name,
+            cu.username AS comment_user_username
           FROM
             posts p
           JOIN
             "user" u ON p.user_id = u.id
+          LEFT JOIN
+            comments c ON c.post_id = p.id
+          LEFT JOIN
+            "user" cu ON c.user_id = cu.id
           ORDER BY
             p.created_at ASC
           LIMIT 10;
         `;
-    
-        const result = await client.query(selectPostsWithUserText);
-    
+
+        const result = await client.query(selectPostsWithUserAndCommentsText);
+
         await client.query("COMMIT");
-    
-        return result.rows.map((row: any) => ({
-          id: row.post_id,
-          content: row.post_content,
-          createdAt: row.post_created_at,
-          user: {
-            id: row.user_id,
-            profileImage: row.user_profile_image,
-            firstName: row.user_first_name,
-            lastName: row.user_last_name,
-            username: row.user_username,
-            email: row.user_email,
-          },
-        }));
+
+        // Group posts and their comments
+        const postsMap: { [key: string]: any } = {};
+
+        result.rows.forEach((row: any) => {
+          if (!postsMap[row.post_id]) {
+            postsMap[row.post_id] = {
+              id: row.post_id,
+              content: row.post_content,
+              createdAt: row.post_created_at,
+              user: {
+                id: row.user_id,
+                profileImage: row.user_profile_image,
+                firstName: row.user_first_name,
+                lastName: row.user_last_name,
+                username: row.user_username,
+                email: row.user_email,
+              },
+              comments: [],
+            };
+          }
+
+          if (row.comment_id) {
+            postsMap[row.post_id].comments.push({
+              id: row.comment_id,
+              content: row.comment_content,
+              createdAt: row.comment_created_at,
+              user: {
+                id: row.comment_user_id,
+                firstName: row.comment_user_first_name,
+                lastName: row.comment_user_last_name,
+                username: row.comment_user_username,
+              },
+            });
+          }
+        });
+
+        return Object.values(postsMap);
       } catch (error) {
         await client.query("ROLLBACK");
         throw error;

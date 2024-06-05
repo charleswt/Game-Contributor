@@ -22,19 +22,21 @@ type Post {
   createdAt: String!
 }
 
-type PostWithUser {
-  id: ID!
-  content: String!
-  createdAt: String!
-  user: User!
-}
-
 type Comment {
   id: ID!
   postId: ID!
   userId: ID!
   content: String!
   createdAt: String!
+  user: User!
+}
+
+type PostWithUser {
+  id: ID!
+  content: String!
+  createdAt: String!
+  user: User!
+  comments: [Comment!]!
 }
 
 type PublishedCode {

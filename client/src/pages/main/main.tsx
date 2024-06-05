@@ -11,11 +11,19 @@ interface User {
   username: string;
 }
 
+interface Comment {
+  id: string;
+  content: string;
+  createdAt: string;
+  user: User;
+}
+
 interface Post {
   id: string;
   content: string;
   createdAt: string;
   user: User;
+  comments: Comment[];
 }
 
 export default function Main() {
@@ -42,20 +50,31 @@ export default function Main() {
         posts.length > 0 ? (
           posts.map((post: Post) => (
             <div className='posts' key={post.id}>
-
               <div className='postProfile' key={post.user.id}>
                 <p><img src={post.user.profileImage} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
-                <a onClick={()=>window.location.href = `/User/${post.user.id}`
-              }>@{post.user.username}</a>
+                <a onClick={() => window.location.href = `/User/${post.user.id}`}>
+                  @{post.user.username}
+                </a>
               </div>
-              {/* /\ dont forget to add link to user profile on click /\ */}
               <div className='postContent' key={post.id}>
                 <p>Content: {post.content}</p>
                 <p>Created At: {formatDate(post.createdAt)}</p>
               </div>
-              
-              
+              <div className='postComments'>
+                {post.comments.length > 0 ? (
+                  post.comments.map((comment: Comment) => (
+                    <div className='comment' key={comment.id}>
+                      <p>{comment.user.firstName} {comment.user.lastName}</p>
+                      <p>@{comment.user.username}</p>
+                      <p>{comment.content}</p>
+                      <p>Created At: {formatDate(comment.createdAt)}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p>No Comments</p>
+                )}
+              </div>
             </div>
           ))
         ) : (
