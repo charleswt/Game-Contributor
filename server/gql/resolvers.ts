@@ -26,8 +26,21 @@ interface Company {
 }
 
 interface Post {
-  userId: string;
   content: string;
+}
+
+type PostWithUser = {
+  id: number;
+  content: string;
+  createdAt: string;
+  user: {
+    id: number;
+    profileImage: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
+  }
 }
 
 interface Comment {
@@ -328,21 +341,48 @@ const resolvers = {
         client.release();
       }
     },
-    posts: async (_:any): Promise<Post[]>=>{
+    posts: async (_: any): Promise<PostWithUser[]> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-        const selectPostsText = 'SELECT * FROM "posts"'
-        const result =  await client.query(selectPostsText);
-
+    
+        const selectPostsWithUserText = `
+          SELECT
+            p.id AS post_id,
+            p.content AS post_content,
+            p.created_at AS post_created_at,
+            u.id AS user_id,
+            u.profile_image AS user_profile_image,
+            u.first_name AS user_first_name,
+            u.last_name AS user_last_name,
+            u.username AS user_username,
+            u.email AS user_email
+          FROM
+            posts p
+          JOIN
+            "user" u ON p.user_id = u.id
+          ORDER BY
+            p.created_at ASC
+          LIMIT 10;
+        `;
+    
+        const result = await client.query(selectPostsWithUserText);
+    
         await client.query("COMMIT");
-
-        return result.rows.map((row: any)=>({
-          id: row.id,
-          userId: row.user_id,
-          content: row.content,
-          createdAt: row.created_at
-        }))
+    
+        return result.rows.map((row: any) => ({
+          id: row.post_id,
+          content: row.post_content,
+          createdAt: row.post_created_at,
+          user: {
+            id: row.user_id,
+            profileImage: row.user_profile_image,
+            firstName: row.user_first_name,
+            lastName: row.user_last_name,
+            username: row.user_username,
+            email: row.user_email,
+          },
+        }));
       } catch (error) {
         await client.query("ROLLBACK");
         throw error;
@@ -394,7 +434,7 @@ const resolvers = {
       try {
         await client.query("BEGIN");
 
-        const selectCommentsText = 'SELECT * FROM "comments" WHERE post_id = $1 ORDER BY created_at ASC';
+        const selectCommentsText = 'SELECT * FROM "comments" WHERE post_id = $1 OR user_id = $1 ORDER BY created_at ASC';
         const selectCommentsValues = [id];
         const result = await client.query(selectCommentsText, selectCommentsValues);
 
@@ -576,7 +616,7 @@ const resolvers = {
       }
     },
 
-    createPost: async (_: any, input: Post): Promise<Post> => {
+    createPost: async (_: any, input: Post, context: any): Promise<Post> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -587,7 +627,7 @@ const resolvers = {
           RETURNING user_id, content;
         `;
 
-        const insertPostValues = [input.userId, input.content];
+        const insertPostValues = [context.user.id, input.content];
 
         const result = await client.query(insertPostText, insertPostValues);
         const newPost = result.rows[0];
@@ -595,7 +635,6 @@ const resolvers = {
         await client.query("COMMIT");
 
         const post: Post = {
-          userId: newPost.user_id,
           content: newPost.content,
         };
         return post;

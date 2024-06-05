@@ -114,14 +114,20 @@ query companyUser($id: string) {
 `;
 
 export const GET_POSTS = gql`
-query posts {
+  query GetPosts {
     posts {
+      id
+      content
+      createdAt
+      user {
         id
-        userId
-        content
-        createdAt
+        profileImage
+        firstName
+        lastName
+        username
+      }
     }
-}
+  }
 `;
 
 export const GET_USER_POSTS = gql`

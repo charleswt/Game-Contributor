@@ -22,6 +22,13 @@ type Post {
   createdAt: String!
 }
 
+type PostWithUser {
+  id: ID!
+  content: String!
+  createdAt: String!
+  user: User!
+}
+
 type Comment {
   id: ID!
   postId: ID!
@@ -64,7 +71,7 @@ type Query {
   me: CompanyUser
   companyUsers: [User!]!
   companyUser(id: ID!): CompanyUser
-  posts: [Post!]!
+  posts: [PostWithUser!]!
   userPosts(id: ID!): [Post!]
   post(id: ID!): Post
   comments: [Comment!]!
