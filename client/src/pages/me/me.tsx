@@ -107,10 +107,10 @@ export default function Me(): any {
       </div>
 
       <div>
-        <p>Your Comments</p>
+        <p className='bg'>Your Comments</p>
         {comments? (
           comments.map((comment: Comment) => (
-            <div key={comment.id}>
+            <div className='bg' key={comment.id}>
               <div>Post ID: {comment.postId}</div>
               <div>User ID: {comment.userId}</div>
               <div>Content: {comment.content}</div>
@@ -122,10 +122,10 @@ export default function Me(): any {
       </div>
 
       <div>
-        <p>Your Posts</p>
+        <p className='bg'>Your Posts</p>
         {userPosts? (
           userPosts.map((post: Post) => (
-            <div key={post.id}>
+            <div className='bg' key={post.id}>
               <div>User ID: {post.userId}</div>
               <div>Content: {post.content}</div>
             </div>

@@ -21,6 +21,12 @@ header {
                 background: rgba(255, 255, 169, 0.075);
                 border-radius: .3rem;
             }
+            .navLinks {
+                text-decoration: none;
+                &:visited {
+                    color: rgb(255, 255, 169);
+                }
+            }
         }
         img {
                 transition: 1s;

@@ -82,6 +82,12 @@ header ul li:hover {
   background: rgba(255, 255, 169, 0.075);
   border-radius: 0.3rem;
 }
+header ul li .navLinks {
+  text-decoration: none;
+}
+header ul li .navLinks:visited {
+  color: rgb(255, 255, 169);
+}
 header ul img {
   transition: 1s;
 }

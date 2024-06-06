@@ -1,21 +1,38 @@
-import '../../../public/css/style.css'
-import CookieAuth from '../../utils/auth'
+import '../../../public/css/style.css';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import CookieAuth from '../../utils/auth';
 
-CookieAuth.checkExpiration()
-export default function Navbar(): any{
+export default function Navbar() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!CookieAuth.getToken()) {
+            navigate('/login');
+        }
+    }, [navigate]);
+
+    const handleMeClick = () => {
+        if (CookieAuth.getToken()) {
+            navigate('/me');
+        } else {
+            navigate('/login');
+        }
+    };
+
     return (
         <header>
             <ul>
                 <li>Logo</li>
-                <li onClick={()=>window.location.href = '/main'}>Home</li>
-                <input type="text"/>
-                <li onClick={()=>
-                    CookieAuth.getToken()?
-                    window.location.href = '/me':
-                    window.location.href = '/login'
-                    }>Me</li>
-                <img src="../../../public/images/settings.svg" alt="" height="60px" />
+                <li>
+                    <Link className='navLinks' to="/main">Home</Link>
+                </li>
+                <input type="text" />
+                <li onClick={handleMeClick}>Me</li>
+                <li>
+                    <img src="../../../public/images/settings.svg" alt="Settings" height="60px" />
+                </li>
             </ul>
         </header>
-    )
+    );
 }
