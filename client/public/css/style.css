@@ -5,9 +5,19 @@
 }
 
 html {
+  scroll-behavior: smooth;
+}
+
+.back {
+  z-index: -1;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
   background-repeat: no-repeat;
   background-image: linear-gradient(to bottom, rgb(0, 26, 26), rgba(0, 26, 26, 0.952));
-  scroll-behavior: smooth;
+  height: 100vh;
 }
 
 #root {
@@ -56,8 +66,16 @@ ul {
   list-style: none;
 }
 
+main {
+  padding: 7vh 0;
+}
+
 header {
-  height: 7vh;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  height: fit-content;
+  max-height: 10vh;
   background-color: rgb(0, 59, 59);
   width: 100%;
   color: rgb(255, 255, 169);
@@ -105,7 +123,26 @@ header ul input {
 header ul input:focus {
   background-image: none;
 }
+header ul .searchSmall {
+  position: absolute;
+  left: 75px;
+  height: 60px;
+  width: 60px;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+  background-size: 30px;
+  background-repeat: no-repeat;
+  background-position: 15px;
+}
 
+@media screen and (width <= 850px) {
+  header ul {
+    justify-content: end;
+  }
+  .logo {
+    position: absolute;
+    left: 0;
+  }
+}
 .posts {
   background-color: white;
 }

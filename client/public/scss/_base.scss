@@ -5,9 +5,16 @@
   }
   
   html {
-    background-repeat: no-repeat;
-    background-image: linear-gradient(to bottom, rgb(0, 26, 26), rgba(0, 26, 26, 0.952)) ;
     scroll-behavior: smooth;
+  }
+
+  .back {
+    z-index: -1;
+    position: fixed;
+    left: 0;right: 0;bottom: 0;top: 0;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(to bottom, rgb(0, 26, 26), rgba(0, 26, 26, 0.952));
+    height: 100vh;
   }
 
   #root {
@@ -54,4 +61,8 @@
   ol,
   ul {
     list-style: none;
+  }
+
+  main {
+    padding: 7vh 0;
   }
