@@ -28,16 +28,17 @@ interface Post {
 }
 
 export default function Me(): any {
+  // Profile information
   const { loading, data } = useQuery(GET_ME);
   const [me, setMe] = useState<User | null>(null);
-
+  // all created comments
   const { loading: commentLoading, data: commentData } = useQuery(GET_ME_COMMENTS);
   const [comments, setComments] = useState<Comment[]>([]);
-
+  // create post operations
   const [createPost] = useMutation(CREATE_POST);
   const [postContent, setPostContent] = useState<string>('');
   const [showCreatePostPanel, setShowCreatePostPanel] = useState<boolean>(false);
-
+  // get all created posts
   const { loading: loadingPosts, data: postData } = useQuery(GET_ME_POSTS);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
 
@@ -46,7 +47,8 @@ export default function Me(): any {
       setMe(data.me.user);
     }
     if (!commentLoading && commentData) {
-      setComments(commentData.comments);
+      setComments(commentData.meComments);
+      console.log(commentData)
     }
     if (!loadingPosts && postData) {
       setUserPosts(postData.mePosts);

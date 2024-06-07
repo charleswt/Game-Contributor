@@ -243,7 +243,7 @@ const resolvers = {
           username: userRow.username,
           email: userRow.email,
           password: userRow.password,
-        };console.log(user)
+        };
 
         let company: Company | undefined;
         
@@ -559,16 +559,14 @@ const resolvers = {
       try {
         await client.query("BEGIN");
 
-        const selectCommentsText = 'SELECT * FROM "comments" WHERE user_id = $1 ORDER BY created_at ASC';
+        const selectCommentsText = 'SELECT * FROM "comments" WHERE user_id = $1 ORDER BY created_at ASC;';
         const selectCommentsValues = [JSON.stringify(context.user.id)];
         console.log(selectCommentsValues)
         const result = await client.query(selectCommentsText, selectCommentsValues);
         console.log(result)
 
         await client.query("COMMIT");
-
-
-
+        
         return result.rows.map((row: any) => ({
           id: row.id,
           postId: row.post_id,
