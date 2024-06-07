@@ -5,7 +5,6 @@ import { CREATE_COMMENT } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 import {jwtDecode} from 'jwt-decode';
 import '../../../public/css/style.css';
-import { inflate } from 'zlib';
 
 interface User {
   id: string;
@@ -54,7 +53,7 @@ export default function Main() {
       const userId = tokenUserId.id
       
       const { data } = await createComment({
-        variables: { userId, postId, content: commentContent }
+        variables: { postId, userId, content: commentContent }
       });
       if (data) {
         setPosts(posts.map(post => {

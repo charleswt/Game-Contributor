@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_ME, GET_COMMENTS, GET_ME_POSTS } from '../../utils/queries';
+import { GET_ME, GET_ME_COMMENTS, GET_ME_POSTS } from '../../utils/queries';
 import { CREATE_POST } from '../../utils/mutations';
 import '../../../public/css/style.css';
 
@@ -17,6 +17,7 @@ interface Comment {
   postId: string;
   userId: string;
   content: string;
+  createdAt: string;
 }
 
 interface Post {
@@ -30,7 +31,7 @@ export default function Me(): any {
   const { loading, data } = useQuery(GET_ME);
   const [me, setMe] = useState<User | null>(null);
 
-  const { loading: commentLoading, data: commentData } = useQuery(GET_COMMENTS);
+  const { loading: commentLoading, data: commentData } = useQuery(GET_ME_COMMENTS);
   const [comments, setComments] = useState<Comment[]>([]);
 
   const [createPost] = useMutation(CREATE_POST);
@@ -114,6 +115,7 @@ export default function Me(): any {
               <div>Post ID: {comment.postId}</div>
               <div>User ID: {comment.userId}</div>
               <div>Content: {comment.content}</div>
+              <div>Content: {comment.createdAt}</div>
             </div>
           ))
         ) : (

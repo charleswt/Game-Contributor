@@ -7,11 +7,7 @@ export default function Navbar() {
     const [input, setInput] = useState<JSX.Element>();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!CookieAuth.getToken()) {
-            navigate('/login');
-        }
-    }, [navigate]);
+    CookieAuth.checkExpiration()
 
     useEffect(() => {
         const updateInput = () => {
@@ -40,7 +36,7 @@ export default function Navbar() {
         <>
             <header>
                 <ul>
-                    <li className='logo'>GAME CONTRIBUTOR</li>
+                    <li className='logo'>LOGO</li>
                     <li>
                         <Link className='navLinks' to="/main"><img src="../../../public/images/home.svg" alt="Settings" height="60px" /></Link>
                         

@@ -178,8 +178,8 @@ export const GET_COMMENTS = gql`
 query comments($id: string) {
     comments(id: $id) {
         id
-        post
-        user
+        postId
+        userId
         content
         createdAt
     }
@@ -190,8 +190,20 @@ export const GET_COMMENT = gql`
 query comment {
     comment {
         id
-        post
-        user
+        postId
+        userId
+        content
+        createdAt
+    }
+}
+`;
+
+export const GET_ME_COMMENTS = gql`
+query meComments {
+    meComments {
+        id
+        postId
+        userId
         content
         createdAt
     }

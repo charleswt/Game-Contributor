@@ -44,6 +44,7 @@ type PostWithUser = {
 }
 
 interface Comment {
+  id?: string;
   postId?: string;
   userId?: string;
   content: string;
@@ -348,6 +349,7 @@ const resolvers = {
         await client.query("BEGIN");
 
         const selectPostsWithUserAndCommentsText = `
+        WITH top_posts AS (
           SELECT
             p.id AS post_id,
             p.content AS post_content,
@@ -357,26 +359,41 @@ const resolvers = {
             u.first_name AS user_first_name,
             u.last_name AS user_last_name,
             u.username AS user_username,
-            u.email AS user_email,
-            c.id AS comment_id,
-            c.content AS comment_content,
-            c.created_at AS comment_created_at,
-            cu.id AS comment_user_id,
-            cu.first_name AS comment_user_first_name,
-            cu.last_name AS comment_user_last_name,
-            cu.username AS comment_user_username
+            u.email AS user_email
           FROM
             posts p
           JOIN
             "user" u ON p.user_id = u.id
-          LEFT JOIN
-            comments c ON c.post_id = p.id
-          LEFT JOIN
-            "user" cu ON c.user_id = cu.id
           ORDER BY
             p.created_at ASC
-          LIMIT 10;
-        `;
+          LIMIT 10
+        )
+        SELECT
+          tp.post_id,
+          tp.post_content,
+          tp.post_created_at,
+          tp.user_id,
+          tp.user_profile_image,
+          tp.user_first_name,
+          tp.user_last_name,
+          tp.user_username,
+          tp.user_email,
+          c.id AS comment_id,
+          c.content AS comment_content,
+          c.created_at AS comment_created_at,
+          cu.id AS comment_user_id,
+          cu.first_name AS comment_user_first_name,
+          cu.last_name AS comment_user_last_name,
+          cu.username AS comment_user_username
+        FROM
+          top_posts tp
+        LEFT JOIN
+          comments c ON c.post_id = tp.post_id
+        LEFT JOIN
+          "user" cu ON c.user_id = cu.id
+        ORDER BY
+          tp.post_created_at ASC, c.created_at ASC;
+      `;
 
         const result = await client.query(selectPostsWithUserAndCommentsText);
 
@@ -530,6 +547,35 @@ const resolvers = {
         }
 
         return comment;
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
+    meComments: async (_: any, args: any, context: any): Promise<Comment[]> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        const selectCommentsText = 'SELECT * FROM "comments" WHERE user_id = $1 ORDER BY created_at ASC';
+        const selectCommentsValues = [JSON.stringify(context.user.id)];
+        console.log(selectCommentsValues)
+        const result = await client.query(selectCommentsText, selectCommentsValues);
+        console.log(result)
+
+        await client.query("COMMIT");
+
+
+
+        return result.rows.map((row: any) => ({
+          id: row.id,
+          postId: row.post_id,
+          userId: row.user_id,
+          content: row.content,
+          createdAt: row.created_at,
+        }));
       } catch (error) {
         await client.query("ROLLBACK");
         throw error;
@@ -717,21 +763,24 @@ const resolvers = {
         const insertCommentText = `
           INSERT INTO "comments" (post_id, user_id, content)
           VALUES ($1, $2, $3)
-          RETURNING post_id, user_id, content;
+          RETURNING id, post_id, user_id, content, created_at;
         `;
 
-        const insertCommentValues = [input.postId, input.postId, input.content];
-        console.log(insertCommentValues)
+        const insertCommentValues = [input.postId, input.userId, input.content];
 
         const result = await client.query(
           insertCommentText,
           insertCommentValues
-        );
-        const newComment = result.rows[0];
+        ).catch((err)=>{
+          throw err
+        })
+        const newComment: any = result.rows[0];
 
         await client.query("COMMIT");
 
         const comment: Comment = {
+          id: newComment.id,
+          postId: newComment.post_id,
           userId: newComment.user_id,
           content: newComment.content,
           createdAt: newComment.created_at

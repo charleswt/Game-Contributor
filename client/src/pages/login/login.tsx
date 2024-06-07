@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client';
 import { LOGIN } from '../../utils/mutations';
 import { GET_ME } from '../../utils/queries';
@@ -6,6 +7,7 @@ import CookieAuth from '../../utils/auth'
 import '../../../public/css/style.css';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [login, setLogin] = useState({ usernameOrEmail: '', password: '' });
   const [loginUser, { error }] = useMutation(LOGIN);
   const [errorMessage, setErrorMessage] = useState('');
@@ -33,7 +35,7 @@ export default function Login() {
 
       CookieAuth.login(JSON.stringify(data.login.token))
       if(CookieAuth.getToken()){
-        window.location.href = '/main'
+        navigate('/main')
       }
     } catch (error) {
       setErrorMessage('Error: Could not login. Please check your credentials.');
@@ -59,7 +61,7 @@ export default function Login() {
         onChange={handleInputChange}
       />
       <button onClick={handleSubmit}>Submit</button>
-      <div>Don't have an account? <a href="signup">Sign Up</a></div>
+      <div>Don't have an account? <a onClick={()=>navigate('/signup')}>Sign Up</a></div>
       {errorMessage && <h2>{errorMessage}</h2>}
     </div>
   );

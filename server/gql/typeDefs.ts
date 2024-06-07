@@ -28,7 +28,7 @@ type Comment {
   userId: ID!
   content: String!
   createdAt: String!
-  user: User!
+  user: User
 }
 
 type PostWithUser {
@@ -79,6 +79,7 @@ type Query {
   post(id: ID!): Post
   comments: [Comment!]!
   comment(id: ID!): Comment
+  meComments: [Comment]
   friends: [Friend!]!
   friend(id: ID!): Friend
 }
