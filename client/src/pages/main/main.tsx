@@ -5,6 +5,7 @@ import { CREATE_COMMENT } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 import {jwtDecode} from 'jwt-decode';
 import '../../../public/css/style.css';
+import { inflate } from 'zlib';
 
 interface User {
   id: string;
@@ -106,8 +107,8 @@ export default function Main() {
                 <div>
                   <textarea
                     name="text"
-                    rows={4}
-                    cols={50}
+                    rows={3}
+                    cols={35}
                     wrap="soft"
                     maxLength={3000}
                     style={{ overflow: 'hidden', resize: 'none' }}

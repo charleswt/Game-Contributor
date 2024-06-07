@@ -97,7 +97,7 @@ header ul li {
 }
 header ul li:hover {
   transition: 0.12;
-  background: rgba(255, 255, 169, 0.075);
+  background-image: radial-gradient(circle closest-side, rgba(255, 255, 169, 0.411), rgba(0, 0, 0, 0));
   border-radius: 0.3rem;
 }
 header ul li .navLinks {
@@ -105,12 +105,6 @@ header ul li .navLinks {
 }
 header ul li .navLinks:visited {
   color: rgb(255, 255, 169);
-}
-header ul img {
-  transition: 1s;
-}
-header ul img:hover {
-  transform: rotate(360deg);
 }
 header ul input {
   background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
@@ -157,6 +151,11 @@ header ul .searchSmall {
 
 .postProfile a {
   color: purple;
+}
+
+textarea {
+  padding: 0.5rem;
+  background-color: antiquewhite;
 }
 
 main {

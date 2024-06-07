@@ -22,7 +22,7 @@ header {
             padding: .3rem;
             &:hover {
                 transition: .12;
-                background: rgba(255, 255, 169, 0.075);
+                background-image: radial-gradient(circle closest-side, rgba(255, 255, 169, 0.411), rgba(0,0,0,.0) );
                 border-radius: .3rem;
             }
             .navLinks {
@@ -32,12 +32,6 @@ header {
                 }
             }
         }
-        img {
-                transition: 1s;
-                &:hover {
-                    transform: rotate(360deg);
-                }
-            }
           input {
             &:focus {
                 background-image: none;

@@ -40,12 +40,13 @@ export default function Navbar() {
         <>
             <header>
                 <ul>
-                    <li className='logo'>Logo</li>
+                    <li className='logo'>GAME CONTRIBUTOR</li>
                     <li>
-                        <Link className='navLinks' to="/main">Home</Link>
+                        <Link className='navLinks' to="/main"><img src="../../../public/images/home.svg" alt="Settings" height="60px" /></Link>
+                        
                     </li>
                     {input}
-                    <li onClick={handleMeClick}>Me</li>
+                    <li onClick={handleMeClick}><img src="../../../public/images/user.svg" alt="Settings" height="60px" /></li>
                     <li>
                         <img src="../../../public/images/settings.svg" alt="Settings" height="60px" />
                     </li>
