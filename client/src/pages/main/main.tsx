@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { GET_POSTS } from '../../utils/queries';
 import { CREATE_COMMENT } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
+import {formatDate} from '../../utils/utils'
 import {jwtDecode} from 'jwt-decode';
 import '../../../public/css/style.css';
 
@@ -40,12 +41,6 @@ export default function Main() {
       setPosts(data.posts);
     }
   }, [data]);
-
-  const formatDate = (timestamp: string) => {
-    const date = new Date(JSON.parse(timestamp));
-    return date.toLocaleDateString('en-US') + ' ' + date.toLocaleTimeString('en-US');
-  };
-
 
   const handleCreateComment = async (postId: string) => {
     try {

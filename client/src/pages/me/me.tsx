@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import MePosts from '../../components/meComponents/posts';
+import MeComments from '../../components/meComponents/comments';
+import MeCode from '../../components/meComponents/code';
+import MeFriends from '../../components/meComponents/friends';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_ME, GET_ME_COMMENTS, GET_ME_POSTS } from '../../utils/queries';
+import { GET_ME } from '../../utils/queries';
 import { CREATE_POST } from '../../utils/mutations';
 import '../../../public/css/style.css';
 
@@ -12,50 +16,26 @@ interface User {
   username: string;
 }
 
-interface Comment {
-  id: string;
-  postId: string;
-  userId: string;
-  content: string;
-  createdAt: string;
-}
-
-interface Post {
-  id: string;
-  userId: string;
-  content: string;
-  createdAt: string;
-}
-
 export default function Me(): any {
   // Profile information
   const { loading, data } = useQuery(GET_ME);
   const [me, setMe] = useState<User | null>(null);
-  // all created comments
-  const { loading: commentLoading, data: commentData } = useQuery(GET_ME_COMMENTS);
-  const [comments, setComments] = useState<Comment[]>([]);
+
   // create post operations
   const [createPost] = useMutation(CREATE_POST);
   const [postContent, setPostContent] = useState<string>('');
   const [showCreatePostPanel, setShowCreatePostPanel] = useState<boolean>(false);
-  // get all created posts
-  const { loading: loadingPosts, data: postData } = useQuery(GET_ME_POSTS);
-  const [userPosts, setUserPosts] = useState<Post[]>([]);
+
+  // Navigation state
+  const [navStatus, setNavStatus] = useState<string>('Posts');
 
   useEffect(() => {
     if (!loading && data) {
       setMe(data.me.user);
     }
-    if (!commentLoading && commentData) {
-      setComments(commentData.meComments);
-      console.log(commentData)
-    }
-    if (!loadingPosts && postData) {
-      setUserPosts(postData.mePosts);
-    }
-  }, [loading, data, commentLoading, commentData, loadingPosts, postData]);
+  }, [loading, data]);
 
-  if (loading || commentLoading || loadingPosts) {
+  if (loading) {
     return <div className="loader"></div>;
   }
 
@@ -90,6 +70,21 @@ export default function Me(): any {
     </div>
   );
 
+  const renderContent = () => {
+    switch (navStatus) {
+      case 'Friends':
+        return <MeFriends />;
+      case 'Posts':
+        return <MePosts />;
+      case 'Comments':
+        return <MeComments />;
+      case 'Code':
+        return <MeCode />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <main>
       {me ? (
@@ -101,7 +96,7 @@ export default function Me(): any {
       ) : (
         <p>No Data</p>
       )}
-
+      
       <div className="createPost bg">
         <button onClick={() => setShowCreatePostPanel(!showCreatePostPanel)}>
           Create Post
@@ -109,35 +104,17 @@ export default function Me(): any {
         {showCreatePostPanel && createPostPanel()}
       </div>
 
-      <div>
-        <p className='bg'>Your Comments</p>
-        {comments? (
-          comments.map((comment: Comment) => (
-            <div className='bg' key={comment.id}>
-              <div>Post ID: {comment.postId}</div>
-              <div>User ID: {comment.userId}</div>
-              <div>Content: {comment.content}</div>
-              <div>Content: {comment.createdAt}</div>
-            </div>
-          ))
-        ) : (
-          <p>No Comments</p>
-        )}
-      </div>
+      <ul className='meNav'>
+        <li onClick={() => setNavStatus('Friends')}>Friends</li>
+        <li>|</li>
+        <li onClick={() => setNavStatus('Posts')}>Posts</li>
+        <li>|</li>
+        <li onClick={() => setNavStatus('Comments')}>Comments</li>
+        <li>|</li>
+        <li onClick={() => setNavStatus('Code')}>Code</li>
+      </ul>
 
-      <div>
-        <p className='bg'>Your Posts</p>
-        {userPosts? (
-          userPosts.map((post: Post) => (
-            <div className='bg' key={post.id}>
-              <div>User ID: {post.userId}</div>
-              <div>Content: {post.content}</div>
-            </div>
-          ))
-        ) : (
-          <p>No Posts</p>
-        )}
-      </div>
+      {renderContent()}
     </main>
   );
 }

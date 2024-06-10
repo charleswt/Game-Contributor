@@ -243,3 +243,12 @@ main {
 .myProfile h1 {
   font-size: 2rem;
 }
+.myProfile ul {
+  display: flex;
+}
+
+.meNav {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: white;
+}
