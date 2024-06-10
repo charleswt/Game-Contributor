@@ -48,14 +48,13 @@ query checkUserExists($usernameOrEmail: String!) {
 `;
 
 export const GET_USER = gql`
-query user($id: String!) {
+query user($id: ID!) {
     user(id: $id) {
         id
         profileImage
-        firstName
         lastName
         username
-        email
+        firstName
     }
 }
 `;

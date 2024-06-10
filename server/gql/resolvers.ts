@@ -194,7 +194,7 @@ const resolvers = {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-        const selectUserText = 'SELECT * FROM "user" WHERE user_id = $1';
+        const selectUserText = 'SELECT * FROM "user" WHERE id = $1';
         const selectUserValues = [id];
 
         const result = await client.query(selectUserText, selectUserValues);
@@ -566,7 +566,7 @@ const resolvers = {
         console.log(result)
 
         await client.query("COMMIT");
-        
+
         return result.rows.map((row: any) => ({
           id: row.id,
           postId: row.post_id,

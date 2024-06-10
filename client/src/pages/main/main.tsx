@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_POSTS } from '../../utils/queries';
 import { CREATE_COMMENT } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 import {formatDate} from '../../utils/utils'
 import {jwtDecode} from 'jwt-decode';
+import UserProfile from '../user/user'
 import '../../../public/css/style.css';
 
 interface User {
@@ -35,6 +38,7 @@ export default function Main() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [createComment] = useMutation(CREATE_COMMENT);
   const [commentContent, setCommentContent] = useState<string>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -66,6 +70,10 @@ export default function Main() {
     }
   };
 
+  function handleNavigateToUserProfile(userId: string){
+    navigate(`/user/${userId}`);
+  };
+
   return (
     <main>
       {loading ? (
@@ -77,9 +85,9 @@ export default function Main() {
               <div className='postProfile' key={post.user.id}>
                 <p><img src={post.user.profileImage} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
-                <a onClick={() => window.location.href = `/User/${post.user.id}`}>
+                <p onClick={() => handleNavigateToUserProfile(post.user.id)} >
                   @{post.user.username}
-                </a>
+                </p>
               </div>
               <div className='postContent'>
                 <p>Content: {post.content}</p>
@@ -90,7 +98,8 @@ export default function Main() {
                   post.comments.map((comment: Comment) => (
                     <div className='comment' key={comment.id}>
                       <p>{comment.user.firstName} {comment.user.lastName}</p>
-                      <p>@{comment.user.username}</p>
+                      <p onClick={() => handleNavigateToUserProfile(comment.user.id)} >
+                        @{comment.user.username}</p>
                       <p>{comment.content}</p>
                       <p>Created At: {formatDate(comment.createdAt)}</p>
                     </div>

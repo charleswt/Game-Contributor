@@ -9,6 +9,7 @@ import Error from './pages/error/error';
 import Me from './pages/me/me';
 import Login from './pages/login/login';
 import Signup from './pages/signup/signup';
+import User from './pages/user/user';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <Login />
+      },
+      {
+        path: 'user/:id',
+        element: <User />
       },
     ]
   }
