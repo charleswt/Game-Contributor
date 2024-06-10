@@ -60,6 +60,7 @@ interface PublishedCode {
 }
 
 interface Friend {
+  id?: string;
   userId1: string;
   userId2: string;
   request: boolean;
@@ -223,7 +224,7 @@ const resolvers = {
       try {
         await client.query("BEGIN");
         const selectUserText = 'SELECT * FROM "user" WHERE id = $1';
-        const selectUserValues = [JSON.stringify(context.user.id)];
+        const selectUserValues = [context.user.id];
 
         const userResult = await client.query(selectUserText, selectUserValues).catch((error)=>{
           throw error
@@ -470,7 +471,7 @@ const resolvers = {
       try {
         await client.query("BEGIN");
         const selectPostsText = 'SELECT * FROM "posts" WHERE user_id = $1'
-        const selectPostsValues = [JSON.stringify(context.user.id)]
+        const selectPostsValues = [context.user.id]
         const result =  await client.query(selectPostsText, selectPostsValues);
 
         await client.query("COMMIT");
@@ -560,7 +561,7 @@ const resolvers = {
         await client.query("BEGIN");
 
         const selectCommentsText = 'SELECT * FROM "comments" WHERE user_id = $1 ORDER BY created_at ASC;';
-        const selectCommentsValues = [JSON.stringify(context.user.id)];
+        const selectCommentsValues = [context.user.id];
         console.log(selectCommentsValues)
         const result = await client.query(selectCommentsText, selectCommentsValues);
         console.log(result)
@@ -587,8 +588,8 @@ const resolvers = {
         await client.query("BEGIN");
 
         const selectFriendsText = `
-          SELECT * FROM "friends" 
-          WHERE userId1 = $1 OR userId2 = $1
+          SELECT * FROM "friend" 
+          WHERE userId1 = $1 OR userId2 = $1 AND request = TRUE
         `;
         const selectFriendsValues = [context.user.id];
         const result = await client.query(selectFriendsText, selectFriendsValues);
@@ -607,31 +608,32 @@ const resolvers = {
         client.release();
       }
     },
-    // friend: async (_: any, context: any): Promise<Friend[]> => {
-    //   const client = await pool.connect();
-    //   try {
-    //     await client.query("BEGIN");
+    friend: async (_: any, { id }: { id: string }, args: any, context: any): Promise<Friend[]> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
 
-    //     const selectFriendsText = `
-    //       SELECT * FROM "friends" 
-    //       WHERE userId1 = $1 OR userId2 = $1 AND userId1 = $2 OR userId2 = $2
-    //     `;
-    //     const selectFriendsValues = [context.user.id];
-    //     const result = await client.query(selectFriendsText, selectFriendsValues);
+        const selectFriendsText = `
+          SELECT * FROM "friend" 
+          WHERE userId1 = $1 OR userId2 = $1 AND userId1 = $2 OR userId2 = $2
+        `;
+        const selectFriendsValues = [context.user.id, id];
+        const result = await client.query(selectFriendsText, selectFriendsValues);
 
-    //     await client.query("COMMIT");
+        await client.query("COMMIT");
 
-    //     return result.rows.map((row: any) => ({
-    //       userId1: row.userId1,
-    //       userId2: row.userId2,
-    //     }));
-    //   } catch (error) {
-    //     await client.query("ROLLBACK");
-    //     throw error;
-    //   } finally {
-    //     client.release();
-    //   }
-    // },
+        return result.rows.map((row: any) => ({
+          userId1: row.userId1,
+          userId2: row.userId2,
+          request: row.request
+        }));
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
   },
 
   Mutation: {
@@ -793,10 +795,7 @@ const resolvers = {
       }
     },
 
-    createPublishedCode: async (
-      _: any,
-      input: PublishedCode
-    ): Promise<PublishedCode> => {
+    createPublishedCode: async (_: any, input: PublishedCode): Promise<PublishedCode> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -837,19 +836,19 @@ const resolvers = {
         client.release();
       }
     },
-
-    createFriendship: async (_: any, input: Friend): Promise<Friend> => {
+    createFriendship: async (_: any, { id }: { id: string }, context: any): Promise<Friend> => {
       const client = await pool.connect();
       try {
+
         await client.query("BEGIN");
 
         const insertFriendText = `
-          INSERT INTO "friend" (user_id1, user_id2)
-          VALUES ($1, $2)
-          RETURNING user_id1, user_id2;
+          INSERT INTO "friend" (user_id1, user_id2, request)
+          VALUES ($1, $2, TRUE)
+          RETURNING id, user_id1, user_id2, request;
         `;
 
-        const insertFriendValues = [input.userId1, input.userId2];
+        const insertFriendValues = [id, context.user.id];
 
         const result = await client.query(insertFriendText, insertFriendValues);
         const newFriend = result.rows[0];
@@ -857,6 +856,42 @@ const resolvers = {
         await client.query("COMMIT");
 
         const friend: Friend = {
+          id: newFriend.id,
+          userId1: newFriend.user_id1,
+          userId2: newFriend.user_id2,
+          request: newFriend.request
+        };
+
+        return friend;
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        console.error("Error creating friend:", error);
+        throw new Error("Error creating friend: " + error.message);
+      } finally {
+        client.release();
+      }
+    },
+    acceptFriendship: async (_: any, { id }: { id: string }, context: any): Promise<Friend> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        const insertFriendText = `
+        UPDATE "friend"
+        SET request = FALSE
+        WHERE (userId1 = $1 OR userId2 = $1) AND (userId1 = $2 OR userId2 = $2) AND request = TRUE
+        RETURNING id, user_id1, user_id2, request;
+      `;
+
+        const insertFriendValues = [context.user.id, id];
+
+        const result = await client.query(insertFriendText, insertFriendValues);
+        const newFriend = result.rows[0];
+
+        await client.query("COMMIT");
+
+        const friend: Friend = {
+          id: newFriend.id,
           userId1: newFriend.user_id1,
           userId2: newFriend.user_id2,
           request: newFriend.request
@@ -870,7 +905,6 @@ const resolvers = {
         client.release();
       }
     },
-
     login: async (_:any, input: LoginInput): Promise<Auth> => {
       const client = await pool.connect();
       try {

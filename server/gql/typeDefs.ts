@@ -90,7 +90,8 @@ type Mutation {
   createPost(content: String!): Post
   createComment(postId: ID!, userId: ID!, content: String!): Comment
   createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
-  createFriendship(userId1: ID!, userId2: ID!): Friend
+  createFriendship(id: ID!): Friend
+  acceptFriendship(id: ID!): Friend
   login(usernameOrEmail: String!, password: String!): Auth
 }
 `
