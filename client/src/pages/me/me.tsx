@@ -27,7 +27,7 @@ export default function Me(): any {
   const [showCreatePostPanel, setShowCreatePostPanel] = useState<boolean>(false);
 
   // Navigation state
-  const [navStatus, setNavStatus] = useState<string>('Posts');
+  const [navStatus, setNavStatus] = useState<string>('Friends');
 
   useEffect(() => {
     if (!loading && data) {

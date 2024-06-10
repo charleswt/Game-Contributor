@@ -62,11 +62,22 @@ export const CREATE_PUBLISHED_CODE = gql`
 `;
 
 export const CREATE_FRIENDSHIP = gql`
-  mutation createFriendship($userId1: ID!, $userId2: ID!) {
-    createFriendship(userId1: $userId1, userId2: $userId2) {
+  mutation createFriendship($id: ID!) {
+    createFriendship(id: $id) {
       id
-      user1
-      user2
+      userId1
+      userId2
+      request
+    }
+  }
+`;
+
+export const ACCEPT_FRIENDSHIP = gql`
+  mutation acceptFriendship($id: ID!) {
+    acceptFriendship(id: $id) {
+      id
+      userId1
+      userId2
       request
     }
   }

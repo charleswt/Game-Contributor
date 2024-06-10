@@ -221,8 +221,8 @@ query friends {
 `;
 
 export const GET_FRIEND = gql`
-query friend {
-    friend {
+query friend($id: ID!) {
+    friend(id: $id) {
         id
         user1
         user2
