@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_USER } from '../../utils/queries';
+import { GET_USER, GET_FRIEND } from '../../utils/queries';
 import { CREATE_FRIENDSHIP } from '../../utils/mutations';
 
 interface User {
@@ -26,6 +26,9 @@ export default function UserProfile() {
       },
     }
   );
+  const { data: friendData, loading: loadingFriendData} = useQuery(GET_FRIEND, {
+    variables: { id }
+  });
 
   useEffect(() => {
     if (!loading && data) {
@@ -37,11 +40,11 @@ export default function UserProfile() {
     if (user && user.id) {
       createFriendship({
         variables: { id: user.id },
-      });
+      })
     }
   };
 
-  if (loading) {
+  if (loading || loadingFriendData) {
     return <div className="loader"></div>;
   }
 
@@ -57,9 +60,9 @@ export default function UserProfile() {
         </h1>
         <p>@{user.username}</p>
 
-        <button onClick={handleAddFriend} disabled={friendshipLoading}>
+        {!loadingFriendData && friendData ? "" : <button onClick={handleAddFriend} disabled={friendshipLoading}>
           {friendshipLoading ? 'Adding friend...' : 'Add friend'}
-        </button>
+        </button>}
 
         {error && <div>Error adding friend. Please try again later.</div>}
       </div>

@@ -582,14 +582,14 @@ const resolvers = {
         client.release();
       }
     },
-    friends: async (_: any, context: any): Promise<Friend[]> => {
+    friends: async (_: any, args: any, context: any): Promise<Friend[]> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
 
         const selectFriendsText = `
-          SELECT * FROM "friend" 
-          WHERE userId1 = $1 OR userId2 = $1 AND request = TRUE
+        SELECT * FROM "friend" 
+        WHERE (user_id1 = $1 OR user_id2 = $1) AND request = TRUE;
         `;
         const selectFriendsValues = [context.user.id];
         const result = await client.query(selectFriendsText, selectFriendsValues);
@@ -597,8 +597,9 @@ const resolvers = {
         await client.query("COMMIT");
 
         return result.rows.map((row: any) => ({
-          userId1: row.userId1,
-          userId2: row.userId2,
+          id: row.id,
+          userId1: row.user_id1,
+          userId2: row.user_id2,
           request: row.request
         }));
       } catch (error) {
@@ -608,25 +609,28 @@ const resolvers = {
         client.release();
       }
     },
-    friend: async (_: any, { id }: { id: string }, args: any, context: any): Promise<Friend[]> => {
+    friend: async (_: any, { id }: { id: string }, context: any): Promise<Friend> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
 
         const selectFriendsText = `
-          SELECT * FROM "friend" 
-          WHERE userId1 = $1 OR userId2 = $1 AND userId1 = $2 OR userId2 = $2
+        SELECT * FROM "friend" 
+        WHERE (user_id1 = $1 AND user_id2 = $2) OR (user_id1 = $2 AND user_id2 = $1);
         `;
         const selectFriendsValues = [context.user.id, id];
         const result = await client.query(selectFriendsText, selectFriendsValues);
 
         await client.query("COMMIT");
 
-        return result.rows.map((row: any) => ({
-          userId1: row.userId1,
-          userId2: row.userId2,
-          request: row.request
-        }));
+        const friend: Friend = {
+          id: result.rows[0].id,
+          userId1: result.rows[0].user_id1,
+          userId2: result.rows[0].user_id2,
+          request: result.rows[0].request
+        }
+
+        return friend;
       } catch (error) {
         await client.query("ROLLBACK");
         throw error;
@@ -879,7 +883,7 @@ const resolvers = {
         const insertFriendText = `
         UPDATE "friend"
         SET request = FALSE
-        WHERE (userId1 = $1 OR userId2 = $1) AND (userId1 = $2 OR userId2 = $2) AND request = TRUE
+        WHERE (user_id1 = $1 OR user_id2 = $1) AND (user_id1 = $2 OR user_id2 = $2) AND request = TRUE
         RETURNING id, user_id1, user_id2, request;
       `;
 

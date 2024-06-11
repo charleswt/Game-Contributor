@@ -213,8 +213,8 @@ export const GET_FRIENDS = gql`
 query friends {
     friends {
         id
-        user1
-        user2
+        userId1
+        userId2
         request
     }
 }
@@ -224,8 +224,8 @@ export const GET_FRIEND = gql`
 query friend($id: ID!) {
     friend(id: $id) {
         id
-        user1
-        user2
+        userId1
+        userId2
         request
     }
 }
