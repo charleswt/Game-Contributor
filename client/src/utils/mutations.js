@@ -83,6 +83,17 @@ export const ACCEPT_FRIENDSHIP = gql`
   }
 `;
 
+export const DECLINE_FRIENDSHIP = gql`
+  mutation declineFriendship($id: ID!) {
+    declineFriendship(id: $id) {
+      id
+      userId1
+      userId2
+      request
+    }
+  }
+`;
+
 export const LOGIN = gql`
   mutation login($usernameOrEmail: String!, $password: String!) {
     login(usernameOrEmail: $usernameOrEmail, password: $password) {

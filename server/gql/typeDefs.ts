@@ -80,8 +80,10 @@ type Query {
   comments: [Comment!]!
   comment(id: ID!): Comment
   meComments: [Comment]
-  friends: [Friend!]!
+  friends: [Friend]
   friend(id: ID!): Friend
+  friendRequestsIncomming: [Friend]
+  friendRequestsOutgoing: [Friend]
 }
 
 type Mutation {
@@ -92,6 +94,7 @@ type Mutation {
   createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
   createFriendship(id: ID!): Friend
   acceptFriendship(id: ID!): Friend
+  declineFriendship(id: ID!): Friend
   login(usernameOrEmail: String!, password: String!): Auth
 }
 `

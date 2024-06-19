@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_POSTS } from '../../utils/queries';
@@ -7,7 +6,6 @@ import { CREATE_COMMENT } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 import {formatDate} from '../../utils/utils'
 import {jwtDecode} from 'jwt-decode';
-import UserProfile from '../user/user'
 import '../../../public/css/style.css';
 
 interface User {

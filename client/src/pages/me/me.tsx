@@ -6,6 +6,7 @@ import MeFriends from '../../components/meComponents/friends';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_ME } from '../../utils/queries';
 import { CREATE_POST } from '../../utils/mutations';
+import CookieAuth from '../../utils/auth'
 import '../../../public/css/style.css';
 
 interface User {
@@ -92,6 +93,7 @@ export default function Me(): any {
           <img src={me.profilePicture} alt="profile picture" />
           <h1>{me.firstName} {me.lastName}</h1>
           <p>@{me.username}</p>
+          <button onClick={()=>CookieAuth.logout()}>Logout</button>
         </div>
       ) : (
         <p>No Data</p>

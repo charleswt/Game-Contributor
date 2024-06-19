@@ -230,3 +230,25 @@ query friend($id: ID!) {
     }
 }
 `;
+
+export const GET_FRIEND_REQUESTS_INCOMMING = gql`
+query friendRequestsIncomming {
+    friendRequestsIncomming {
+        id
+        userId1
+        userId2
+        request
+    }
+}
+`;
+
+export const GET_FRIEND_REQUESTS_OUTGOING = gql`
+query friendRequestsOutgoing {
+    friendRequestsOutgoing {
+        id
+        userId1
+        userId2
+        request
+    }
+}
+`;

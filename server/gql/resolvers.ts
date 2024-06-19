@@ -589,7 +589,7 @@ const resolvers = {
 
         const selectFriendsText = `
         SELECT * FROM "friend" 
-        WHERE (user_id1 = $1 OR user_id2 = $1) AND request = TRUE;
+        WHERE (user_id1 = $1 OR user_id2 = $1) AND request = FALSE;
         `;
         const selectFriendsValues = [context.user.id];
         const result = await client.query(selectFriendsText, selectFriendsValues);
@@ -638,6 +638,62 @@ const resolvers = {
         client.release();
       }
     },
+    friendRequestsIncomming: async (_: any, args: any, context: any): Promise<Friend[]> =>{
+      const client = await pool.connect();
+      try{
+        client.query('BEGIN');
+        const queryString = `
+        SELECT * FROM "friend" WHERE user_id1 = $1 AND request = TRUE;
+        `;
+        const queryValues = [context.user.id]
+
+        const result = await client.query(queryString, queryValues);
+        client.query('COMMIT');
+
+        return result.rows.map((row: any)=>({
+          id: row.id,
+          userId1: row.user_id1,
+          userId2: row.user_id2,
+          request: row.request
+        }))
+
+      } catch(error){
+        client.query('ROLLBACK')
+        throw error
+      } finally {
+        client.release(
+          
+        )
+      }
+    },
+    friendRequestsOutgoing: async (_: any, args: any, context: any): Promise<Friend[]> =>{
+      const client = await pool.connect();
+      try{
+        client.query('BEGIN');
+        const queryString = `
+        SELECT * FROM "friend" WHERE user_id2 = $1 AND request = TRUE;
+        `;
+        const queryValues = [context.user.id]
+
+        const result = await client.query(queryString, queryValues);
+        client.query('COMMIT');
+
+        return result.rows.map((row: any)=>({
+          id: row.id,
+          userId1: row.user_id1,
+          userId2: row.user_id2,
+          request: row.request
+        }))
+
+      } catch(error){
+        client.query('ROLLBACK')
+        throw error
+      } finally {
+        client.release(
+          
+        )
+      }
+    }
   },
 
   Mutation: {
@@ -875,7 +931,7 @@ const resolvers = {
         client.release();
       }
     },
-    acceptFriendship: async (_: any, { id }: { id: string }, context: any): Promise<Friend> => {
+    acceptFriendship: async (_: any, { id }: { id: string }): Promise<Friend> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -883,11 +939,11 @@ const resolvers = {
         const insertFriendText = `
         UPDATE "friend"
         SET request = FALSE
-        WHERE (user_id1 = $1 OR user_id2 = $1) AND (user_id1 = $2 OR user_id2 = $2) AND request = TRUE
+        WHERE id = $1 AND request = TRUE
         RETURNING id, user_id1, user_id2, request;
       `;
 
-        const insertFriendValues = [context.user.id, id];
+        const insertFriendValues = [id];
 
         const result = await client.query(insertFriendText, insertFriendValues);
         const newFriend = result.rows[0];
@@ -904,7 +960,39 @@ const resolvers = {
         return friend;
       } catch (error: any) {
         await client.query("ROLLBACK");
-        throw new Error("Error creating friend: " + error.message);
+        throw new Error("Error accepting request: " + error.message);
+      } finally {
+        client.release();
+      }
+    },
+    declineFriendship: async (_: any, { id }: { id: string }): Promise<Friend> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        const insertFriendText = `
+        DELETE FROM "friend"
+        WHERE id = $1 AND request = TRUE
+        RETURNING id, user_id1, user_id2, request;
+      `;
+
+        const insertFriendValues = [id];
+
+        const result = await client.query(insertFriendText, insertFriendValues);
+
+        await client.query("COMMIT");
+
+        const friend: Friend = {
+          id: result.rows[0].id,
+          userId1: result.rows[0].user_id1,
+          userId2: result.rows[0].user_id2,
+          request: result.rows[0].request
+        };
+console.log('here return')
+        return friend;
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error declining request " + error.message);
       } finally {
         client.release();
       }

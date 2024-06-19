@@ -16,7 +16,8 @@ class CookieAuth implements CookieAuthenticate {
     }
 
     logout() {
-        cookies.remove('token_auth', { path: '/' });
+        cookies.remove('token_auth');
+        return document.location.href = '/';
     }
 
     getToken() {
