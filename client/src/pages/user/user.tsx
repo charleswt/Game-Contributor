@@ -61,9 +61,10 @@ export default function UserProfile() {
         </h1>
         <p>@{user.username}</p>
 
-        {!loadingFriendData && friendData && JSON.stringify(CookieAuth.getTokenId()) === user.id ? "" : <button onClick={handleAddFriend} disabled={friendshipLoading}>
-          {friendshipLoading ? 'Adding friend...' : 'Add friend'}
-        </button>}
+        {!loading && data && JSON.stringify(CookieAuth.getTokenId()) !== user.id ? <button onClick={handleAddFriend} disabled={friendshipLoading}>
+          {friendshipLoading ? 'Adding friend...' : 'Add friend'}</button>
+          :""
+        }
 
         {error && <div>Error adding friend. Please try again later.</div>}
       </div>
