@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_USER, GET_FRIEND } from '../../utils/queries';
 import { CREATE_FRIENDSHIP } from '../../utils/mutations';
+import CookieAuth from '../../utils/auth'
 
 interface User {
   id: string;
@@ -60,7 +61,7 @@ export default function UserProfile() {
         </h1>
         <p>@{user.username}</p>
 
-        {!loadingFriendData && friendData ? "" : <button onClick={handleAddFriend} disabled={friendshipLoading}>
+        {!loadingFriendData && friendData && JSON.stringify(CookieAuth.getTokenId()) === user.id ? "" : <button onClick={handleAddFriend} disabled={friendshipLoading}>
           {friendshipLoading ? 'Adding friend...' : 'Add friend'}
         </button>}
 

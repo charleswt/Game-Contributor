@@ -24,6 +24,12 @@ class CookieAuth implements CookieAuthenticate {
         return cookies.get('token_auth');
     }
 
+    getTokenId() {
+        
+        const decoded: any = jwtDecode(cookies.get('token_auth'))
+        return decoded.id
+    }
+
     checkExpiration() {
         const token: string | undefined = this.getToken();
         if (token) {

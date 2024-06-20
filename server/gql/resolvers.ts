@@ -638,7 +638,7 @@ const resolvers = {
         client.release();
       }
     },
-    friendRequestsIncomming: async (_: any, args: any, context: any): Promise<Friend[]> =>{
+    friendRequestsIncoming: async (_: any, args: any, context: any): Promise<Friend[]> =>{
       const client = await pool.connect();
       try{
         client.query('BEGIN');
@@ -972,7 +972,7 @@ const resolvers = {
 
         const insertFriendText = `
         DELETE FROM "friend"
-        WHERE id = $1 AND request = TRUE
+        WHERE id = $1
         RETURNING id, user_id1, user_id2, request;
       `;
 

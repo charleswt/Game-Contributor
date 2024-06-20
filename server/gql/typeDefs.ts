@@ -82,7 +82,7 @@ type Query {
   meComments: [Comment]
   friends: [Friend]
   friend(id: ID!): Friend
-  friendRequestsIncomming: [Friend]
+  friendRequestsIncoming: [Friend]
   friendRequestsOutgoing: [Friend]
 }
 
