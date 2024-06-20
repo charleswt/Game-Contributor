@@ -47,7 +47,7 @@ export default function Main() {
   const handleCreateComment = async (postId: string) => {
     try {
       const tokenUserId: any = await jwtDecode(CookieAuth.getToken())
-      const userId = tokenUserId.id
+      const userId = JSON.stringify(tokenUserId.id)
       
       const { data } = await createComment({
         variables: { postId, userId, content: commentContent }
@@ -57,7 +57,7 @@ export default function Main() {
           if (post.id === postId) {
             return {
               ...post,
-              comments: [...post.comments, data.createComment]
+              comments: [...post.comments]
             };
           }
           return post;
