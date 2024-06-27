@@ -46,8 +46,7 @@ export default function Main() {
 
   const handleCreateComment = async (postId: string) => {
     try {
-      const tokenUserId: any = await jwtDecode(CookieAuth.getToken())
-      const userId = JSON.stringify(tokenUserId.id)
+      const userId: string = JSON.stringify(CookieAuth.getTokenId())
       
       const { data } = await createComment({
         variables: { postId, userId, content: commentContent }
