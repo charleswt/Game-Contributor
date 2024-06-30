@@ -37,6 +37,28 @@ export const CREATE_POST = gql`
   }
 `;
 
+export const UPDATE_POST = gql`
+  mutation updatePost($id: ID!, $content: String!) {
+    updatePost(id: $id, content: $content) {
+      id
+      userId
+      content
+      createdAt
+    }
+  }
+`;
+
+export const DELETE_POST = gql`
+  mutation deletePost($id: ID!) {
+    deletePost(id: $id) {
+      id
+      userId
+      content
+      createdAt
+    }
+  }
+`;
+
 export const CREATE_COMMENT = gql`
   mutation createComment($postId: ID!, $userId: ID!, $content: String!) {
     createComment(postId: $postId, userId: $userId, content: $content) {

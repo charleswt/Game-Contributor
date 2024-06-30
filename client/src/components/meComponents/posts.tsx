@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { GET_ME_POSTS } from '../../utils/queries';
+import { UPDATE_POST, DELETE_POST } from '../../utils/mutations';
 import { formatDate } from '../../utils/utils';
 import '../../../public/css/style.css';
 
@@ -12,6 +13,8 @@ interface Post {
 }
 
 export default function MePosts() {
+  const [updatePost] = useMutation(UPDATE_POST);
+  const [deletePost] = useMutation(DELETE_POST);
   const { loading: loadingPosts, data: postData } = useQuery(GET_ME_POSTS);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
@@ -24,9 +27,35 @@ export default function MePosts() {
     }
   }, [loadingPosts, postData]);
 
+  async function changePost(id: string, content: string) {
+    content = `${content}\n[Edited] ${new Date().toISOString()}`;
+    try {
+      const { data } = await updatePost({
+        variables: { id, content }
+      });
+      if (data) {
+        setUserPosts(userPosts.map(post => 
+          post.id === id ? { ...post, content: data.updatePost.content } : post
+        ));
+        setEditingPostId(null);
+      }
+    } catch (error) {
+      console.error("Error updating post:", error);
+    }
+  }
+
+  async function destroyPost(id: any) {
+    try {
+      await deletePost({ variables: { id } });
+      setUserPosts(userPosts.filter(post => post.id !== id));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  }
+
   function calculateRows(content: string) {
-    const length = content.length;
-    const row = Math.ceil(length / 35);
+    const lines = content.split('\n').length;
+    const row = Math.max(lines, Math.ceil(content.length / 35));
     setNumRows(row);
   }
 
@@ -69,10 +98,10 @@ export default function MePosts() {
               <div>{post.content}</div>
             )}
             <div>{formatDate(post.createdAt)}</div>
-            <button onClick={() => handleEdit(post)}>
-              {editingPostId === post.id ? 'Save' : 'Edit'}
-            </button>
-            <button>Delete</button>
+            {editingPostId === post.id ? 
+              (<button onClick={() => changePost(post.id, editContent)}>Save</button>) : 
+              (<button onClick={() => handleEdit(post)}>Edit</button>)}
+            <button onClick={() => destroyPost(post.id)}>Delete</button>
           </div>
         ))
       ) : (

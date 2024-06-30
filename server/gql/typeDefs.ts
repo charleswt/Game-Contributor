@@ -90,6 +90,8 @@ type Mutation {
   createUser(firstName: String!, lastName: String!, username: String!, email: String!, password: String!): Auth
   createCompany(companyName: String!, userId: ID!): Company
   createPost(content: String!): Post
+  updatePost(id: ID!, content: String): Post
+  deletePost(id: ID!): Post
   createComment(postId: ID!, userId: ID!, content: String!): Comment
   createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
   createFriendship(id: ID!): Friend

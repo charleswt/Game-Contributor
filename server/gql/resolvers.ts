@@ -26,7 +26,8 @@ interface Company {
 }
 
 interface Post {
-  content: string;
+  id?: string;
+  content?: string;
 }
 
 type PostWithUser = {
@@ -810,6 +811,89 @@ const resolvers = {
       } catch (error: any) {
         await client.query("ROLLBACK");
         throw new Error("Error creating post: " + error.message);
+      } finally {
+        client.release();
+      }
+    },
+
+    updatePost: async (_: any, input: Post, context: any): Promise<any> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+    
+        const updatePostText = `
+          UPDATE "posts"
+          SET content = $1
+          WHERE id = $2 AND user_id = $3
+          RETURNING id, user_id, content, created_at;
+        `;
+    
+        const updatePostValues = [input.content, input.id, context.user.id];
+    
+        const result = await client.query(updatePostText, updatePostValues);
+        const updatedPost = result.rows[0];
+    
+        if (!updatedPost) {
+          throw new Error("Post not found or user is not authorized to update this post.");
+        }
+    
+        await client.query("COMMIT");
+    
+        const post = {
+          id: updatedPost.id,
+          userId: updatedPost.user_id,
+          content: updatedPost.content,
+          createdAt: updatedPost.created_at
+        };
+        return post;
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error updating post: " + error.message);
+      } finally {
+        client.release();
+      }
+    },
+
+    deletePost: async (_: any, input: Post): Promise<any> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+    
+        // Delete related comments first
+        const deleteCommentsText = `
+          DELETE FROM "comments"
+          WHERE post_id = $1;
+        `;
+    
+        const deleteCommentsValues = [input.id];
+        await client.query(deleteCommentsText, deleteCommentsValues);
+    
+        // Then delete the post
+        const deletePostText = `
+          DELETE FROM "posts"
+          WHERE id = $1
+          RETURNING id, user_id, content, created_at;
+          `;
+    
+        const result = await client.query(deletePostText, deleteCommentsValues);
+        const deletedPost = result.rows[0];
+    
+        if (!deletedPost) {
+          throw new Error("Post not found or user is not authorized to delete this post.");
+        }
+    
+        await client.query("COMMIT");
+    
+        const post = {
+          id: deletedPost.id,
+          userId: deletedPost.user_id,
+          content: deletedPost.content,
+          createdAt: deletedPost.created_at
+        };
+        return post;
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error deleting post: " + error.message);
       } finally {
         client.release();
       }
