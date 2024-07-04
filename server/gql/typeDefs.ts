@@ -93,6 +93,8 @@ type Mutation {
   updatePost(id: ID!, content: String): Post
   deletePost(id: ID!): Post
   createComment(postId: ID!, userId: ID!, content: String!): Comment
+  updateComment(id: ID!, content: String!): Comment
+  deleteComment(id: ID!): Comment
   createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
   createFriendship(id: ID!): Friend
   acceptFriendship(id: ID!): Friend

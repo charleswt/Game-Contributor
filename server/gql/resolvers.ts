@@ -939,6 +939,87 @@ const resolvers = {
       }
     },
 
+    updateComment: async (_: any, input: Comment): Promise<Comment> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        const insertCommentText = `
+          UPDATE "comments"
+          SET content = $2
+          WHERE id = $1
+          RETURNING id, post_id, user_id, content, created_at;
+        `;
+
+        const insertCommentValues = [input.id, input.content];
+
+        const result = await client.query(
+          insertCommentText,
+          insertCommentValues
+        ).catch((err)=>{
+          throw err
+        })
+        const newComment: any = result.rows[0];
+
+        await client.query("COMMIT");
+
+        const comment: Comment = {
+          id: newComment.id,
+          postId: newComment.post_id,
+          userId: newComment.user_id,
+          content: newComment.content,
+          createdAt: newComment.created_at
+        };
+
+        return comment;
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error creating comment: " + error.message);
+      } finally {
+        client.release();
+      }
+    },
+
+    deleteComment: async (_: any, input: Comment): Promise<Comment> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        const insertCommentText = `
+          DELETE FROM "comments"
+          WHERE id = $1
+          RETURNING id, post_id, user_id, content, created_at;
+        `;
+
+        const insertCommentValues = [input.id];
+
+        const result = await client.query(
+          insertCommentText,
+          insertCommentValues
+        ).catch((err)=>{
+          throw err
+        })
+        const newComment: any = result.rows[0];
+
+        await client.query("COMMIT");
+
+        const comment: Comment = {
+          id: newComment.id,
+          postId: newComment.post_id,
+          userId: newComment.user_id,
+          content: newComment.content,
+          createdAt: newComment.created_at
+        };
+
+        return comment;
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error creating comment: " + error.message);
+      } finally {
+        client.release();
+      }
+    },
+
     createPublishedCode: async (_: any, input: PublishedCode): Promise<PublishedCode> => {
       const client = await pool.connect();
       try {

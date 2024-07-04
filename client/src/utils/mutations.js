@@ -71,6 +71,30 @@ export const CREATE_COMMENT = gql`
   }
 `;
 
+export const UPDATE_COMMENT = gql`
+  mutation updateComment($id: ID!, $content: String!) {
+    updateComment(id: $id, content: $content) {
+      id
+      postId
+      userId
+      content
+      createdAt
+    }
+  }
+`;
+
+export const DELETE_COMMENT = gql`
+  mutation deleteComment($id: ID!) {
+    deleteComment(id: $id) {
+      id
+      postId
+      userId
+      content
+      createdAt
+    }
+  }
+`;
+
 export const CREATE_PUBLISHED_CODE = gql`
   mutation createPublishedCode($userId: ID!, $companyUserId: ID!, $code: String!) {
     createPublishedCode(userId: $userId, companyUserId: $companyUserId, code: $code) {
