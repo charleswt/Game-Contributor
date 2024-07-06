@@ -5,10 +5,10 @@ query publishedCodes {
     publishedCodes {
         id
         userId
-        companyUser
+        companyId
         code
         createdAt
-        fistName
+        firstName
         lastName
         username
     }
@@ -20,7 +20,7 @@ query publishedCode {
     publishedCode {
         id
         userId
-        companyUser
+        companyId
         code
         createdAt
     }

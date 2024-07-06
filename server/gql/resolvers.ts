@@ -79,7 +79,7 @@ interface Auth {
 
 const resolvers = {
   Query: {
-    publishedCodes: async (_: any, context: any): Promise<PublishedCode[]> => {
+    publishedCodes: async (_: any, args: any, context: any): Promise<PublishedCode[]> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -89,7 +89,7 @@ const resolvers = {
           JOIN "user" u ON pc.user_id = u.id
           WHERE pc.user_id = $1
         `;
-        const selectPublishedCodesValues = [context.user.id]; // Pass values as an array
+        const selectPublishedCodesValues = [context.user.id];
     
         const result = await client.query(selectPublishedCodesText, selectPublishedCodesValues);
         await client.query("COMMIT");
@@ -1031,7 +1031,7 @@ const resolvers = {
         const insertPublishedCodeText = `
           INSERT INTO "published_code" (user_id, company_id, code)
           VALUES ($1, $2, $3)
-          RETURNING user_id, company_id, code;
+          RETURNING id, user_id, company_id, code, created_at;
         `;
 
         const insertPublishedCodeValues = [

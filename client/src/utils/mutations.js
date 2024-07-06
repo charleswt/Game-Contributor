@@ -96,11 +96,11 @@ export const DELETE_COMMENT = gql`
 `;
 
 export const CREATE_PUBLISHED_CODE = gql`
-  mutation createPublishedCode($userId: ID!, $companyUserId: ID!, $code: String!) {
-    createPublishedCode(userId: $userId, companyUserId: $companyUserId, code: $code) {
+  mutation createPublishedCode($userId: ID!, $companyId: ID!, $code: String!) {
+    createPublishedCode(userId: $userId, companyId: $companyId, code: $code) {
       id
       userId
-      companyUserId
+      companyId
       code
       createdAt
     }

@@ -42,7 +42,7 @@ type PostWithUser {
 type PublishedCode {
   id: ID!
   userId: ID!
-  companyUserId: ID!
+  companyId: ID!
   code: String!
   createdAt: String!
   firstName: String!
@@ -68,7 +68,7 @@ type Auth {
 }
 
 type Query {
-  publishedCodes: [PublishedCode!]!
+  publishedCodes: [PublishedCode!]
   publishedCode(id: ID!): PublishedCode!
   users: [User]
   checkUserExists(usernameOrEmail: String): User
@@ -98,7 +98,7 @@ type Mutation {
   createComment(postId: ID!, userId: ID!, content: String!): Comment
   updateComment(id: ID!, content: String!): Comment
   deleteComment(id: ID!): Comment
-  createPublishedCode(userId: ID!, companyUserId: ID!, code: String!): PublishedCode
+  createPublishedCode(userId: ID!, companyId: ID!, code: String!): PublishedCode
   createFriendship(id: ID!): Friend
   acceptFriendship(id: ID!): Friend
   declineFriendship(id: ID!): Friend
