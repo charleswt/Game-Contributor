@@ -4,10 +4,13 @@ export const GET_PUBLISHED_CODES = gql`
 query publishedCodes {
     publishedCodes {
         id
-        user
+        userId
         companyUser
         code
         createdAt
+        fistName
+        lastName
+        username
     }
 }
 `;

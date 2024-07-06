@@ -45,6 +45,9 @@ type PublishedCode {
   companyUserId: ID!
   code: String!
   createdAt: String!
+  firstName: String!
+  lastName: String!
+  username: String!
 }
 
 type Friend {
