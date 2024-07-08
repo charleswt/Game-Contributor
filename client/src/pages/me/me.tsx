@@ -30,6 +30,14 @@ export default function Me(): any {
   // Navigation state
   const [navStatus, setNavStatus] = useState<string>('Friends');
 
+  const [numRows, setNumRows] = useState<number>(1);
+
+  function calculateRows(content: string) {
+    const lines = content.split('\n').length;
+    const row = Math.max(lines, Math.ceil(content.length / 35));
+    setNumRows(row);
+  }
+
   useEffect(() => {
     if (!loading && data) {
       setMe(data.me.user);
@@ -39,6 +47,8 @@ export default function Me(): any {
   if (loading) {
     return <div className="loader"></div>;
   }
+
+
 
   const handleCreatePost = async () => {
     try {
@@ -53,23 +63,6 @@ export default function Me(): any {
       console.error('Error creating post:', error);
     }
   };
-
-  const createPostPanel = () => (
-    <div>
-      <textarea
-        name="text"
-        rows={14}
-        cols={10}
-        wrap="soft"
-        maxLength={3000}
-        style={{ overflow: 'hidden', resize: 'none' }}
-        placeholder="Content Here..."
-        value={postContent}
-        onChange={(e) => setPostContent(e.target.value)}
-      />
-      <button onClick={handleCreatePost}>Post</button>
-    </div>
-  );
 
   const renderContent = () => {
     switch (navStatus) {
@@ -90,7 +83,7 @@ export default function Me(): any {
     <main>
       {me ? (
         <div className='bg myProfile'>
-          <img src={me.profilePicture} alt="profile picture" />
+          <img src={me.profilePicture? me.profilePicture:'../../../public/images/defaultPfp.png'} alt="profile picture" />
           <h1>{me.firstName} {me.lastName}</h1>
           <p>@{me.username}</p>
           <button onClick={()=>CookieAuth.logout()}>Logout</button>
@@ -103,7 +96,22 @@ export default function Me(): any {
         <button onClick={() => setShowCreatePostPanel(!showCreatePostPanel)}>
           Create Post
         </button>
-        {showCreatePostPanel && createPostPanel()}
+
+        <div>
+      <textarea
+        name="text"
+        rows={numRows}
+        cols={10}
+        wrap="soft"
+        maxLength={3000}
+        style={{ overflow: 'hidden', resize: 'none' }}
+        placeholder="Content Here..."
+        value={postContent}
+        onChange={(e) => {setPostContent(e.target.value); calculateRows(e.target.value)}}
+      />
+      <button onClick={handleCreatePost}>Post</button>
+    </div>
+
       </div>
 
       <ul className='meNav'>

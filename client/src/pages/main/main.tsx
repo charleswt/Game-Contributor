@@ -4,8 +4,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { GET_POSTS } from '../../utils/queries';
 import { CREATE_COMMENT } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
-import {formatDate} from '../../utils/utils'
-import {jwtDecode} from 'jwt-decode';
+import { formatDate } from '../../utils/utils';
 import '../../../public/css/style.css';
 
 interface User {
@@ -36,18 +35,32 @@ export default function Main() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [createComment] = useMutation(CREATE_COMMENT);
   const [commentContent, setCommentContent] = useState<string>();
+  const [commentsToShow, setCommentsToShow] = useState<{ [key: string]: number }>({});
+  const [numRows, setNumRows] = useState<number>(1);
   const navigate = useNavigate();
+
+  function calculateRows(content: string) {
+    const lines = content.split('\n').length;
+    const row = Math.max(lines, Math.ceil(content.length / 35));
+    setNumRows(row);
+  }
+
 
   useEffect(() => {
     if (data) {
       setPosts(data.posts);
+      const initialCommentsToShow = data.posts.reduce((acc: { [key: string]: number }, post: Post) => {
+        acc[post.id] = 1; // Initially show one comment per post
+        return acc;
+      }, {});
+      setCommentsToShow(initialCommentsToShow);
     }
   }, [data]);
 
   const handleCreateComment = async (postId: string) => {
     try {
-      const userId: string = JSON.stringify(CookieAuth.getTokenId())
-      
+      const userId: string = JSON.stringify(CookieAuth.getTokenId());
+
       const { data } = await createComment({
         variables: { postId, userId, content: commentContent }
       });
@@ -56,7 +69,7 @@ export default function Main() {
           if (post.id === postId) {
             return {
               ...post,
-              comments: [...post.comments]
+              comments: [...post.comments, data.createComment] // Assuming data.createComment returns the new comment
             };
           }
           return post;
@@ -67,8 +80,15 @@ export default function Main() {
     }
   };
 
-  function handleNavigateToUserProfile(userId: string){
+  const handleNavigateToUserProfile = (userId: string) => {
     navigate(`/user/${userId}`);
+  };
+
+  const handleViewMoreComments = (postId: string) => {
+    setCommentsToShow({
+      ...commentsToShow,
+      [postId]: commentsToShow[postId] + 10
+    });
   };
 
   return (
@@ -80,7 +100,7 @@ export default function Main() {
           posts.map((post: Post) => (
             <div className='posts bg' key={post.id}>
               <div className='postProfile' key={post.user.id}>
-                <p><img src={post.user.profileImage} alt="Profile" /></p>
+                <p><img src={post.user.profileImage ? post.user.profileImage : '../../../public/images/defaultPfp.png'} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
                 <p onClick={() => handleNavigateToUserProfile(post.user.id)} >
                   @{post.user.username}
@@ -91,29 +111,28 @@ export default function Main() {
                 <p>Created At: {formatDate(post.createdAt)}</p>
               </div>
               <div className='postComments'>
-                {post.comments.length > 0 ? (
-                  post.comments.map((comment: Comment) => (
-                    <div className='comment' key={comment.id}>
-                      <p>{comment.user.firstName} {comment.user.lastName}</p>
-                      <p onClick={() => handleNavigateToUserProfile(comment.user.id)} >
-                        @{comment.user.username}</p>
-                      <p>{comment.content}</p>
-                      <p>Created At: {formatDate(comment.createdAt)}</p>
-                    </div>
-                  ))
-                ) : (
-                  ""
+                {post.comments.slice(0, commentsToShow[post.id]).map((comment: Comment) => (
+                  <div className='comment' key={comment.id}>
+                    <p>{comment.user.firstName} {comment.user.lastName}</p>
+                    <p onClick={() => handleNavigateToUserProfile(comment.user.id)} >
+                      @{comment.user.username}</p>
+                    <p>{comment.content}</p>
+                    <p>Created At: {formatDate(comment.createdAt)}</p>
+                  </div>
+                ))}
+                {post.comments.length > commentsToShow[post.id] && (
+                  <button onClick={() => handleViewMoreComments(post.id)}>View More Comments</button>
                 )}
                 <div>
                   <textarea
                     name="text"
-                    rows={3}
+                    rows={numRows}
                     cols={35}
                     wrap="soft"
                     maxLength={3000}
                     style={{ overflow: 'hidden', resize: 'none' }}
                     placeholder="Content Here..."
-                    onChange={(e) => setCommentContent(e.target.value)}
+                    onChange={(e) => {setCommentContent(e.target.value); calculateRows(e.target.value)}}
                   />
                   <button onClick={() => handleCreateComment(post.id)}>Post</button>
                 </div>

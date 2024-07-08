@@ -21,6 +21,12 @@
 .myProfile {
     display: flex;
 
+    img {
+        border-radius: 50%;
+        max-height: 100px;
+        height: 100%;
+    }
+
     h1 {
         font-size: 2rem;
     }

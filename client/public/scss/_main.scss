@@ -1,9 +1,19 @@
 .posts {
-    background-color: white;
+    
 }
 
 .postProfile {
     display: flex;
+
+    img {
+        max-height: 75px;
+        height: 100%;
+        border-radius: 100%;
+    }
+
+    p {
+        font-size: 1.4rem;
+    }
 }
 
 .postProfile p {
@@ -17,4 +27,27 @@
 textarea {
     padding: .5rem;
     background-color: antiquewhite;
+}
+
+.postContent {
+    background-color: white;
+    margin: 1rem 0;
+    border: 1px solid black;
+    box-shadow: 3px 3px 3px 0px black;
+
+    p {
+
+    }
+}
+
+.postComments {
+}
+
+.comment {
+    padding: .5rem;
+    border-top: 1px solid black;
+
+    p {
+        padding: .1rem;
+    }
 }
