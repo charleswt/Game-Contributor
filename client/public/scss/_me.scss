@@ -40,5 +40,11 @@
 .meNav {
     display: flex;
     justify-content: space-evenly;
+    width: 100%;
+    max-width: 1000px;
     background-color: white;
+
+    li {
+        margin: .2rem;
+    }
 }

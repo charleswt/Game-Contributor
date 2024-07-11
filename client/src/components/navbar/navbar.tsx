@@ -36,7 +36,7 @@ export default function Navbar() {
         <>
             <header>
                 <ul>
-                    <li className='logo'>LOGO</li>
+                    <li className='logo'><img src="../../../public/images/GC.png" alt="Settings" height="60px" /></li>
                     <li>
                         <Link className='navLinks' to="/main"><img src="../../../public/images/home.svg" alt="Settings" height="60px" /></Link>
                         

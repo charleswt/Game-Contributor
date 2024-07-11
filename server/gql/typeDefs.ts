@@ -102,6 +102,7 @@ type Mutation {
   createFriendship(id: ID!): Friend
   acceptFriendship(id: ID!): Friend
   declineFriendship(id: ID!): Friend
+  updateUserPfp(pfp: String): User
   login(usernameOrEmail: String!, password: String!): Auth
 }
 `

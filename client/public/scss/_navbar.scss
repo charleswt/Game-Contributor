@@ -4,7 +4,7 @@ header {
     top: 0;
     height: fit-content;
     max-height: 10vh;
-    background-color: rgb(0, 59, 59);
+    background-color: rgb(191, 204, 195);
     width: 100%;
     color: rgb(255, 255, 169);
     display: flex;
@@ -22,7 +22,7 @@ header {
             padding: .3rem;
             &:hover {
                 transition: .12;
-                background-image: radial-gradient(circle closest-side, rgba(255, 255, 169, 0.411), rgba(0,0,0,.0) );
+                background-image: radial-gradient(circle closest-side, #16D992, rgba(0,0,0,.0) );
                 border-radius: .3rem;
             }
             .navLinks {

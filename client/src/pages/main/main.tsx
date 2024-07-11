@@ -65,6 +65,15 @@ export default function Main() {
         variables: { postId, userId, content: commentContent }
       });
       if (data) {
+        console.log(posts.map((post: Post) => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              comments: [...post.comments, data.createComment] // Assuming data.createComment returns the new comment
+            };
+          }
+          return post;
+        }))
         setPosts(posts.map(post => {
           if (post.id === postId) {
             return {
@@ -96,7 +105,6 @@ export default function Main() {
       {loading ? (
         <div className="loader"></div>
       ) : (
-        posts.length > 0 ? (
           posts.map((post: Post) => (
             <div className='posts bg' key={post.id}>
               <div className='postProfile' key={post.user.id}>
@@ -111,7 +119,7 @@ export default function Main() {
                 <p>Created At: {formatDate(post.createdAt)}</p>
               </div>
               <div className='postComments'>
-                {post.comments.slice(0, commentsToShow[post.id]).map((comment: Comment) => (
+                {post.comments.length > 0? (post.comments.slice(0, commentsToShow[post.id]).map((comment: Comment) => (
                   <div className='comment' key={comment.id}>
                     <p>{comment.user.firstName} {comment.user.lastName}</p>
                     <p onClick={() => handleNavigateToUserProfile(comment.user.id)} >
@@ -119,7 +127,7 @@ export default function Main() {
                     <p>{comment.content}</p>
                     <p>Created At: {formatDate(comment.createdAt)}</p>
                   </div>
-                ))}
+                ))):(<div>Be the first to comment!</div>)}
                 {post.comments.length > commentsToShow[post.id] && (
                   <button onClick={() => handleViewMoreComments(post.id)}>View More Comments</button>
                 )}
@@ -134,14 +142,11 @@ export default function Main() {
                     placeholder="Content Here..."
                     onChange={(e) => {setCommentContent(e.target.value); calculateRows(e.target.value)}}
                   />
-                  <button onClick={() => handleCreateComment(post.id)}>Post</button>
+                  <button onClick={() => handleCreateComment(post.id)}>Send</button>
                 </div>
               </div>
             </div>
           ))
-        ) : (
-          <p>No Data</p>
-        )
       )}
     </main>
   );

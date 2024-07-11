@@ -67,6 +67,13 @@ export const CREATE_COMMENT = gql`
       userId
       content
       createdAt
+      user {
+        id
+        profileImage
+        firstName
+        lastName
+        username
+      }
     }
   }
 `;
@@ -136,6 +143,18 @@ export const DECLINE_FRIENDSHIP = gql`
       userId1
       userId2
       request
+    }
+  }
+`;
+
+export const UPDATE_USER_PFP = gql`
+  mutation updateUserPfp($pfp: String!) {
+    updateUserPfp(pfp: $pfp) {
+        id
+        profileImage
+        firstName
+        lastName
+        username
     }
   }
 `;

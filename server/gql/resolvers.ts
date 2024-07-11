@@ -12,12 +12,12 @@ interface CreateUserParams {
 interface User {
   id: string;
   company?: boolean;
-  profileImage?: string | null;
+  profileImage: string;
   firstName: string;
   lastName: string;
   username: string;
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
 }
 
 interface Company {
@@ -49,7 +49,8 @@ interface Comment {
   postId?: string;
   userId?: string;
   content: string;
-  createdAt?: string,
+  createdAt?: string;
+  user?: User;
 }
 
 interface PublishedCode {
@@ -154,6 +155,7 @@ const resolvers = {
 
         return result.rows.map((row: any) => ({
           id: row.id,
+          profileImage: row.profile_image,
           firstName: row.first_name,
           lastName: row.last_name,
           username: row.username,
@@ -180,6 +182,7 @@ const resolvers = {
 
         const user: User = {
           id: result.rows[0].id,
+          profileImage: result.rows[0].profile_image,
           firstName: 'result.rows[0].first_name',
           lastName: 'result.rows[0].last_name',
           username: result.rows[0].username,
@@ -208,6 +211,7 @@ const resolvers = {
 
         const user: User = {
           id: result.rows[0].id,
+          profileImage: result.rows[0].profile_image,
           firstName: result.rows[0].first_name,
           lastName: result.rows[0].last_name,
           username: result.rows[0].username,
@@ -239,10 +243,10 @@ const resolvers = {
         }
 
         const userRow = userResult.rows[0];
-        
 
         const user: User = {
           id: userRow.id,
+          profileImage: userRow.profile_image,
           firstName: userRow.first_name,
           lastName: userRow.last_name,
           username: userRow.username,
@@ -286,6 +290,7 @@ const resolvers = {
 
         return result.rows.map((row: any) => ({
           id: row.id,
+          profileImage: row.profile_image,
           firstName: row.first_name,
           lastName: row.last_name,
           username: row.username,
@@ -316,6 +321,7 @@ const resolvers = {
 
         const user: User = {
           id: userRow.id,
+          profileImage: userRow.profile_image,
           firstName: userRow.first_name,
           lastName: userRow.last_name,
           username: userRow.username,
@@ -709,12 +715,13 @@ const resolvers = {
         const hashedPassword = await hashPassword(input.password);
 
         const insertUserText = `
-          INSERT INTO "user" (first_name, last_name, username, email, password)
-          VALUES ($1, $2, $3, $4, $5)
-          RETURNING id, first_name, last_name, username, email;
+          INSERT INTO "user" (profile_image, first_name, last_name, username, email, password)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING id, profile_image, first_name, last_name, username, email;
         `;
 
         const insertUserValues = [
+          "https://res.cloudinary.com/dtmr1se3m/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png",
           input.firstName,
           input.lastName,
           input.username,
@@ -729,6 +736,7 @@ const resolvers = {
 
         const userData = {
           id: newUser.id,
+          profileImage: newUser.profile_image,
           firstName: newUser.first_name,
           lastName: newUser.last_name,
           username: newUser.username,
@@ -902,46 +910,54 @@ const resolvers = {
       }
     },
 
-    createComment: async (_: any, input: Comment): Promise<Comment> => {
+    createComment: async (_: any, input: Comment, context: any): Promise<Comment> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-
+    
         const insertCommentText = `
           INSERT INTO "comments" (post_id, user_id, content)
           VALUES ($1, $2, $3)
           RETURNING id, post_id, user_id, content, created_at;
         `;
-
+    
         const insertCommentValues = [input.postId, input.userId, input.content];
-
-        const result = await client.query(
-          insertCommentText,
-          insertCommentValues
-        ).catch((err)=>{
-          throw err
-        })
-        const newComment: any = result.rows[0];
-
+        const result = await client.query(insertCommentText, insertCommentValues);
+    
+        const newComment = result.rows[0];
+    
+        const selectUserText = 'SELECT * FROM "user" WHERE id = $1';
+        const selectUserValues = [context.user.id];
+        const userResult = await client.query(selectUserText, selectUserValues);
+    
+        const userRow = userResult.rows[0];
         await client.query("COMMIT");
-
+    
+        const user: User = {
+          id: userRow.id,
+          profileImage: userRow.profile_image,
+          firstName: userRow.first_name,
+          lastName: userRow.last_name,
+          username: userRow.username,
+        };
+    
         const comment: Comment = {
           id: newComment.id,
           postId: newComment.post_id,
           userId: newComment.user_id,
           content: newComment.content,
-          createdAt: newComment.created_at
+          createdAt: newComment.created_at,
+          user
         };
-
+    
         return comment;
       } catch (error: any) {
         await client.query("ROLLBACK");
-        throw new Error("Error creating comment: " + error.message);
+        throw new Error(`Error creating comment: ${error.message}`);
       } finally {
         client.release();
       }
     },
-
     updateComment: async (_: any, input: Comment): Promise<Comment> => {
       const client = await pool.connect();
       try {
@@ -1165,6 +1181,37 @@ console.log('here return')
         client.release();
       }
     },
+    updateUserPfp: async (_: any, { pfp }: { pfp: string }, context: any): Promise<User> => {
+      const client = await pool.connect(); 
+      try {
+        await client.query("BEGIN");
+        const queryString = `UPDATE "user" 
+        SET profile_image = $2
+        WHERE id = $1
+        RETURNING id, profile_image, first_name, last_name, username;
+        `
+        const queryValues = [context.user.id, pfp]
+
+        const result = await client.query(queryString, queryValues);
+        client.query("COMMIT");
+
+        const user: User = {
+          id: result.rows[0].id,
+          profileImage: result.rows[0].profile_image,
+          firstName: result.rows[0].first_name,
+          lastName: result.rows[0].last_name,
+          username: result.rows[0].username,
+        }
+
+        return user;
+        
+      } catch(error){
+        client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release()
+      }
+    },
     login: async (_:any, input: LoginInput): Promise<Auth> => {
       const client = await pool.connect();
       try {
@@ -1189,6 +1236,7 @@ console.log('here return')
 
         const userData = {
           id: user.id,
+          profileImage: user.profile_image,
           firstName: user.first_name,
           lastName: user.last_name,
           username: user.username,
