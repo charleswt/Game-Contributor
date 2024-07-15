@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "@apollo/client";
+import { debounce } from "lodash";
 import { CHECK_USER_EXISTS } from "../../utils/queries";
-import { CREATE_USER, LOGIN } from "../../utils/mutations";
-import CookieAuth from '../../utils/auth'
+import { CREATE_USER } from "../../utils/mutations";
+import CookieAuth from '../../utils/auth';
 import "../../../public/css/style.css";
 
 export default function Signup() {
   const [errorMessage, setErrorMessage] = useState("");
-  const [createUser, { error }] = useMutation(CREATE_USER);
+  const [createUser] = useMutation(CREATE_USER);
   const [signUp, setSignUp] = useState({
     first: "",
     last: "",
@@ -17,19 +18,22 @@ export default function Signup() {
     password2: "",
   });
 
-  const { loading: queryLoading, error: queryError, data: queryData } = useQuery(CHECK_USER_EXISTS, {
-    skip: !signUp.username && !signUp.email,
-    variables: {
-      usernameOrEmail: signUp.username || signUp.email,
-    },
-    onError: (error) => {
-      console.error("Error fetching user:", error.message);
-    },
+  const [existingUsername, setExistingUsername] = useState(null);
+  const [existingEmail, setExistingEmail] = useState(null);
+
+  const { data: usernameQueryData } = useQuery(CHECK_USER_EXISTS, {
+    variables: { usernameOrEmail: signUp.username },
+    skip: !signUp.username,
+  });
+
+  const { data: emailQueryData } = useQuery(CHECK_USER_EXISTS, {
+    variables: { usernameOrEmail: signUp.email },
+    skip: !signUp.email,
   });
 
   const regex =
     /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{9,}$/;
-    
+
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setSignUp((prevState) => ({
@@ -37,6 +41,24 @@ export default function Signup() {
       [name]: value,
     }));
   };
+
+  const debouncedCheck = useCallback(
+    debounce<any>((usernameData: any, emailData: any) => {
+      setExistingUsername(usernameData);
+      setExistingEmail(emailData);
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    if (usernameQueryData) {
+      setExistingUsername(usernameQueryData);
+    }
+    if (emailQueryData && !usernameQueryData) {
+      setExistingEmail(emailQueryData);
+    }
+    debouncedCheck(usernameQueryData, emailQueryData);
+  }, [usernameQueryData, emailQueryData, debouncedCheck]);
 
   function validatePassword(): boolean {
     return regex.test(signUp.password);
@@ -46,24 +68,29 @@ export default function Signup() {
     return password === password2;
   }
 
-  async function handleSubmit() {
-    if (queryData && (queryData.userExists || queryData.emailExists)) {
-        if (queryData.userExists) {
-          return setErrorMessage("Error: Username already exists");
-        }
-        if (queryData.emailExists) {
-          return setErrorMessage("Error: Email already exists");
-        }
-      }
-    if (validatePassword() !== true)
-      return setErrorMessage(
-        "Error: Password must have a capitol letter, one or more numbers and symbols as well as be 9 or more digits long."
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (existingEmail || existingUsername) {
+      setErrorMessage(
+        existingUsername ? "Username already exists" : "Email already exists"
       );
+      return;
+    }
 
-    if (!checkPasswords(signUp.password, signUp.password2))
-      return setErrorMessage("Passwords must match.");
+    if (!validatePassword()) {
+      setErrorMessage(
+        "Password must have a capital letter, one or more numbers and symbols as well as be 9 or more digits long."
+      );
+      return;
+    }
 
-    const { data } = await createUser({
+    if (!checkPasswords(signUp.password, signUp.password2)) {
+      setErrorMessage("Passwords must match.");
+      return;
+    }
+
+    try {
+      const { data } = await createUser({
         variables: {
           firstName: signUp.first,
           lastName: signUp.last,
@@ -72,11 +99,16 @@ export default function Signup() {
           password: signUp.password,
         },
       });
-      if(data){
+      if (data) {
         CookieAuth.login(JSON.stringify(data.createUser.token));
+      } else {
+        setErrorMessage("Error: Try again later (1)");
       }
-}
-
+    } catch (err) {
+      setErrorMessage("Error: Try again later (2)");
+      throw err
+    }
+  };
 
   return (
     <div className="login">

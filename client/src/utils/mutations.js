@@ -150,11 +150,11 @@ export const DECLINE_FRIENDSHIP = gql`
 export const UPDATE_USER_PFP = gql`
   mutation updateUserPfp($pfp: String!) {
     updateUserPfp(pfp: $pfp) {
-        id
-        profileImage
-        firstName
-        lastName
-        username
+      id
+      profileImage
+      firstName
+      lastName
+      username
     }
   }
 `;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_POSTS } from '../../utils/queries';
@@ -50,7 +50,7 @@ export default function Main() {
     if (data) {
       setPosts(data.posts);
       const initialCommentsToShow = data.posts.reduce((acc: { [key: string]: number }, post: Post) => {
-        acc[post.id] = 1; // Initially show one comment per post
+        acc[post.id] = 1;
         return acc;
       }, {});
       setCommentsToShow(initialCommentsToShow);
@@ -65,20 +65,11 @@ export default function Main() {
         variables: { postId, userId, content: commentContent }
       });
       if (data) {
-        console.log(posts.map((post: Post) => {
-          if (post.id === postId) {
-            return {
-              ...post,
-              comments: [...post.comments, data.createComment] // Assuming data.createComment returns the new comment
-            };
-          }
-          return post;
-        }))
         setPosts(posts.map(post => {
           if (post.id === postId) {
             return {
               ...post,
-              comments: [...post.comments, data.createComment] // Assuming data.createComment returns the new comment
+              comments: [...post.comments, data.createComment]
             };
           }
           return post;

@@ -4,7 +4,7 @@ import MeComments from '../../components/meComponents/comments';
 import MeCode from '../../components/meComponents/code';
 import MeFriends from '../../components/meComponents/friends';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_ME } from '../../utils/queries';
+import { GET_ME, GET_CLOUDINARY } from '../../utils/queries';
 import { CREATE_POST, UPDATE_USER_PFP } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 import { useDropzone } from 'react-dropzone';
@@ -21,6 +21,7 @@ interface User {
 export default function Me(): any {
   // update user profile image\
   const [updateUserPfp] = useMutation(UPDATE_USER_PFP);
+  const {loading: cloudinaryLoading, data: cloudinaryData } = useQuery(GET_CLOUDINARY);
   // Profile information
   const { loading, data } = useQuery(GET_ME);
   const [me, setMe] = useState<User | null>(null);
@@ -57,7 +58,7 @@ export default function Me(): any {
     if (!loading && data) {
       setMe(data.me.user)
       
-    }console.log(data.me.user)
+    }
   }, [data]);
 
   function calculateRows(content: string) {
@@ -89,16 +90,16 @@ export default function Me(): any {
 
     if (!file) return;
 
+    const { name, key } = await cloudinaryData.cloudinaryCreds
+
     const formData = new FormData();
-    const apiKey = "343886947291618"; // Ensure this is the correct API key
-    const cloudName = "dtmr1se3m"; // Ensure this is the correct Cloudinary cloud name
 
     formData.append('file', file);
-    formData.append('upload_preset', 'test-react-uploads-unsigned'); // Ensure this preset exists in your Cloudinary settings
-    formData.append('api_key', apiKey);
+    formData.append('upload_preset', 'test-react-uploads'); // Ensure this preset exists in your Cloudinary settings
+    formData.append('api_key', key);
 
     try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${name}/image/upload`, {
         method: 'POST',
         body: formData,
       });

@@ -1,5 +1,14 @@
 import { gql } from '@apollo/client';
 
+export const GET_CLOUDINARY = gql`
+query cloudinaryCreds {
+    cloudinaryCreds {
+        name
+        key
+    }
+}
+`;
+
 export const GET_PUBLISHED_CODES = gql`
 query publishedCodes {
     publishedCodes {
@@ -44,8 +53,10 @@ export const CHECK_USER_EXISTS = gql`
 query checkUserExists($usernameOrEmail: String!) {
     checkUserExists(usernameOrEmail: $usernameOrEmail) {
         id
+        profileImage
+        firstName
+        lastName
         username
-        email
     }
 }
 `;

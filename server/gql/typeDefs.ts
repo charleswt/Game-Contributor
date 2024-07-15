@@ -9,6 +9,14 @@ type User {
   password: String!
 }
 
+input FileInput {
+  lastModified: Float!
+  name: String!
+  size: Int!
+  type: String!
+  webkitRelativePath: String!
+}
+
 type Company {
   id: ID!
   companyName: String!
@@ -67,7 +75,13 @@ type Auth {
   user: User
 }
 
+type Cloudinary {
+  name: String
+  key: String
+}
+
 type Query {
+  cloudinaryCreds: Cloudinary
   publishedCodes: [PublishedCode!]
   publishedCode(id: ID!): PublishedCode!
   users: [User]
@@ -102,9 +116,9 @@ type Mutation {
   createFriendship(id: ID!): Friend
   acceptFriendship(id: ID!): Friend
   declineFriendship(id: ID!): Friend
-  updateUserPfp(pfp: String): User
+  updateUserPfp(pfp: String!): User
   login(usernameOrEmail: String!, password: String!): Auth
 }
-`
+`;
 
 export default typeDefs;

@@ -1,4 +1,6 @@
 import { packToken, comparePasswordHash, hashPassword } from "../utils/auth";
+import "dotenv/config"
+import { GraphQLUpload } from 'graphql-upload-ts';
 import pool from "../config/connect";
 
 interface CreateUserParams {
@@ -78,8 +80,16 @@ interface Auth {
   user: User;
 }
 
+interface Cloudinary {
+  name: string | undefined;
+  key: string | undefined; 
+}
+
 const resolvers = {
   Query: {
+    cloudinaryCreds: async (_: any): Promise<Cloudinary> => {
+      return { name: process.env.CLOUD_NAME, key: process.env.CLOUD_API_KEY} as Cloudinary
+    },
     publishedCodes: async (_: any, args: any, context: any): Promise<PublishedCode[]> => {
       const client = await pool.connect();
       try {
@@ -112,7 +122,7 @@ const resolvers = {
         client.release();
       }
     },
-    publishedCode: async (_: any, context: any): Promise<PublishedCode> => {
+    publishedCode: async (_: any, args: any, context: any): Promise<PublishedCode> => {
       const client = await pool.connect();
       try {
         client.query("BEGIN");
@@ -172,6 +182,7 @@ const resolvers = {
     checkUserExists:  async (_: any, {usernameOrEmail}: { usernameOrEmail: string}): Promise<User> => {
       const client = await pool.connect();
       try {
+        console.log("resolvers 1")
         await client.query("BEGIN");
         const selectUserText = 'SELECT * FROM "user" WHERE email = $1 or username = $1';
         const selectUserValues = [usernameOrEmail];
@@ -183,13 +194,11 @@ const resolvers = {
         const user: User = {
           id: result.rows[0].id,
           profileImage: result.rows[0].profile_image,
-          firstName: 'result.rows[0].first_name',
-          lastName: 'result.rows[0].last_name',
+          firstName: result.rows[0].first_name,
+          lastName: result.rows[0].last_name,
           username: result.rows[0].username,
-          email: 'result.rows[0].email',
-          password: 'result.rows[0].password',
         };
-
+        console.log({...user})
         return user;
       } catch (error) {
         client.query("ROLLBACK");
@@ -1181,35 +1190,43 @@ console.log('here return')
         client.release();
       }
     },
-    updateUserPfp: async (_: any, { pfp }: { pfp: string }, context: any): Promise<User> => {
-      const client = await pool.connect(); 
+    updateUserPfp: async (_: any, { pfp }: { pfp: any }, context: any) => {
+      const client = await pool.connect();
+
       try {
+        console.log("Entering resolver");
+
         await client.query("BEGIN");
-        const queryString = `UPDATE "user" 
-        SET profile_image = $2
-        WHERE id = $1
-        RETURNING id, profile_image, first_name, last_name, username;
-        `
-        const queryValues = [context.user.id, pfp]
 
-        const result = await client.query(queryString, queryValues);
-        client.query("COMMIT");
+        const queryString = `
+          UPDATE "user"
+          SET profile_image = $2
+          WHERE id = $1
+          RETURNING id, profile_image, first_name, last_name, username;
+        `;
+        const queryValues = [context.user.id, pfp];
 
-        const user: User = {
-          id: result.rows[0].id,
-          profileImage: result.rows[0].profile_image,
-          firstName: result.rows[0].first_name,
-          lastName: result.rows[0].last_name,
-          username: result.rows[0].username,
-        }
+        const queryResult = await client.query(queryString, queryValues);
+        await client.query("COMMIT");
+
+        // Construct the User object to return in the GraphQL response
+        const user = {
+          id: queryResult.rows[0].id,
+          profileImage: queryResult.rows[0].profile_image,
+          firstName: queryResult.rows[0].first_name,
+          lastName: queryResult.rows[0].last_name,
+          username: queryResult.rows[0].username,
+          email: "", // Add if necessary
+          password: "", // Add if necessary
+        };
 
         return user;
-        
-      } catch(error){
-        client.query("ROLLBACK");
+
+      } catch (error) {
+        await client.query("ROLLBACK");
         throw error;
       } finally {
-        client.release()
+        client.release();
       }
     },
     login: async (_:any, input: LoginInput): Promise<Auth> => {

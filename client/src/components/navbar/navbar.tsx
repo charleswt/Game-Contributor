@@ -25,7 +25,7 @@ export default function Navbar() {
     }, []);
 
     const handleMeClick = () => {
-        if (CookieAuth.getToken()) {
+        if (CookieAuth.getToken() !== undefined) {
             navigate('/me');
         } else {
             navigate('/login');
