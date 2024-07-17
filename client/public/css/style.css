@@ -146,7 +146,10 @@ header ul .searchSmall {
   border-radius: 100%;
 }
 .postProfile p {
-  font-size: 1.4rem;
+  font-size: 1.7rem;
+}
+.postProfile a {
+  font-size: 20px;
 }
 
 .postProfile p {
@@ -168,12 +171,62 @@ textarea {
   border: 1px solid black;
   box-shadow: 3px 3px 3px 0px black;
 }
+.more-comments {
+  border: none;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+  background-color: rgb(233, 233, 233);
+}
+
 .comment {
   padding: 0.5rem;
   border-top: 1px solid black;
+  border-left: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
 }
 .comment p {
+  margin: 0.2rem;
+}
+.comment div {
+  display: flex;
+  border-bottom: 0;
+}
+.comment div img {
+  margin: 0 0.2rem;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+}
+.comment div p {
+  font-weight: 700;
+  margin: 0 0.2rem;
+  font-size: 20px;
   padding: 0.1rem;
+  border-bottom: 0;
+}
+.comment div a {
+  color: blueviolet;
+  text-decoration: underline;
+  margin: 0.2rem;
+  border-bottom: 0;
+}
+
+.comment-reply {
+  display: flex;
+  height: fit-content;
+}
+.comment-reply textarea {
+  background-color: white;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+}
+.comment-reply button {
+  padding: 0.2rem;
+  border: 1px solid grey;
+  border-radius: 4px;
+  height: 37px;
 }
 
 main {
@@ -280,4 +333,21 @@ main {
 }
 .meNav li {
   margin: 0.2rem;
+}
+
+.user-pfp {
+  display: flex;
+  flex-direction: column;
+  margin-right: 1rem;
+}
+.user-pfp button {
+  border: none;
+  background-color: none;
+}
+
+.user-name div {
+  display: flex;
+}
+.user-name div p {
+  margin: 0 1rem;
 }

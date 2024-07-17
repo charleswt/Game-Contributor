@@ -9,9 +9,9 @@ async function insertData() {
     const userInsertQuery = `
       INSERT INTO "user" (company, profile_image, first_name, last_name, username, email, password)
       VALUES
-      (FALSE, 'https://res.cloudinary.com/dtmr1se3m/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png', 'John', 'Doe', 'johndoe', 'john@example.com', 'password123'),
-      (FALSE, 'https://res.cloudinary.com/dtmr1se3m/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png', 'Jane', 'Smith', 'janesmith', 'jane@example.com', 'password123'),
-      (TRUE, 'https://res.cloudinary.com/dtmr1se3m/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png', 'Company', 'One', 'companyone', 'companyone@example.com', 'password123')
+      (FALSE, 'https://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png', 'John', 'Doe', 'johndoe', 'john@example.com', 'password123'),
+      (FALSE, 'https://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png', 'Jane', 'Smith', 'janesmith', 'jane@example.com', 'password123'),
+      (TRUE, 'https://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png', 'Company', 'One', 'companyone', 'companyone@example.com', 'password123')
       RETURNING id;
     `;
     

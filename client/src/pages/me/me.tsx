@@ -136,11 +136,18 @@ export default function Me(): any {
     <main>
       {me ? (
         <div className='bg myProfile'>
+          <div className='user-pfp'>
           <img src={me.profileImage ? me.profileImage : '../../../public/images/defaultPfp.png'} alt="profile picture" />
-          {!updatePfp && <button onClick={handleShowChangePfp}>Update Profile Photo</button>}
-          <h1>{me.firstName} {me.lastName}</h1>
-          <p>@{me.username}</p>
-          <button onClick={() => CookieAuth.logout()}>Logout</button>
+          {!updatePfp && <button onClick={handleShowChangePfp}>Update Photo</button>}
+          </div>
+          <div className='user-name'>
+            <div>
+              <h1>{me.firstName} {me.lastName}</h1>
+              <p>@{me.username}</p>
+              <button onClick={() => CookieAuth.logout()}>Logout</button>
+            </div>
+          <div>Bio</div>
+          </div>
         </div>
       ) : (
         <p>No Data</p>

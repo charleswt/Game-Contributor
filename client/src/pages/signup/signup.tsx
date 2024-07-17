@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom"
 import { useQuery, useMutation } from "@apollo/client";
 import { debounce } from "lodash";
 import { CHECK_USER_EXISTS } from "../../utils/queries";
@@ -7,6 +8,7 @@ import CookieAuth from '../../utils/auth';
 import "../../../public/css/style.css";
 
 export default function Signup() {
+  const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState("");
   const [createUser] = useMutation(CREATE_USER);
   const [signUp, setSignUp] = useState({
@@ -53,8 +55,13 @@ export default function Signup() {
   useEffect(() => {
     if (usernameQueryData) {
       setExistingUsername(usernameQueryData);
-    }
+      
+    } else {
+        setExistingUsername(null)
+      }
     if (emailQueryData && !usernameQueryData) {
+      setExistingEmail(emailQueryData);
+    } else {
       setExistingEmail(emailQueryData);
     }
     debouncedCheck(usernameQueryData, emailQueryData);
@@ -68,9 +75,9 @@ export default function Signup() {
     return password === password2;
   }
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    if (existingEmail || existingUsername) {
+  const handleSubmit = async () => {
+
+    if (existingEmail !== undefined || existingUsername !== undefined) {
       setErrorMessage(
         existingUsername ? "Username already exists" : "Email already exists"
       );
@@ -98,14 +105,22 @@ export default function Signup() {
           email: signUp.email,
           password: signUp.password,
         },
-      });
-      if (data) {
-        CookieAuth.login(JSON.stringify(data.createUser.token));
+      }).catch((error)=>{
+        throw "Error from createUser:"+error
+      })
+      
+      CookieAuth.login(JSON.stringify(data.createUser.token))
+      
+      if (data.createUser.token) {
+        console.log('Login successful:', data);
+        navigate('/main')
       } else {
         setErrorMessage("Error: Try again later (1)");
       }
+
     } catch (err) {
       setErrorMessage("Error: Try again later (2)");
+      console.log(existingEmail, existingUsername)
       throw err
     }
   };

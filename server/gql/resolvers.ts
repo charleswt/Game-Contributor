@@ -1,6 +1,5 @@
 import { packToken, comparePasswordHash, hashPassword } from "../utils/auth";
 import "dotenv/config"
-import { GraphQLUpload } from 'graphql-upload-ts';
 import pool from "../config/connect";
 
 interface CreateUserParams {
@@ -88,7 +87,7 @@ interface Cloudinary {
 const resolvers = {
   Query: {
     cloudinaryCreds: async (_: any): Promise<Cloudinary> => {
-      return { name: process.env.CLOUD_NAME, key: process.env.CLOUD_API_KEY} as Cloudinary
+      return { name: process.env.CLOUD_NAME, key: process.env.CLOUD_API_KEY } as Cloudinary;
     },
     publishedCodes: async (_: any, args: any, context: any): Promise<PublishedCode[]> => {
       const client = await pool.connect();
@@ -192,11 +191,11 @@ const resolvers = {
         await client.query("COMMIT");
 
         const user: User = {
-          id: result.rows[0].id,
-          profileImage: result.rows[0].profile_image,
-          firstName: result.rows[0].first_name,
-          lastName: result.rows[0].last_name,
-          username: result.rows[0].username,
+          id: result.rows[0].id || "",
+          profileImage: result.rows[0].profile_image || "",
+          firstName: result.rows[0].first_name || "",
+          lastName: result.rows[0].last_name || "",
+          username: result.rows[0].username || "",
         };
         console.log({...user})
         return user;
@@ -730,7 +729,7 @@ const resolvers = {
         `;
 
         const insertUserValues = [
-          "https://res.cloudinary.com/dtmr1se3m/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png",
+          `https://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/v1720657512/uifivve2qsnqhbnioqoa.png`,
           input.firstName,
           input.lastName,
           input.username,

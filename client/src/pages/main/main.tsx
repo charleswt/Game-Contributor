@@ -99,11 +99,11 @@ export default function Main() {
           posts.map((post: Post) => (
             <div className='posts bg' key={post.id}>
               <div className='postProfile' key={post.user.id}>
-                <p><img src={post.user.profileImage ? post.user.profileImage : '../../../public/images/defaultPfp.png'} alt="Profile" /></p>
+                <p><img src={post.user.profileImage} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
-                <p onClick={() => handleNavigateToUserProfile(post.user.id)} >
+                <a onClick={() => handleNavigateToUserProfile(post.user.id)} >
                   @{post.user.username}
-                </p>
+                </a>
               </div>
               <div className='postContent'>
                 <p>Content: {post.content}</p>
@@ -112,17 +112,21 @@ export default function Main() {
               <div className='postComments'>
                 {post.comments.length > 0? (post.comments.slice(0, commentsToShow[post.id]).map((comment: Comment) => (
                   <div className='comment' key={comment.id}>
+                    <div>
+                      <img src={comment.user.profileImage}/>
                     <p>{comment.user.firstName} {comment.user.lastName}</p>
-                    <p onClick={() => handleNavigateToUserProfile(comment.user.id)} >
-                      @{comment.user.username}</p>
+                    <a onClick={() => handleNavigateToUserProfile(comment.user.id)} >
+                      @{comment.user.username}</a>
+                    </div>
+                    
                     <p>{comment.content}</p>
-                    <p>Created At: {formatDate(comment.createdAt)}</p>
+                    <p>Created at: {formatDate(comment.createdAt)}</p>
                   </div>
                 ))):(<div>Be the first to comment!</div>)}
                 {post.comments.length > commentsToShow[post.id] && (
-                  <button onClick={() => handleViewMoreComments(post.id)}>View More Comments</button>
+                  <button className='more-comments' onClick={() => handleViewMoreComments(post.id)}>View More Comments</button>
                 )}
-                <div>
+                <div className="comment-reply">
                   <textarea
                     name="text"
                     rows={numRows}
@@ -133,7 +137,7 @@ export default function Main() {
                     placeholder="Content Here..."
                     onChange={(e) => {setCommentContent(e.target.value); calculateRows(e.target.value)}}
                   />
-                  <button onClick={() => handleCreateComment(post.id)}>Send</button>
+                  <button onClick={() => handleCreateComment(post.id)}>Reply</button>
                 </div>
               </div>
             </div>

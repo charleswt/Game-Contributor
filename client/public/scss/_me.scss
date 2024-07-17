@@ -48,3 +48,28 @@
         margin: .2rem;
     }
 }
+
+.user-pfp {
+    display: flex;
+    flex-direction: column;
+    margin-right: 1rem;
+    
+    button {
+        border: none;
+        background-color: none;
+    } 
+
+    
+}
+
+.user-name {
+
+
+    div {
+        display: flex;
+
+        p {
+            margin: 0 1rem;
+        }
+    }
+} 

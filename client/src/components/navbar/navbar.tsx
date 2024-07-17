@@ -12,7 +12,7 @@ export default function Navbar() {
     useEffect(() => {
         const updateInput = () => {
             if (window.innerWidth > 850) {
-                setInput(<input type="text" />);
+                setInput(<input type="text"/>);
             } else {
                 setInput(<div className='searchSmall'></div>);
             }

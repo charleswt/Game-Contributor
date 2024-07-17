@@ -145,6 +145,7 @@ export const GET_POSTS = gql`
           createdAt
           user {
             id
+            profileImage
             firstName
             lastName
             username
