@@ -10,6 +10,7 @@ import Me from './pages/me/me';
 import Login from './pages/login/login';
 import Signup from './pages/signup/signup';
 import User from './pages/user/user';
+import Settings from './pages/settings/Settings';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <Login />
+      },
+      {
+        path: 'settings',
+        element: <Settings />
       },
       {
         path: 'user/:id',
