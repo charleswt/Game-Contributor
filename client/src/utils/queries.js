@@ -78,6 +78,7 @@ query me {
     me {
         user {
         id
+        bio
         profileImage
         firstName
         lastName

@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS friend;
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
     company BOOLEAN NOT NULL DEFAULT FALSE,
+    bio VARCHAR (255),
     profile_image VARCHAR(255),
     first_name VARCHAR(32) NOT NULL UNIQUE,
     last_name VARCHAR(32) NOT NULL UNIQUE,

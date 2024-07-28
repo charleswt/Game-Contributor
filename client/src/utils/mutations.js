@@ -159,6 +159,19 @@ export const UPDATE_USER_PFP = gql`
   }
 `;
 
+export const UPDATE_BIO = gql`
+  mutation updateBio($bio: String!) {
+    updateBio(bio: $bio) {
+      id
+      bio
+      profileImage
+      firstName
+      lastName
+      username
+    }
+  }
+`;
+
 export const LOGIN = gql`
   mutation login($usernameOrEmail: String!, $password: String!) {
     login(usernameOrEmail: $usernameOrEmail, password: $password) {

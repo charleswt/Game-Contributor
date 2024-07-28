@@ -13,6 +13,7 @@ interface CreateUserParams {
 interface User {
   id: string;
   company?: boolean;
+  bio?: string;
   profileImage: string;
   firstName: string;
   lastName: string;
@@ -121,6 +122,37 @@ const resolvers = {
         client.release();
       }
     },
+    recievedCode: async (_: any, args: any, context: any): Promise<PublishedCode> => {
+      const client = await pool.connect();
+      try {
+        client.query("BEGIN");
+        const selectPublishedCodesText =
+          'SELECT * FROM "published_code" WHERE company_id = $1;';
+        const selectPublishedCodesValues = [context.user.id];
+
+        const result = await client.query(
+          selectPublishedCodesText,
+          selectPublishedCodesValues
+        );
+
+        await client.query("COMMIT");
+
+        const publishedCode: PublishedCode = {
+          id: result.rows[0].id,
+          userId: result.rows[0].user_id,
+          companyId: result.rows[0].company_id,
+          code: result.rows[0].code,
+          createdAt: result.rows[0].created_at,
+        };
+
+        return publishedCode;
+      } catch (error) {
+        client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
     publishedCode: async (_: any, args: any, context: any): Promise<PublishedCode> => {
       const client = await pool.connect();
       try {
@@ -219,6 +251,7 @@ const resolvers = {
 
         const user: User = {
           id: result.rows[0].id,
+          bio: result.rows[0].bio,
           profileImage: result.rows[0].profile_image,
           firstName: result.rows[0].first_name,
           lastName: result.rows[0].last_name,
@@ -254,6 +287,7 @@ const resolvers = {
 
         const user: User = {
           id: userRow.id,
+          bio: userRow.bio,
           profileImage: userRow.profile_image,
           firstName: userRow.first_name,
           lastName: userRow.last_name,
@@ -329,6 +363,7 @@ const resolvers = {
 
         const user: User = {
           id: userRow.id,
+          bio: userRow.bio,
           profileImage: userRow.profile_image,
           firstName: userRow.first_name,
           lastName: userRow.last_name,
@@ -1224,6 +1259,36 @@ console.log('here return')
       } catch (error) {
         await client.query("ROLLBACK");
         throw error;
+      } finally {
+        client.release();
+      }
+    },
+    updateBio: async (_: any, { bio }: { bio: string }, context: any): Promise<User> => {
+      const client = await pool.connect()
+      try {
+        client.query("BEGIN");
+
+        const queryString = `UPDATE "user"
+        SET bio = $1
+        WHERE id = $2
+        RETURNING id, bio, profile_image, first_name, last_name, username;`
+        const queryValues = [bio, context.user.id]
+        const result = await client.query(queryString, queryValues);
+        client.query("COMMIT");
+
+        const user: User = {
+          id: result.rows[0].id,
+          bio: result.rows[0].bio,
+          profileImage: result.rows[0].profile_image,
+          firstName: result.rows[0].first_name,
+          lastName: result.rows[0].last_name,
+          username: result.rows[0].username
+        };
+        
+        return user;
+      } catch(err){
+        client.query("ROLLBACK");
+        throw err;
       } finally {
         client.release();
       }

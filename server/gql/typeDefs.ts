@@ -1,6 +1,7 @@
 const typeDefs = `
 type User {
   id: ID!
+  bio: String
   profileImage: String
   firstName: String!
   lastName: String!
@@ -83,6 +84,7 @@ type Cloudinary {
 type Query {
   cloudinaryCreds: Cloudinary
   publishedCodes: [PublishedCode!]
+  recievedCode: [PublishedCode!]
   publishedCode(id: ID!): PublishedCode!
   users: [User]
   checkUserExists(usernameOrEmail: String): User
@@ -117,6 +119,7 @@ type Mutation {
   acceptFriendship(id: ID!): Friend
   declineFriendship(id: ID!): Friend
   updateUserPfp(pfp: String!): User
+  updateBio(bio: String!): User
   login(usernameOrEmail: String!, password: String!): Auth
 }
 `;

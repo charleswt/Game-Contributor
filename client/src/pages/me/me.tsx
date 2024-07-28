@@ -5,49 +5,40 @@ import MeCode from '../../components/meComponents/code';
 import MeFriends from '../../components/meComponents/friends';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_ME, GET_CLOUDINARY } from '../../utils/queries';
-import { CREATE_POST, UPDATE_USER_PFP } from '../../utils/mutations';
+import { CREATE_POST, UPDATE_USER_PFP, UPDATE_BIO } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 import { useDropzone } from 'react-dropzone';
 import '../../../public/css/style.css';
 
 interface User {
   id: string;
+  bio?: string;
   profileImage?: string;
   firstName: string;
   lastName: string;
   username: string;
-}
+};
 
-export default function Me(): any {
-  // update user profile image\
+export default function Me(): JSX.Element {
+  const [updateBio] = useMutation(UPDATE_BIO);
+
+  const [bioValue, setBioValue] = useState<boolean>(false);
   const [updateUserPfp] = useMutation(UPDATE_USER_PFP);
-  const {loading: cloudinaryLoading, data: cloudinaryData } = useQuery(GET_CLOUDINARY);
-  // Profile information
+  const { loading: cloudinaryLoading, data: cloudinaryData } = useQuery(GET_CLOUDINARY);
   const { loading, data } = useQuery(GET_ME);
   const [me, setMe] = useState<User | null>(null);
-
-  // create post operations
   const [createPost] = useMutation(CREATE_POST);
   const [postContent, setPostContent] = useState<string>('');
   const [showCreatePostPanel, setShowCreatePostPanel] = useState<boolean>(false);
-
-  // Navigation state
   const [navStatus, setNavStatus] = useState<string>('Friends');
-
   const [numRows, setNumRows] = useState<number>(1);
-
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
-
-  const [updatePfp, setUpdatePfp] = useState(false);
-
+  const [updatePfp, setUpdatePfp] = useState<boolean>(false);
+  const [editBio, setEditBio] = useState<string>("");
   const onDrop = useCallback((acceptedFiles: Array<File>) => {
     const reader = new FileReader();
-
-    reader.onload = function () {
-      setPreview(reader.result);
-    };
-
+    reader.onload = () => setPreview(reader.result);
     reader.readAsDataURL(acceptedFiles[0]);
     setFile(acceptedFiles[0]);
   }, []);
@@ -56,26 +47,21 @@ export default function Me(): any {
 
   useEffect(() => {
     if (!loading && data) {
-      setMe(data.me.user)
-      
+      setMe(data.me.user);
     }
-  }, [data]);
+  }, [loading, data]);
 
-  function calculateRows(content: string) {
+  const calculateRows = (content: string) => {
     const lines = content.split('\n').length;
     const row = Math.max(lines, Math.ceil(content.length / 35));
     setNumRows(row);
-  }
+  };
 
-  function handleShowChangePfp() {
-    setUpdatePfp(!updatePfp);
-  }
+  const handleShowChangePfp = () => setUpdatePfp(!updatePfp);
 
   const handleCreatePost = async () => {
     try {
-      const { data } = await createPost({
-        variables: { content: postContent },
-      });
+      const { data } = await createPost({ variables: { content: postContent } });
       if (data) {
         setPostContent('');
         setShowCreatePostPanel(false);
@@ -85,32 +71,43 @@ export default function Me(): any {
     }
   };
 
+  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = event.target.value;
+    setEditBio(newValue);
+    calculateRows(newValue);
+  };
+
+  const changeBio = async (bio: string) => {
+    try {
+      const { data } = await updateBio({ variables: { bio } });
+      if (data && me) {
+        setMe({ ...me, bio });
+        setEditBio('');
+        setBioValue(false);
+      }
+    } catch (error) {
+      console.error('Error updating bio:', error);
+    }
+  };
+
   const handleFileSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-
     if (!file) return;
-
-    const { name, key } = await cloudinaryData.cloudinaryCreds
-
+    const { name, key } = cloudinaryData.cloudinaryCreds;
     const formData = new FormData();
-
     formData.append('file', file);
-    formData.append('upload_preset', 'test-react-uploads'); // Ensure this preset exists in your Cloudinary settings
+    formData.append('upload_preset', 'test-react-uploads');
     formData.append('api_key', key);
-
     try {
       const response = await fetch(`https://api.cloudinary.com/v1_1/${name}/image/upload`, {
         method: 'POST',
         body: formData,
       });
       const result = await response.json();
-
-      await updateUserPfp({
-        variables: { pfp: result.secure_url }
-      })
-
-      setMe((prevMe) => prevMe ? { ...prevMe, profilePicture: result.secure_url } : null);
-
+      await updateUserPfp({ variables: { pfp: result.secure_url } });
+      if (me) {
+        setMe({ ...me, profileImage: result.secure_url });
+      }
       setUpdatePfp(false);
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -137,8 +134,8 @@ export default function Me(): any {
       {me ? (
         <div className='bg myProfile'>
           <div className='user-pfp'>
-          <img src={me.profileImage ? me.profileImage : '../../../public/images/defaultPfp.png'} alt="profile picture" />
-          {!updatePfp && <button onClick={handleShowChangePfp}>Update Photo</button>}
+            <img src={me.profileImage || '../../../public/images/defaultPfp.png'} alt="profile picture" />
+            {!updatePfp && <button onClick={handleShowChangePfp}>Update Photo</button>}
           </div>
           <div className='user-name'>
             <div>
@@ -146,7 +143,28 @@ export default function Me(): any {
               <p>@{me.username}</p>
               <button onClick={() => CookieAuth.logout()}>Logout</button>
             </div>
-          <div>Bio</div>
+            {bioValue ? (
+              <div>
+                <textarea
+                  name="text"
+                  rows={numRows}
+                  cols={35}
+                  wrap="soft"
+                  maxLength={3000}
+                  value={editBio}
+                  style={{ overflow: 'hidden', resize: 'none' }}
+                  placeholder="Content Here..."
+                  onChange={handleContentChange}
+                />
+                <button onClick={() => changeBio(editBio)}>Save</button>
+                <button onClick={() => {setBioValue(false); setEditBio("")}}>cancel</button>
+              </div>
+            ) : (
+              <div>
+                <div>{me.bio}</div>
+                <button onClick={() => {setBioValue(true); setEditBio(me.bio as string)}}>Update Bio</button>
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -169,7 +187,6 @@ export default function Me(): any {
         <button onClick={() => setShowCreatePostPanel(!showCreatePostPanel)}>
           Create Post
         </button>
-
         {showCreatePostPanel && (
           <div>
             <textarea
