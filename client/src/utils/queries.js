@@ -226,45 +226,85 @@ query meComments {
 `;
 
 export const GET_FRIENDS = gql`
-query friends {
+  query friends {
     friends {
+      friend {
         id
         userId1
         userId2
         request
+      }
+      user {
+        id
+        username
+        email
+        profileImage
+        firstName
+        lastName
+      }
     }
-}
+  }
 `;
 
 export const GET_FRIEND = gql`
-query friend($id: ID!) {
+  query friend($id: ID!) {
     friend(id: $id) {
+      friend {
         id
         userId1
         userId2
         request
+      }
+      user {
+        id
+        username
+        email
+        profileImage
+        firstName
+        lastName
+      }
     }
-}
+  }
 `;
 
-export const GET_FRIEND_REQUESTS_INCOMMING = gql`
-query friendRequestsIncoming {
+export const GET_FRIEND_REQUESTS_INCOMING = gql`
+  query friendRequestsIncoming {
     friendRequestsIncoming {
+      friend {
         id
         userId1
         userId2
         request
+      }
+      user {
+        id
+        username
+        email
+        profileImage
+        firstName
+        lastName
+      }
     }
-}
+  }
 `;
 
 export const GET_FRIEND_REQUESTS_OUTGOING = gql`
-query friendRequestsOutgoing {
+  query friendRequestsOutgoing {
     friendRequestsOutgoing {
+      friend {
         id
         userId1
         userId2
         request
+      }
+      user {
+        id
+        username
+        email
+        profileImage
+        firstName
+        lastName
+      }
     }
-}
+  }
 `;

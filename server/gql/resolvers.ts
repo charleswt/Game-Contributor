@@ -637,34 +637,72 @@ const resolvers = {
         client.release();
       }
     },
-    friends: async (_: any, args: any, context: any): Promise<Friend[]> => {
+    friends: async (_: any, args: any, context: any): Promise<Array<{ friend: Friend, user: User }>> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-
-        const selectFriendsText = `
-        SELECT * FROM "friend" 
-        WHERE (user_id1 = $1 OR user_id2 = $1) AND request = FALSE;
+    
+        const selectFriendsWithUserText = `
+          WITH friends_cte AS (
+            SELECT
+              f.id AS friend_id,
+              f.user_id1,
+              f.user_id2,
+              f.request,
+              CASE
+                WHEN f.user_id1 = $1 THEN f.user_id2
+                ELSE f.user_id1
+              END AS friend_user_id
+            FROM
+              friend f
+            WHERE
+              (f.user_id1 = $1 OR f.user_id2 = $1) AND f.request = FALSE
+          )
+          SELECT
+            fct.friend_id,
+            fct.user_id1,
+            fct.user_id2,
+            fct.request,
+            u.id AS user_id,
+            u.username,
+            u.email,
+            u.profile_image,
+            u.first_name,
+            u.last_name
+          FROM
+            friends_cte fct
+          JOIN
+            "user" u ON fct.friend_user_id = u.id;
         `;
         const selectFriendsValues = [context.user.id];
-        const result = await client.query(selectFriendsText, selectFriendsValues);
-
+        const result = await client.query(selectFriendsWithUserText, selectFriendsValues);
+    
         await client.query("COMMIT");
-
+    
         return result.rows.map((row: any) => ({
-          id: row.id,
-          userId1: row.user_id1,
-          userId2: row.user_id2,
-          request: row.request
+          friend: {
+            id: row.friend_id,
+            userId1: row.user_id1,
+            userId2: row.user_id2,
+            request: row.request,
+          },
+          user: {
+            id: row.user_id,
+            username: row.username,
+            email: row.email,
+            profileImage: row.profile_image,
+            firstName: row.first_name,
+            lastName: row.last_name,
+          },
         }));
-      } catch (error) {
+      } catch (error: any) {
         await client.query("ROLLBACK");
-        throw error;
+        throw new Error("Error fetching friends: " + error.message);
       } finally {
         client.release();
       }
     },
-    friend: async (_: any, { id }: { id: string }, context: any): Promise<Friend> => {
+    friend: async (_: any, { id }: { id: string }, context: any): Promise<{friend: Friend, friendInfo: User}> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -676,8 +714,6 @@ const resolvers = {
         const selectFriendsValues = [context.user.id, id];
         const result = await client.query(selectFriendsText, selectFriendsValues);
 
-        await client.query("COMMIT");
-
         const friend: Friend = {
           id: result.rows[0].id,
           userId1: result.rows[0].user_id1,
@@ -685,7 +721,26 @@ const resolvers = {
           request: result.rows[0].request
         }
 
-        return friend;
+        const friendDataQueryString = `
+        SELECT * FROM "user" 
+        WHERE id = $1;
+        `
+
+        const friendId = friend.userId1 === context.user.id? [friend.userId2] : [friend.userId1];
+
+        const friendData = await client.query(friendDataQueryString, friendId)
+
+        const friendInfo: User = {
+          id: friendData.rows[0].id,
+          profileImage: friendData.rows[0].profile_image,
+          firstName: friendData.rows[0].first_name,
+          lastName: friendData.rows[0].last_name,
+          username: friendData.rows[0].username,
+        } 
+
+        await client.query("COMMIT");
+
+        return { friend, friendInfo };
       } catch (error) {
         await client.query("ROLLBACK");
         throw error;
@@ -693,64 +748,131 @@ const resolvers = {
         client.release();
       }
     },
-    friendRequestsIncoming: async (_: any, args: any, context: any): Promise<Friend[]> =>{
+    friendRequestsIncoming: async (_: any, args: any, context: any): Promise<Array<{ friend: Friend, user: User }>> => {
       const client = await pool.connect();
-      try{
-        client.query('BEGIN');
-        const queryString = `
-        SELECT * FROM "friend" WHERE user_id1 = $1 AND request = TRUE;
+      try {
+        await client.query("BEGIN");
+    
+        const selectFriendRequestsIncomingText = `
+          WITH incoming_requests AS (
+            SELECT
+              f.id AS friend_id,
+              f.user_id1,
+              f.user_id2,
+              f.request,
+              f.user_id2 AS requester_id
+            FROM
+              friend f
+            WHERE
+              f.user_id1 = $1 AND f.request = TRUE
+          )
+          SELECT
+            ir.friend_id,
+            ir.user_id1,
+            ir.user_id2,
+            ir.request,
+            u.id AS user_id,
+            u.username,
+            u.email,
+            u.profile_image,
+            u.first_name,
+            u.last_name
+          FROM
+            incoming_requests ir
+          JOIN
+            "user" u ON ir.requester_id = u.id;
         `;
-        const queryValues = [context.user.id]
-
-        const result = await client.query(queryString, queryValues);
-        client.query('COMMIT');
-
-        return result.rows.map((row: any)=>({
-          id: row.id,
-          userId1: row.user_id1,
-          userId2: row.user_id2,
-          request: row.request
-        }))
-
-      } catch(error){
-        client.query('ROLLBACK')
-        throw error
+        const selectFriendRequestsIncomingValues = [context.user.id];
+        const result = await client.query(selectFriendRequestsIncomingText, selectFriendRequestsIncomingValues);
+    
+        await client.query("COMMIT");
+    
+        return result.rows.map((row: any) => ({
+          friend: {
+            id: row.friend_id,
+            userId1: row.user_id1,
+            userId2: row.user_id2,
+            request: row.request,
+          },
+          user: {
+            id: row.user_id,
+            username: row.username,
+            email: row.email,
+            profileImage: row.profile_image,
+            firstName: row.first_name,
+            lastName: row.last_name,
+          },
+        }));
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error fetching incoming friend requests: " + error.message);
       } finally {
-        client.release(
-          
-        )
+        client.release();
       }
     },
-    friendRequestsOutgoing: async (_: any, args: any, context: any): Promise<Friend[]> =>{
+    friendRequestsOutgoing: async (_: any, args: any, context: any): Promise<Array<{ friend: Friend, user: User }>> => {
       const client = await pool.connect();
-      try{
-        client.query('BEGIN');
-        const queryString = `
-        SELECT * FROM "friend" WHERE user_id2 = $1 AND request = TRUE;
+      try {
+        await client.query("BEGIN");
+    
+        const selectFriendRequestsOutgoingText = `
+          WITH outgoing_requests AS (
+            SELECT
+              f.id AS friend_id,
+              f.user_id1,
+              f.user_id2,
+              f.request,
+              f.user_id1 AS requester_id
+            FROM
+              friend f
+            WHERE
+              f.user_id2 = $1 AND f.request = TRUE
+          )
+          SELECT
+            orq.friend_id,
+            orq.user_id1,
+            orq.user_id2,
+            orq.request,
+            u.id AS user_id,
+            u.username,
+            u.email,
+            u.profile_image,
+            u.first_name,
+            u.last_name
+          FROM
+            outgoing_requests orq
+          JOIN
+            "user" u ON orq.requester_id = u.id;
         `;
-        const queryValues = [context.user.id]
-
-        const result = await client.query(queryString, queryValues);
-        client.query('COMMIT');
-
-        return result.rows.map((row: any)=>({
-          id: row.id,
-          userId1: row.user_id1,
-          userId2: row.user_id2,
-          request: row.request
-        }))
-
-      } catch(error){
-        client.query('ROLLBACK')
-        throw error
+        const selectFriendRequestsOutgoingValues = [context.user.id];
+        const result = await client.query(selectFriendRequestsOutgoingText, selectFriendRequestsOutgoingValues);
+    
+        await client.query("COMMIT");
+    
+        return result.rows.map((row: any) => ({
+          friend: {
+            id: row.friend_id,
+            userId1: row.user_id1,
+            userId2: row.user_id2,
+            request: row.request,
+          },
+          user: {
+            id: row.user_id,
+            username: row.username,
+            email: row.email,
+            profileImage: row.profile_image,
+            firstName: row.first_name,
+            lastName: row.last_name,
+          },
+        }));
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error fetching outgoing friend requests: " + error.message);
       } finally {
-        client.release(
-          
-        )
+        client.release();
       }
-    }
+    },
   },
-
   Mutation: {
     createUser: async (_: any, input: CreateUserParams): Promise<Auth> => {
       const client = await pool.connect();

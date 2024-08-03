@@ -11,6 +11,11 @@ type User {
   password: String!
 }
 
+type FriendAndUser {
+  friend: Friend!
+  user: User!
+}
+
 input FileInput {
   lastModified: Float!
   name: String!
@@ -100,10 +105,10 @@ type Query {
   comments: [Comment!]!
   comment(id: ID!): Comment
   meComments: [Comment]
-  friends: [Friend]
-  friend(id: ID!): Friend
-  friendRequestsIncoming: [Friend]
-  friendRequestsOutgoing: [Friend]
+  friends: [FriendAndUser]
+  friend(id: ID!): FriendAndUser
+  friendRequestsIncoming: [FriendAndUser]
+  friendRequestsOutgoing: [FriendAndUser]
 }
 
 type Mutation {

@@ -338,6 +338,21 @@ main {
   margin: 0 1rem;
 }
 
+.friend-profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.friend-profile p {
+  font-size: 1.6rem;
+}
+.friend-profile img {
+  margin: 0 0.2rem;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+}
+
 .settings-aside {
   display: flex;
   justify-content: space-between;

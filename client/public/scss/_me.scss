@@ -59,3 +59,20 @@
         }
     }
 } 
+
+.friend-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    p {
+      font-size: 1.6rem;
+    }
+    
+    img {
+        margin: 0 .2rem;
+        height: 3rem;
+        width: 3rem;
+        border-radius: 50%;
+    }
+  }
