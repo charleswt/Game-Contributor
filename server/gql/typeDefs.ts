@@ -2,6 +2,7 @@ const typeDefs = `
 type User {
   id: ID!
   bio: String
+  company: Boolean
   profileImage: String
   firstName: String!
   lastName: String!

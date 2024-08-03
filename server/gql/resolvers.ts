@@ -306,6 +306,7 @@ const resolvers = {
           if (companyResult.rows.length > 0) {
             const companyRow = companyResult.rows[0];
             company = {
+              id: companyRow.id,
               userId: companyRow.user_id,
               companyName: companyRow.company_name,
             };
