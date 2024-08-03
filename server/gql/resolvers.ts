@@ -803,33 +803,42 @@ const resolvers = {
       }
     },
 
-    createCompany: async (_: any, input: Company, context: any): Promise<Company> => {
+    createCompany: async (_: any, { companyName }: { companyName: string }, context: any): Promise<Company> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
-
+    
         const insertCompanyText = `
           INSERT INTO "company" (company_name, user_id)
           VALUES ($1, $2)
           RETURNING id, company_name, user_id;
         `;
-
-        const insertCompanyValues = [input.companyName, context.user.id];
-
-        const result = await client.query(
-          insertCompanyText,
-          insertCompanyValues
-        );
+        const insertCompanyValues = [companyName, context.user.id];
+        const result = await client.query(insertCompanyText, insertCompanyValues);
+    
         const newCompany = result.rows[0];
-
+    
+        if (newCompany) {
+          const updateUserText = `
+            UPDATE "user"
+            SET company = $2
+            WHERE id = $1
+            RETURNING company;
+          `;
+          const updateUserValues = [context.user.id, true];
+          const userCompanyRes = await client.query(updateUserText, updateUserValues);
+    
+          console.log(userCompanyRes);
+        }
+    
         await client.query("COMMIT");
-
+    
         const company: Company = {
           id: newCompany.id,
           companyName: newCompany.company_name,
           userId: newCompany.user_id,
         };
-
+    
         return company;
       } catch (error: any) {
         await client.query("ROLLBACK");

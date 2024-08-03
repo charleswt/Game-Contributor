@@ -17,8 +17,8 @@ export const CREATE_USER = gql`
 `;
 
 export const CREATE_COMPANY = gql`
-  mutation createCompany($companyName: String!, $userId: ID!) {
-    createCompany(companyName: $companyName, userId: $userId) {
+  mutation createCompany($companyName: String!) {
+    createCompany(companyName: $companyName) {
       id
       companyName
       userId
