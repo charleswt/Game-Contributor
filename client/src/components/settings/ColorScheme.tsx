@@ -3,6 +3,6 @@
 export default function ColorScheme(){
     
     return (
-        <div></div>
+        <div>Color Scheme settings</div>
     )
 }

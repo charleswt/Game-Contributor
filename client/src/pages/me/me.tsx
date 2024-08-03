@@ -144,7 +144,7 @@ export default function Me(): JSX.Element {
               <button onClick={() => CookieAuth.logout()}>Logout</button>
             </div>
             {bioValue ? (
-              <div>
+              <div className="comment-reply">
                 <textarea
                   name="text"
                   rows={numRows}
@@ -188,11 +188,11 @@ export default function Me(): JSX.Element {
           Create Post
         </button>
         {showCreatePostPanel && (
-          <div>
+          <div className="comment-reply">
             <textarea
               name="text"
               rows={numRows}
-              cols={10}
+              cols={30}
               wrap="soft"
               maxLength={3000}
               style={{ overflow: 'hidden', resize: 'none' }}

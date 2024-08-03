@@ -23,6 +23,7 @@ interface User {
 }
 
 interface Company {
+  id?: string;
   companyName: string;
   userId: string;
 }
@@ -802,7 +803,7 @@ const resolvers = {
       }
     },
 
-    createCompany: async (_: any, input: Company): Promise<Company> => {
+    createCompany: async (_: any, input: Company, context: any): Promise<Company> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -813,7 +814,7 @@ const resolvers = {
           RETURNING id, company_name, user_id;
         `;
 
-        const insertCompanyValues = [input.companyName, input.userId];
+        const insertCompanyValues = [input.companyName, context.user.id];
 
         const result = await client.query(
           insertCompanyText,
@@ -824,6 +825,7 @@ const resolvers = {
         await client.query("COMMIT");
 
         const company: Company = {
+          id: newCompany.id,
           companyName: newCompany.company_name,
           userId: newCompany.user_id,
         };
