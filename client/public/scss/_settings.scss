@@ -55,3 +55,23 @@
   display: flex;
   margin: auto;
 }
+
+.settings-link {
+  margin-right: 0;
+  height: 65px;
+  transition: 0.12s;
+  padding: 0.3rem;
+  &:hover {
+    transition: 0.12;
+    background-image: radial-gradient(
+      circle closest-side,
+      #16d992,
+      rgba(0, 0, 0, 0)
+    );
+    border-radius: 0.3rem;
+  }
+  text-decoration: none;
+  &:visited {
+    color: rgb(255, 255, 169);
+  }
+}

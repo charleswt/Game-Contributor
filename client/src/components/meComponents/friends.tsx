@@ -124,7 +124,7 @@ export default function MeFriends() {
   return (
     <>
       <div>
-        <p className="bg">Friends</p>
+      {friends.length >= 1 && <p className="bg">Friends</p>}
         {friends.length ? (
           friends.map((friend: FriendAndUser) => {
             const friendId =
@@ -134,7 +134,7 @@ export default function MeFriends() {
             const details = friendDetails[friendId];
             return (
               <div className="bg" key={friend.friend.id}>
-                {details ? (
+                {friend.user ? (
                   <>
                       <img src={friend.user.profileImage} alt="profile picture" />
                       <p>{friend.user.firstName}</p>
@@ -147,7 +147,7 @@ export default function MeFriends() {
                     </button>
                   </>
                 ) : (
-                  <p>Loading details...</p>
+                  <p className="loader">;ojk'</p>
                 )}
               </div>
             );
@@ -157,7 +157,7 @@ export default function MeFriends() {
         )}
       </div>
       <div>
-        <p className="bg">Received Friend Requests</p>
+      {incomingRequests.length >= 1 && <p className="bg">Received Friend Requests</p>}
         {incomingRequests.length ? (
           incomingRequests.map((request: FriendAndUser) => (
             <div className="bg friend-profile" key={request.friend.id}>
@@ -183,7 +183,7 @@ export default function MeFriends() {
         )}
       </div>
       <div>
-        <p className="bg">Sent Friend Requests</p>
+        {outgoingRequests.length && <p className="bg">Sent Friend Requests</p>}
         {outgoingRequests.length ? (
           outgoingRequests.map((request: FriendAndUser) => (
             <div className="bg friend-profile" key={request.user.id}>

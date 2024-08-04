@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import MePosts from '../../components/meComponents/posts';
 import MeComments from '../../components/meComponents/comments';
 import MeCode from '../../components/meComponents/code';
@@ -21,6 +22,7 @@ interface User {
 };
 
 export default function Me(): JSX.Element {
+  const navigate = useNavigate()
   const [updateBio] = useMutation(UPDATE_BIO);
 
   const [bioValue, setBioValue] = useState<boolean>(false);
@@ -144,6 +146,7 @@ export default function Me(): JSX.Element {
               <h1>{me.firstName} {me.lastName}</h1>
               <p>@{me.username}</p>
               <button onClick={() => CookieAuth.logout()}>Logout</button>
+              <Link className='settings-link' to="/settings"><img src="../../../public/images/settings.svg" alt="Settings" height="60px" /></Link>
             </div>
             {bioValue ? (
               <div className="comment-reply">

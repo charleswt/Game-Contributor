@@ -37,15 +37,12 @@ export default function Navbar() {
             <header>
                 <ul>
                     <li className='logo'><img src="../../../public/images/GC.png" alt="Logo" height="60px" /></li>
+                    {input}
                     <li>
                         <Link className='navLinks' to="/main"><img src="../../../public/images/home.svg" alt="Home" height="60px" /></Link>
-                        
                     </li>
-                    {input}
+                    
                     <li onClick={handleMeClick}><img src="../../../public/images/user.svg" alt="Me" height="60px" /></li>
-                    <li>
-                       <Link className='navLinks' to="/settings"><img src="../../../public/images/settings.svg" alt="Settings" height="60px" /></Link>
-                    </li>
                 </ul>
             </header>
             <p className='back'></p>
