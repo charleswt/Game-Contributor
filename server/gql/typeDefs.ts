@@ -94,7 +94,7 @@ type Query {
   publishedCode(id: ID!): PublishedCode!
   users: [User]
   checkUserExists(usernameOrEmail: String): User
-  user(id: ID!): User!
+  user(id: ID!): CompanyUser
   me: CompanyUser
   companyUsers: [User!]!
   companyUser(id: ID!): CompanyUser

@@ -239,29 +239,53 @@ const resolvers = {
         client.release();
       }
     },
-    user:  async (_: any, {id}: { id: string}): Promise<User> => {
+    user:  async (_: any, {id}: { id: string }): Promise<{user: User, company: Company | undefined }> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
         const selectUserText = 'SELECT * FROM "user" WHERE id = $1';
         const selectUserValues = [id];
 
-        const result = await client.query(selectUserText, selectUserValues);
+        const userResult = await client.query(selectUserText, selectUserValues).catch((error)=>{
+          throw error
+        })
 
-        await client.query("COMMIT");
+        if (userResult.rows.length === 0) {
+          throw new Error('User not found');
+        }
+
+        const userRow = userResult.rows[0];
 
         const user: User = {
-          id: result.rows[0].id,
-          bio: result.rows[0].bio,
-          profileImage: result.rows[0].profile_image,
-          firstName: result.rows[0].first_name,
-          lastName: result.rows[0].last_name,
-          username: result.rows[0].username,
-          email: result.rows[0].email,
-          password: result.rows[0].password,
+          id: userRow.id,
+          bio: userRow.bio,
+          profileImage: userRow.profile_image,
+          firstName: userRow.first_name,
+          lastName: userRow.last_name,
+          username: userRow.username,
+          email: userRow.email,
+          password: userRow.password,
         };
 
-        return user;
+        let company: Company | undefined;
+        
+        if (userRow.company) {
+          const selectCompanyText = 'SELECT * FROM "company" WHERE user_id = $1';
+          const companyResult = await client.query(selectCompanyText, selectUserValues);
+
+          if (companyResult.rows.length > 0) {
+            const companyRow = companyResult.rows[0];
+            company = {
+              id: companyRow.id,
+              userId: companyRow.user_id,
+              companyName: companyRow.company_name,
+            };
+          }
+        }
+
+        await client.query("COMMIT");
+        
+        return { user, company };
       } catch (error) {
         client.query("ROLLBACK");
         throw error;
