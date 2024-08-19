@@ -15,7 +15,7 @@ interface User {
   id: string;
   bio?: string;
   company?: boolean;
-  profileImage?: string;
+  profileImage: string;
   firstName: string;
   lastName: string;
   username: string;
@@ -51,8 +51,7 @@ export default function Me(): JSX.Element {
   useEffect(() => {
     if (!loading && data) {
       setMe(data.me.user);
-      console.log(data.me.user)
-    }console.log(data)
+    }
   }, [loading, data]);
 
   const calculateRows = (content: string) => {

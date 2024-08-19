@@ -14,11 +14,11 @@ interface Company {
 interface User {
   id: string;
   bio: string;
-  profilePicture?: string;
+  profileImage: string;
   firstName: string;
   lastName: string;
   username: string;
-  company: Company;
+  company?: Company;
 }
 
 export default function UserProfile() {
@@ -40,8 +40,8 @@ export default function UserProfile() {
   });
 
   useEffect(() => {
-    if (!loading && data) {
-      setUser(data.user);
+    if (!loading && data.user.user) {
+      setUser(data.user.user);
     }
   }, [loading, data]);
 
@@ -63,14 +63,18 @@ export default function UserProfile() {
 
   return (
     <main>
-      <div className="bg userProfile">
-        <h1>
-          {user.firstName} {user.lastName}
-        </h1>
-        <p>@{user.username}</p>
-
-        <h2>{user.bio}</h2>
-
+      <div className="bg myProfile">
+      <div className='user-pfp'>
+      <img src={user.profileImage || '../../../public/images/defaultPfp.png'} alt="profile picture" />
+        </div>
+        <div className='user-name'>
+            <div>
+              <h1>{user.firstName} {user.lastName}</h1>
+              <p>@{user.username}</p></div>
+              <div>
+                <div>{user.bio}</div>
+                </div>
+          </div>
         {!loading && data && JSON.stringify(CookieAuth.getTokenId()) !== user.id ? <button onClick={handleAddFriend} disabled={friendshipLoading}>
           {friendshipLoading ? 'Adding friend...' : 'Add friend'}</button>
           :""
