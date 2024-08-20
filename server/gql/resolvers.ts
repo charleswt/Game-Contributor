@@ -123,13 +123,13 @@ const resolvers = {
         client.release();
       }
     },
-    recievedCode: async (_: any, args: any, context: any): Promise<PublishedCode> => {
+    recievedCode: async (_: any, companyId: string): Promise<PublishedCode> => {
       const client = await pool.connect();
       try {
         client.query("BEGIN");
         const selectPublishedCodesText =
           'SELECT * FROM "published_code" WHERE company_id = $1;';
-        const selectPublishedCodesValues = [context.user.id];
+        const selectPublishedCodesValues = [companyId];
 
         const result = await client.query(
           selectPublishedCodesText,

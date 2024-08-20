@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_USER, GET_FRIEND } from '../../utils/queries';
-import { CREATE_FRIENDSHIP } from '../../utils/mutations';
+import { CREATE_FRIENDSHIP, CREATE_PUBLISHED_CODE } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 
 interface Company {
@@ -43,11 +43,26 @@ export default function UserProfile() {
     variables: { id },
   });
 
+  const [createPublishedCode] = useMutation(CREATE_PUBLISHED_CODE);
+  const [codeLink, setCodeLink] = useState('');
+  const [codeSent, setCodeSent] = useState(false);
+
   useEffect(() => {
     if (!loading && data && data.user) {
       setUser({ user: data.user.user, company: data.user.company });
     }
   }, [loading, data]);
+
+  const handlePublishCode = async (userId: string, companyId: string, code: string) => {
+    try {
+      await createPublishedCode({
+        variables: { userId, companyId, code },
+      });
+      setCodeSent(true);
+    } catch (error) {
+      console.error('Error publishing code:', error);
+    }
+  };
 
   const handleAddFriend = () => {
     if (user && user.user.id) {
@@ -66,17 +81,17 @@ export default function UserProfile() {
   }
 
   const { user: userData, company: companyData } = user;
-  
+
   return (
     <main>
       <div className="bg myProfile">
-        <div className='user-pfp'>
+        <div className="user-pfp">
           <img
             src={userData.profileImage || '../../../public/images/defaultPfp.png'}
             alt="profile picture"
           />
         </div>
-        <div className='user-name'>
+        <div className="user-name">
           <div>
             <h1>{userData.firstName} {userData.lastName}</h1>
             <p>@{userData.username}</p>
@@ -90,11 +105,34 @@ export default function UserProfile() {
             {friendshipLoading ? 'Adding friend...' : 'Add friend'}
           </button>
         )}
-        
 
         {error && <div>Error adding friend. Please try again later.</div>}
       </div>
-      {companyData && <div className='bg'>{companyData.companyName}</div>}
+
+      {companyData && (
+        <>
+          <div className="bg">{companyData.companyName}</div>
+          {codeSent && <div>Code sent successfully!</div>}
+          <div className="bg">
+            <h2>Share code to contribute towards company code bases and earn stars if your code is approved for use!</h2>
+            <textarea 
+              placeholder="Link to code here..."
+              name="codeLink"
+              rows={1}
+              cols={35}
+              id={userData.id}
+              value={codeLink}
+              onChange={(e) => setCodeLink(e.target.value)}
+            />
+            <button
+              onClick={() => handlePublishCode(userData.id, companyData.id, codeLink)}
+              disabled={!codeLink.trim()}
+            >
+              Submit Code
+            </button>
+          </div>
+        </>
+      )}
     </main>
   );
 }

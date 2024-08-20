@@ -90,7 +90,7 @@ type Cloudinary {
 type Query {
   cloudinaryCreds: Cloudinary
   publishedCodes: [PublishedCode!]
-  recievedCode: [PublishedCode!]
+  recievedCode(companyId: String!): [PublishedCode!]
   publishedCode(id: ID!): PublishedCode!
   users: [User]
   checkUserExists(usernameOrEmail: String): User
