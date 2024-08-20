@@ -10,8 +10,8 @@ query cloudinaryCreds {
 `;
 
 export const GET_PUBLISHED_CODES = gql`
-query publishedCodes {
-    publishedCodes {
+query publishedCodesByCompany($companyId: String!) {
+    publishedCodesByCompany(companyId: $companyId) {
         id
         userId
         companyId
@@ -20,6 +20,18 @@ query publishedCodes {
         firstName
         lastName
         username
+    }
+}
+`;
+
+export const GET_RECIEVED_CODE = gql`
+query recievedCode {
+    recievedCode {
+        id
+        userId
+        companyId
+        code
+        createdAt
     }
 }
 `;

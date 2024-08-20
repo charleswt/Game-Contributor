@@ -91,7 +91,7 @@ const resolvers = {
     cloudinaryCreds: async (_: any): Promise<Cloudinary> => {
       return { name: process.env.CLOUD_NAME, key: process.env.CLOUD_API_KEY } as Cloudinary;
     },
-    publishedCodes: async (_: any, args: any, context: any): Promise<PublishedCode[]> => {
+    publishedCodesByCompany: async (_: any, companyId: string, args: any, context: any): Promise<PublishedCode[]> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -99,9 +99,9 @@ const resolvers = {
           SELECT pc.*, u.first_name, u.last_name, u.username
           FROM "published_code" pc
           JOIN "user" u ON pc.user_id = u.id
-          WHERE pc.user_id = $1
+          WHERE pc.user_id = $1 AND pc.company_id = $2
         `;
-        const selectPublishedCodesValues = [context.user.id];
+        const selectPublishedCodesValues = [context.user.id, companyId];
     
         const result = await client.query(selectPublishedCodesText, selectPublishedCodesValues);
         await client.query("COMMIT");
@@ -123,13 +123,13 @@ const resolvers = {
         client.release();
       }
     },
-    recievedCode: async (_: any, companyId: string): Promise<PublishedCode> => {
+    recievedCode: async (_: any, args: any, context: any): Promise<PublishedCode> => {
       const client = await pool.connect();
       try {
         client.query("BEGIN");
         const selectPublishedCodesText =
           'SELECT * FROM "published_code" WHERE company_id = $1;';
-        const selectPublishedCodesValues = [companyId];
+        const selectPublishedCodesValues = [context.user.id];
 
         const result = await client.query(
           selectPublishedCodesText,
