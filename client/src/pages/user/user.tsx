@@ -22,7 +22,7 @@ interface User {
 
 interface UserProfileData {
   user: User;
-  company: Company;
+  company?: Company;
 }
 
 export default function UserProfile() {
