@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_USER, GET_FRIEND } from '../../utils/queries';
+import { GET_USER, GET_FRIEND, GET_PUBLISHED_CODES } from '../../utils/queries';
 import { CREATE_FRIENDSHIP, CREATE_PUBLISHED_CODE } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
 
@@ -46,12 +46,25 @@ export default function UserProfile() {
   const [createPublishedCode] = useMutation(CREATE_PUBLISHED_CODE);
   const [codeLink, setCodeLink] = useState('');
   const [codeSent, setCodeSent] = useState(false);
+  
+  const { loading: loadingCode, data: codeData } = useQuery(GET_PUBLISHED_CODES, {
+    variables: { companyId: data?.user.company?.id }
+  })
+  const [allCode, setAllCode] = useState()
 
   useEffect(() => {
     if (!loading && data && data.user) {
       setUser({ user: data.user.user, company: data.user.company });
     }
   }, [loading, data]);
+
+  useEffect(() => {
+    if (!loadingCode && codeData) {
+      setAllCode(codeData.map(()=>{
+        
+      }));
+    }
+  }, [loadingCode, codeData]);
 
   const handlePublishCode = async (userId: string, companyId: string, code: string) => {
     try {
