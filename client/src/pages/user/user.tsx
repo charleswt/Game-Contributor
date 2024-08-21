@@ -25,6 +25,17 @@ interface UserProfileData {
   company?: Company;
 }
 
+interface allCode {
+  id: string;
+  userId: string;
+  companyId: string;
+  code: string;
+  createdAt: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+}
+
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
   const { loading, data } = useQuery<{ user: UserProfileData }>(GET_USER, {
@@ -50,7 +61,7 @@ export default function UserProfile() {
   const { loading: loadingCode, data: codeData } = useQuery(GET_PUBLISHED_CODES, {
     variables: { companyId: data?.user.company?.id }
   })
-  const [allCode, setAllCode] = useState()
+  const [allCode, setAllCode] = useState<allCode[]>()
 
   useEffect(() => {
     if (!loading && data && data.user) {
@@ -60,10 +71,9 @@ export default function UserProfile() {
 
   useEffect(() => {
     if (!loadingCode && codeData) {
-      setAllCode(codeData.map(()=>{
-        
-      }));
+      setAllCode(codeData.publishedCodesByCompany)
     }
+    console.log(allCode, "93")
   }, [loadingCode, codeData]);
 
   const handlePublishCode = async (userId: string, companyId: string, code: string) => {
@@ -125,6 +135,7 @@ export default function UserProfile() {
       {companyData && (
         <>
           <div className="bg">{companyData.companyName}</div>
+
           {codeSent && <div>Code sent successfully!</div>}
           <div className="bg">
             <h2>Share code to contribute towards company code bases and earn stars if your code is approved for use!</h2>
@@ -144,6 +155,27 @@ export default function UserProfile() {
               Submit Code
             </button>
           </div>
+
+          {allCode && <div>{allCode?.map((code: allCode)=>(        
+            <div key={code.id}>
+        <p>
+        <strong>Submitted by:</strong> {code.firstName} {code.lastName} (@{code.username})
+      </p>
+      <p>
+        <strong>User ID:</strong> {code.userId}
+      </p>
+      <p>
+        <strong>Company ID:</strong> {code.companyId}
+      </p>
+      <p>
+        <strong>Code Snippet:</strong> <code>{code.code}</code>
+      </p>
+      <p>
+        <strong>Submitted on:</strong> {new Date(code.createdAt).toLocaleString()}
+      </p>
+      </div>
+      ))}</div>}
+      
         </>
       )}
     </main>

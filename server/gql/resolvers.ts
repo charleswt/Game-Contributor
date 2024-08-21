@@ -91,7 +91,7 @@ const resolvers = {
     cloudinaryCreds: async (_: any): Promise<Cloudinary> => {
       return { name: process.env.CLOUD_NAME, key: process.env.CLOUD_API_KEY } as Cloudinary;
     },
-    publishedCodesByCompany: async (_: any, companyId: string, args: any, context: any): Promise<PublishedCode[]> => {
+    publishedCodesByCompany: async (_: any, {companyId}: {companyId: string}, context: any): Promise<PublishedCode[]> => {
       const client = await pool.connect();
       try {
         await client.query("BEGIN");
@@ -104,8 +104,19 @@ const resolvers = {
         const selectPublishedCodesValues = [context.user.id, companyId];
     
         const result = await client.query(selectPublishedCodesText, selectPublishedCodesValues);
+        console.log(result)
         await client.query("COMMIT");
-    
+
+    console.log(result.rows.map((row: any) => ({
+      id: row.id,
+      userId: row.user_id,
+      companyId: row.company_id,
+      code: row.code,
+      createdAt: row.created_at,
+      firstName: row.first_name,
+      lastName: row.last_name,
+      username: row.username
+    })))
         return result.rows.map((row: any) => ({
           id: row.id,
           userId: row.user_id,
