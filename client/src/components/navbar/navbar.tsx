@@ -14,7 +14,7 @@ export default function Navbar() {
             if (window.innerWidth > 850) {
                 setInput(<input type="text"/>);
             } else {
-                setInput(<div className='searchSmall'></div>);
+                setInput(<div className='searchSmall' onClick={()=>navigate('/serach')}></div>);
             }
         };
 

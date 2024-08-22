@@ -11,6 +11,7 @@ import Login from './pages/login/login';
 import Signup from './pages/signup/signup';
 import User from './pages/user/user';
 import Settings from './pages/settings/Settings';
+import Search from './pages/search/search';
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: 'user/:id',
         element: <User />
+      },
+      {
+        path: 'search',
+        element: <Search />
       },
     ]
   }

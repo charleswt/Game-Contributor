@@ -2,14 +2,14 @@ header {
     z-index: 1000;
     position: fixed;
     top: 0;
-    height: fit-content;
-    max-height: 10vh;
+    height: min-content;
     background-color: rgb(191, 204, 195);
     width: 100%;
     color: rgb(255, 255, 169);
     display: flex;
     margin: auto;
     ul {
+        height: 100%;
         max-width: 1250px;
         width: 100%;
         margin: auto;
@@ -44,7 +44,6 @@ header {
             border-radius: 2rem;
         }  
         .searchSmall {
-            position: absolute;
             left: 75px;
             height: 60px;
             width: 60px;

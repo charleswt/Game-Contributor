@@ -4,6 +4,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { GET_USER, GET_FRIEND, GET_PUBLISHED_CODES } from '../../utils/queries';
 import { CREATE_FRIENDSHIP, CREATE_PUBLISHED_CODE } from '../../utils/mutations';
 import CookieAuth from '../../utils/auth';
+import { formatDate } from "../../utils/utils"
 
 interface Company {
   id: string;
@@ -156,7 +157,7 @@ export default function UserProfile() {
             </button>
           </div>
 
-          {allCode && <div>{allCode?.map((code: allCode)=>(        
+          {allCode && <div className='bg'>{allCode?.map((code: allCode)=>(        
             <div key={code.id}>
         <p>
         <strong>Submitted by:</strong> {code.firstName} {code.lastName} (@{code.username})
@@ -171,11 +172,11 @@ export default function UserProfile() {
         <strong>Code Snippet:</strong> <code>{code.code}</code>
       </p>
       <p>
-        <strong>Submitted on:</strong> {new Date(code.createdAt).toLocaleString()}
+        <strong>Submitted on:</strong> {formatDate(code.createdAt)}
       </p>
       </div>
       ))}</div>}
-      
+
         </>
       )}
     </main>
