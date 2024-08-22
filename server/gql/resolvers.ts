@@ -907,6 +907,19 @@ const resolvers = {
         client.release();
       }
     },
+    search: async (_: any, {searchInput}: {searchInput: string}) =>{
+      const client = await pool.connect()
+      try{
+        client.query("BEGIN")
+
+        client.query("COMMIT")
+      } catch(error){
+        client.query("ROLLBACK")
+
+      } finally {
+        client.release();
+      }
+    }
   },
   Mutation: {
     createUser: async (_: any, input: CreateUserParams): Promise<Auth> => {

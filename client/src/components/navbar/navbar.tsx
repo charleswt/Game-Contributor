@@ -12,9 +12,12 @@ export default function Navbar() {
     useEffect(() => {
         const updateInput = () => {
             if (window.innerWidth > 850) {
-                setInput(<input type="text"/>);
+                setInput(<input type="text"
+                    value={""}
+                    onChange={()=>console.log("changed")}
+                />);
             } else {
-                setInput(<div className='searchSmall' onClick={()=>navigate('/serach')}></div>);
+                setInput(<div className='searchSmall' onClick={()=>navigate(`/search/${""}`)}></div>);
             }
         };
 
@@ -32,12 +35,16 @@ export default function Navbar() {
         }
     };
 
+    const searchChange = ()=>{
+        return;
+    }
+
     return (
         <>
             <header>
                 <ul>
                     <li className='logo'><img src="../../../public/images/GC.png" alt="Logo" height="60px" /></li>
-                    {input}
+                    {/* search element */} {input} 
                     <li>
                         <Link className='navLinks' to="/main"><img src="../../../public/images/home.svg" alt="Home" height="60px" /></Link>
                     </li>
@@ -46,6 +53,10 @@ export default function Navbar() {
                 </ul>
             </header>
             <p className='back'></p>
+            {/* Search Result modal */}
+            {true && <div>
+                <p>Search Results</p>
+                </div>}
         </>
     );
 }
