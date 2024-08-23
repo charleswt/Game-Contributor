@@ -87,6 +87,22 @@ type Cloudinary {
   key: String
 }
 
+type UserCompany {
+  id: String!
+  bio: String
+  profileImage: String!
+  firstName: String!
+  lastName: String!
+  username: String!
+  companyName: String!
+}
+
+type SearchQuery {
+  nameResponse: [User]
+  usernameResponse: [User]
+  companyResponse: [UserCompany]
+}
+
 type Query {
   cloudinaryCreds: Cloudinary
   publishedCodesByCompany(companyId: String!): [PublishedCode!]
@@ -109,6 +125,7 @@ type Query {
   friend(id: ID!): FriendAndUser
   friendRequestsIncoming: [FriendAndUser]
   friendRequestsOutgoing: [FriendAndUser]
+  search(serachInput: String): SearchQuery
 }
 
 type Mutation {

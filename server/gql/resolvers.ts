@@ -2,6 +2,8 @@ import { packToken, comparePasswordHash, hashPassword } from "../utils/auth";
 import "dotenv/config"
 import pool from "../config/connect";
 
+
+
 interface CreateUserParams {
   firstName: string;
   lastName: string;
@@ -26,6 +28,22 @@ interface Company {
   id?: string;
   companyName: string;
   userId: string;
+}
+
+interface UserCompany {
+  id: string;
+  bio?: string;
+  profileImage: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  companyName: string;
+}
+
+interface SearchQuery {
+  nameResponse?: User|undefined;
+  usernameResponse?: User|undefined;
+  companyResponse?: UserCompany|undefined;
 }
 
 interface Post {
@@ -907,15 +925,86 @@ const resolvers = {
         client.release();
       }
     },
-    search: async (_: any, {searchInput}: {searchInput: string}) =>{
-      const client = await pool.connect()
-      try{
-        client.query("BEGIN")
+    search: async (_: any, { searchInput }: { searchInput: string }): Promise<SearchQuery> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+    
+        let nameResponse: User | User[] | undefined;
+        let usernameResponse: User | User[] | undefined;
+        let companyResponse: UserCompany | UserCompany[] | undefined;
+    
+        const searchInputArr = searchInput.split(" ");
+    
+        if (searchInputArr.length > 1) {
+          // Search by first and last name
+          const nameQueryString = `SELECT * FROM "user" WHERE first_name = $1 AND last_name = $2`;
+          const nameRes = await client.query(nameQueryString, searchInputArr);
+          nameResponse = nameRes.rows.map((row: any) => ({
+            id: row.user_id,
+            username: row.username,
+            email: row.email,
+            profileImage: row.profile_image,
+            firstName: row.first_name,
+            lastName: row.last_name,
+          }));
+        } else {
+          // Search by username
+          const usernameQueryString = `SELECT * FROM "user" WHERE username = $1`;
+          const usernameRes = await client.query(usernameQueryString, [searchInput]);
+          usernameResponse = usernameRes.rows.map((row: any) => ({
+            id: row.user_id,
+            username: row.username,
+            email: row.email,
+            profileImage: row.profile_image,
+            firstName: row.first_name,
+            lastName: row.last_name,
+          }));
+          
+          // Search by company name
+          const companyQueryString = `
+            SELECT
+              c.*,
+              u.id as user_id,
+              u.username,
+              u.email,
+              u.profile_image,
+              u.first_name,
+              u.last_name
+            FROM
+              "company" c
+            JOIN "user" u
+            ON 
+              c.user_id = u.id
+            WHERE
+              c.company_name = $1
+          `;
 
-        client.query("COMMIT")
-      } catch(error){
-        client.query("ROLLBACK")
-
+          // id: string;
+          // bio?: string;
+          // profileImage: string;
+          // firstName: string;
+          // lastName: string;
+          // username: string;
+          // companyName: string;
+          const companyRes = await client.query(companyQueryString, [searchInput]);
+          companyResponse = companyRes.rows.map((row: any) => ({
+            id: row.id,
+            bio: row.bio,
+            profileImage: row.profile_image,
+            username: row.username,
+            firstName: row.first_name,
+            lastName: row.last_name,
+            companyName: row.company_name,
+          }));
+        }
+    
+        await client.query("COMMIT");
+    
+        return { nameResponse, usernameResponse, companyResponse } as SearchQuery;
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error; // Ensure you handle this error in your calling function
       } finally {
         client.release();
       }
