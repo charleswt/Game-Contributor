@@ -125,7 +125,7 @@ type Query {
   friend(id: ID!): FriendAndUser
   friendRequestsIncoming: [FriendAndUser]
   friendRequestsOutgoing: [FriendAndUser]
-  search(serachInput: String): SearchQuery
+  search(searchInput: String): SearchQuery
 }
 
 type Mutation {
