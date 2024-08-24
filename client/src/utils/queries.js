@@ -329,3 +329,32 @@ export const GET_FRIEND_REQUESTS_OUTGOING = gql`
     }
   }
 `;
+
+export const SEARCH_RESULTS = gql`
+  query Search($searchInput: String!) {
+    search(searchInput: $searchInput) {
+      nameResponse {
+        id
+        firstName
+        lastName
+        username
+        profileImage
+      }
+      usernameResponse {
+        id
+        firstName
+        lastName
+        username
+        profileImage
+      }
+      companyResponse {
+        id
+        firstName
+        lastName
+        username
+        companyName
+        profileImage
+      }
+    }
+  }
+`;

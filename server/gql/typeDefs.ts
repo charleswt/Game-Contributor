@@ -7,8 +7,8 @@ type User {
   firstName: String!
   lastName: String!
   username: String!
-  email: String!
-  password: String!
+  email: String
+  password: String
 }
 
 type FriendAndUser {
@@ -39,8 +39,8 @@ type Post {
 
 type Comment {
   id: ID!
-  postId: ID!
-  userId: ID!
+  postId: ID
+  userId: ID
   content: String!
   createdAt: String!
   user: User

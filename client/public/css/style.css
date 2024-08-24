@@ -106,7 +106,8 @@ header ul li .navLinks {
 header ul li .navLinks:visited {
   color: rgb(255, 255, 169);
 }
-header ul input {
+header ul textarea {
+  background-color: white;
   background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
   background-size: 13px;
   background-repeat: no-repeat;
@@ -114,7 +115,7 @@ header ul input {
   padding: 0.1rem;
   border-radius: 2rem;
 }
-header ul input:focus {
+header ul textarea:focus {
   background-image: none;
 }
 header ul .searchSmall {
@@ -125,6 +126,40 @@ header ul .searchSmall {
   background-size: 30px;
   background-repeat: no-repeat;
   background-position: 15px;
+}
+
+.searchResults {
+  background-color: rgb(233, 233, 233);
+  box-shadow: 3px 3px 7px 3px;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  z-index: 1001;
+  background-color: rgb(255, 255, 255);
+  position: fixed;
+  height: fit-content;
+  left: 0;
+  right: 0;
+  top: 9vh;
+  text-align: center;
+  margin: auto;
+}
+.searchResults:hover {
+  position: absolute;
+}
+
+.searchResult {
+  display: flex;
+  text-align: center;
+  align-items: center;
+}
+.searchResult p {
+  font-size: 1.6rem;
+}
+.searchResult img {
+  margin: 0 0.2rem;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
 }
 
 @media screen and (width <= 850px) {

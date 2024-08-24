@@ -937,11 +937,10 @@ const resolvers = {
         const searchInputArr = searchInput.split(" ");
     
         if (searchInputArr.length > 1) {
-          // Search by first and last name
           const nameQueryString = `SELECT * FROM "user" WHERE first_name = $1 AND last_name = $2`;
           const nameRes = await client.query(nameQueryString, searchInputArr);
           nameResponse = nameRes.rows.map((row: any) => ({
-            id: row.user_id,
+            id: row.id,
             username: row.username,
             email: row.email,
             profileImage: row.profile_image,
@@ -949,11 +948,10 @@ const resolvers = {
             lastName: row.last_name,
           }));
         } else {
-          // Search by username
           const usernameQueryString = `SELECT * FROM "user" WHERE username = $1`;
           const usernameRes = await client.query(usernameQueryString, [searchInput]);
           usernameResponse = usernameRes.rows.map((row: any) => ({
-            id: row.user_id,
+            id: row.id,
             username: row.username,
             email: row.email,
             profileImage: row.profile_image,
@@ -961,7 +959,6 @@ const resolvers = {
             lastName: row.last_name,
           }));
           
-          // Search by company name
           const companyQueryString = `
             SELECT
               c.*,
@@ -979,14 +976,7 @@ const resolvers = {
             WHERE
               c.company_name = $1
           `;
-
-          // id: string;
-          // bio?: string;
-          // profileImage: string;
-          // firstName: string;
-          // lastName: string;
-          // username: string;
-          // companyName: string;
+          
           const companyRes = await client.query(companyQueryString, [searchInput]);
           companyResponse = companyRes.rows.map((row: any) => ({
             id: row.id,
@@ -1004,7 +994,7 @@ const resolvers = {
         return { nameResponse, usernameResponse, companyResponse } as SearchQuery;
       } catch (error) {
         await client.query("ROLLBACK");
-        throw error; // Ensure you handle this error in your calling function
+        throw error;
       } finally {
         client.release();
       }
