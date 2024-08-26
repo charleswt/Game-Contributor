@@ -51,6 +51,9 @@ export default function Navbar() {
     useEffect(() => {
         const updateInput = () => {
             if (window.innerWidth > 850) {
+                if(window.location.href.split("/").find((search)=>search === "search")){
+                    navigate("main")
+                }
                 setInput(
                     <div style={{ position: 'relative' }}>
                         <textarea
@@ -73,6 +76,7 @@ export default function Navbar() {
                     </div>
                 );
             } else {
+                
                 setInput(
                     <div className='searchSmall' onClick={() => navigate(`/search/${searchInput}`)}></div>
                 );

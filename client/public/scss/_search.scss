@@ -1,0 +1,45 @@
+.searchFix {
+    position: fixed;
+    left: 0;right: 0;top: 0;bottom: 0;
+    margin: auto;
+    align-items: center;
+}
+
+.searchTextArea {
+    display: flex;
+    justify-content: center;
+  textarea {
+    &:focus {
+      background-image: none;
+    }
+    margin-top: 12vh;
+    background-color: white;
+    background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+    background-size: 13px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    padding: 0.1rem;
+    border-radius: 2rem;
+    width: 350px;
+    height: 2rem;
+  }
+}
+
+.searchPageResultsBg {
+    z-index: 1001;
+    position: fixed;
+    height: 100%;
+    left: 0;right: 0;top: 16vh;
+    text-align: center;
+    margin: auto;
+}
+
+.searchPageResults {
+    top: 22vh;
+}
+
+@media screen and (width <= 400px) {
+    textarea {
+        width: 10vw;
+    }
+}
