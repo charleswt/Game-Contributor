@@ -140,15 +140,18 @@ export default function UserProfile() {
           {codeSent && <div>Code sent successfully!</div>}
           <div className="bg">
             <h2>Share code to contribute towards company code bases and earn stars if your code is approved for use!</h2>
-            <textarea 
+            <div className='comment-reply'>
+              <textarea 
               placeholder="Link to code here..."
               name="codeLink"
-              rows={1}
+              rows={2}
               cols={35}
+              maxLength={35}
               id={userData.id}
               value={codeLink}
+              style={{ overflow: 'hidden', resize: 'none' }}
               onChange={(e) => setCodeLink(e.target.value)}
-            />
+            /></div>
             <button
               onClick={() => handlePublishCode(userData.id, companyData.id, codeLink)}
               disabled={!codeLink.trim()}

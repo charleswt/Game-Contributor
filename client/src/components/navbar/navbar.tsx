@@ -5,7 +5,6 @@ import { useQuery } from '@apollo/client';
 import { SEARCH_RESULTS } from "../../utils/queries";
 import CookieAuth from '../../utils/auth';
 
-// Define the interfaces for the search results
 interface NameResponse {
     id: string;
     firstName: string;
@@ -53,15 +52,25 @@ export default function Navbar() {
         const updateInput = () => {
             if (window.innerWidth > 850) {
                 setInput(
-                    <textarea
-                        name="text"
-                        wrap="soft"
-                        style={{ overflow: 'hidden', resize: 'none' }}
-                        cols={32}
-                        rows={1}
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                    />
+                    <div style={{ position: 'relative' }}>
+                        <textarea
+                            name="text"
+                            wrap="soft"
+                            style={{ overflow: 'hidden', resize: 'none' }}
+                            cols={32}
+                            rows={1}
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                        />
+                        {searchInput && (
+                            <button
+                            className='escSearch'
+                                onClick={() => setSearchInput("")}
+                            >
+                                &#x2715;
+                            </button>
+                        )}
+                    </div>
                 );
             } else {
                 setInput(
@@ -84,6 +93,12 @@ export default function Navbar() {
         navigate(token ? '/me' : '/login');
     };
 
+    const handleSearchResultsBgClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            setSearchInput("");
+        }
+    };
+
     return (
         <>
             <header>
@@ -102,47 +117,49 @@ export default function Navbar() {
             </header>
             <p className='back'></p>
             {searchInput && (
-                <div className='searchResults'>
-                    <p>Search Results</p>
-                    {resultsData?.search?.nameResponse && (
-                        <div className=''>
-                            <h3>Name Response</h3>
-                            {resultsData.search.nameResponse.map((user: NameResponse) => (
-                                <div className='searchResult' key={user.id}>
-                                    <img src={user.profileImage} alt={`${user.username}'s profile`}/>
-                                    <p>{user.firstName} {user.lastName} ({user.username})</p>
-                                    
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {resultsData?.search?.usernameResponse && (
-                        <div className=''>
-                            <h3>Username Response</h3>
-                            {resultsData.search.usernameResponse.map((user: UsernameResponse) => (
-                                <div className='searchResult' key={user.id}>
-                                    <img src={user.profileImage} alt={`${user.username}'s profile`}/>
-                                    <p>{user.firstName} {user.lastName} ({user.username})</p>
-                                    
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {resultsData?.search?.companyResponse && (
-                        <div className=''>
-                            <h3>Company Response</h3>
-                            {resultsData.search.companyResponse.map((user: CompanyResponse) => (
-                                <div className='searchResult' key={user.id}>
-                                    <img src={user.profileImage} alt={`${user.username}'s profile`}/>
-                                    <p>{user.firstName} {user.lastName} ({user.companyName})</p>
-                                    
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {(!resultsData?.search?.nameResponse && !resultsData?.search?.usernameResponse && !resultsData?.search?.companyResponse) && (
-                        <p>No results found</p>
-                    )}
+                <div className='searchResultsBg' onClick={handleSearchResultsBgClick}>
+                    <div className='searchResults' onClick={(e) => e.stopPropagation()}>
+                        <p>Search Results</p>
+                        {resultsData?.search?.nameResponse && (
+                            <div className=''>
+                                {resultsData?.search?.nameResponse.length >= 1 && <h3>Name Response</h3>}
+                                {resultsData.search.nameResponse.map((user: NameResponse) => (
+                                    <div className='searchResult' key={user.id}>
+                                        <img src={user.profileImage} alt={`${user.username}'s profile`} />
+                                        <p>{user.firstName} {user.lastName}</p>
+                                        <p style={{color: "purple"}} onClick={()=>{navigate(`/user/${user.id}`); setSearchInput("")}}> @{user.username}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {resultsData?.search?.usernameResponse && (
+                            <div className=''>
+                                {resultsData?.search?.usernameResponse.length >= 1 && <h3>Username Response</h3>}
+                                {resultsData.search.usernameResponse.map((user: UsernameResponse) => (
+                                    <div className='searchResult' key={user.id}>
+                                        <img src={user.profileImage} alt={`${user.username}'s profile`} />
+                                        <p>{user.firstName} {user.lastName}</p>
+                                        <p style={{color: "purple"}} onClick={()=>{navigate(`/user/${user.id}`); setSearchInput("")}}>@{user.username}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {resultsData?.search?.companyResponse && (
+                            <div className=''>
+                                {resultsData?.search?.companyResponse.length >= 1 && <h3>Company Response</h3>}
+                                {resultsData.search.companyResponse.map((user: CompanyResponse) => (
+                                    <div className='searchResult' key={user.id}>
+                                        <img src={user.profileImage} alt={`${user.username}'s profile`} />
+                                        <p>{user.firstName} {user.lastName}</p>
+                                        <p style={{color: "purple"}} onClick={()=>{navigate(`/user/${user.id}`); setSearchInput("")}}> @{user.username}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {(!resultsData?.search?.nameResponse && !resultsData?.search?.usernameResponse && !resultsData?.search?.companyResponse) && (
+                            <p>No results found</p>
+                        )}
+                    </div>
                 </div>
             )}
         </>
