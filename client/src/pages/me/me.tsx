@@ -21,6 +21,12 @@ interface User {
   username: string;
 };
 
+interface Company {
+  id?: string;
+  companyName: string;
+  userId: string;
+};
+
 export default function Me(): JSX.Element {
   const navigate = useNavigate()
   const [updateBio] = useMutation(UPDATE_BIO);
@@ -29,7 +35,7 @@ export default function Me(): JSX.Element {
   const [updateUserPfp] = useMutation(UPDATE_USER_PFP);
   const { loading: cloudinaryLoading, data: cloudinaryData } = useQuery(GET_CLOUDINARY);
   const { loading, data } = useQuery(GET_ME);
-  const [me, setMe] = useState<User | null>(null);
+  const [me, setMe] = useState<{user: User, company?: Company} | null>(null);
   const [createPost] = useMutation(CREATE_POST);
   const [postContent, setPostContent] = useState<string>('');
   const [showCreatePostPanel, setShowCreatePostPanel] = useState<boolean>(false);
@@ -50,7 +56,7 @@ export default function Me(): JSX.Element {
 
   useEffect(() => {
     if (!loading && data) {
-      setMe(data.me.user);
+      setMe({user: data.me.user, company: data.me.company || null});
     }
   }, [loading, data]);
 
@@ -84,7 +90,7 @@ export default function Me(): JSX.Element {
     try {
       const { data } = await updateBio({ variables: { bio } });
       if (data && me) {
-        setMe({ ...me, bio });
+        setMe({ user: {...me.user, bio}, company: me.company });
         setEditBio('');
         setBioValue(false);
       }
@@ -109,7 +115,7 @@ export default function Me(): JSX.Element {
       const result = await response.json();
       await updateUserPfp({ variables: { pfp: result.secure_url } });
       if (me) {
-        setMe({ ...me, profileImage: result.secure_url });
+        setMe({ user: {...me.user, profileImage: result.secure_url } });
       }
       setUpdatePfp(false);
     } catch (error) {
@@ -126,7 +132,7 @@ export default function Me(): JSX.Element {
       case 'Comments':
         return <MeComments />;
       case 'Code':
-        return <MeCode />;
+        return <MeCode paramCompanyId={me?.company?.id}/>;
       default:
         return null;
     }
@@ -137,13 +143,13 @@ export default function Me(): JSX.Element {
       {me ? (
         <div className='bg myProfile'>
           <div className='user-pfp'>
-            <img src={me.profileImage || '../../../public/images/defaultPfp.png'} alt="profile picture" />
+            <img src={me.user.profileImage || '../../../public/images/defaultPfp.png'} alt="profile picture" />
             {!updatePfp && <button onClick={handleShowChangePfp}>Update Photo</button>}
           </div>
           <div className='user-name'>
             <div>
-              <h1>{me.firstName} {me.lastName}</h1>
-              <p>@{me.username}</p>
+              <h1>{me.user.firstName} {me.user.lastName}</h1>
+              <p>@{me.user.username}</p>
               <button onClick={() => CookieAuth.logout()}>Logout</button>
               <Link className='settings-link' to="/settings"><img src="../../../public/images/settings.svg" alt="Settings" height="60px" /></Link>
             </div>
@@ -165,8 +171,8 @@ export default function Me(): JSX.Element {
               </div>
             ) : (
               <div>
-                <div>{me.bio}</div>
-                <button onClick={() => {setBioValue(true); setEditBio(me.bio as string)}}>Update Bio</button>
+                <div>{me.user.bio}</div>
+                <button onClick={() => {setBioValue(true); setEditBio(me.user.bio as string)}}>Update Bio</button>
               </div>
             )}
           </div>

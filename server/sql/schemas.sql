@@ -32,10 +32,12 @@ CREATE TABLE company (
 
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
+    comment_id INT,
     user_id INT,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES "user"(id)
+    FOREIGN KEY (comment_id) REFERENCES "comment"(id)
 );
 
 CREATE TABLE comments (
