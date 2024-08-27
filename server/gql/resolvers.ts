@@ -183,30 +183,29 @@ const resolvers = {
         client.release();
       }
     },
-    publishedCode: async (_: any, args: any, context: any): Promise<PublishedCode> => {
+    publishedCode: async (_: any, args: any, context: any): Promise<PublishedCode[]> => {
       const client = await pool.connect();
       try {
         client.query("BEGIN");
         const selectPublishedCodesText =
           'SELECT * FROM "published_code" WHERE user_id = $1';
-        const selectPublishedCodesValues = context.user.id;
+        const selectPublishedCodesValues = [context.user.id];
 
         const result = await client.query(
           selectPublishedCodesText,
           selectPublishedCodesValues
         );
+        console.log(result.rows)
 
         await client.query("COMMIT");
 
-        const publishedCode: PublishedCode = {
-          id: result.rows[0].id,
-          userId: result.rows[0].user_id,
-          companyId: result.rows[0].company_id,
-          code: result.rows[0].code,
-          createdAt: result.rows[0].created_at,
-        };
-
-        return publishedCode;
+        return result.rows.map((row:any)=>({
+          id: row.id,
+          userId: row.user_id,
+          companyId: row.company_id,
+          code: row.code,
+          createdAt: row.created_at
+        }))
       } catch (error) {
         client.query("ROLLBACK");
         throw error;

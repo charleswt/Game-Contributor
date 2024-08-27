@@ -1,7 +1,7 @@
 import '../../../public/css/style.css';
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_PUBLISHED_CODES } from '../../utils/queries';
+import { GET_PUBLISHED_CODE } from '../../utils/queries';
 
 interface Code {
   id: string;
@@ -9,27 +9,25 @@ interface Code {
   companyId: string;
   code: string;
   createdAt: string;
-  firstName: string;
-  lastName: string;
-  username: string;
 }
 
 export default function MeCode() {
-  const { loading: codeLoading, data: codeData } = useQuery(GET_PUBLISHED_CODES);
+  const { loading: codeLoading, data: codeData } = useQuery(GET_PUBLISHED_CODE);
   const [pubdCodes, setPubdCodes] = useState<Code[]>([]);
 
   useEffect(() => {
     if (codeData) {
-      setPubdCodes(codeData.publishedCodes)
-      
+      setPubdCodes(codeData.publishedCode);
+      console.log(codeData)
     }
-  }, [codeData]);
+  }, [!codeLoading, codeData]);
   if (codeLoading) {
     return <div className="loader"></div>;
   }
 
   return (
     <>
+    {pubdCodes.length > 0 && <div className='bg'>Sent Code</div>}
       {pubdCodes.length > 0 ? (
         pubdCodes.map((code: Code) => (
           <div className="bg" key={code.id}>
@@ -38,9 +36,6 @@ export default function MeCode() {
             <div>{code.companyId}</div>
             <div>{code.code}</div>
             <div>{code.createdAt}</div>
-            <div>{code.firstName}</div>
-            <div>{code.lastName}</div>
-            <div>{code.username}</div>
           </div>
         ))
       ) : (

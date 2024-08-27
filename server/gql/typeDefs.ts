@@ -60,9 +60,9 @@ type PublishedCode {
   companyId: ID!
   code: String!
   createdAt: String!
-  firstName: String!
-  lastName: String!
-  username: String!
+  firstName: String
+  lastName: String
+  username: String
 }
 
 type Friend {
@@ -107,7 +107,7 @@ type Query {
   cloudinaryCreds: Cloudinary
   publishedCodesByCompany(companyId: String!): [PublishedCode!]
   recievedCode: [PublishedCode!]
-  publishedCode(id: ID!): PublishedCode!
+  publishedCode: [PublishedCode!]
   users: [User]
   checkUserExists(usernameOrEmail: String): User
   user(id: ID!): CompanyUser
