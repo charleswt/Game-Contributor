@@ -122,19 +122,9 @@ const resolvers = {
         const selectPublishedCodesValues = [context.user.id, companyId];
     
         const result = await client.query(selectPublishedCodesText, selectPublishedCodesValues);
-        console.log(result)
+
         await client.query("COMMIT");
 
-    console.log(result.rows.map((row: any) => ({
-      id: row.id,
-      userId: row.user_id,
-      companyId: row.company_id,
-      code: row.code,
-      createdAt: row.created_at,
-      firstName: row.first_name,
-      lastName: row.last_name,
-      username: row.username
-    })))
         return result.rows.map((row: any) => ({
           id: row.id,
           userId: row.user_id,
@@ -195,7 +185,6 @@ const resolvers = {
           selectPublishedCodesText,
           selectPublishedCodesValues
         );
-        console.log(result.rows)
 
         await client.query("COMMIT");
 
@@ -242,7 +231,6 @@ const resolvers = {
     checkUserExists:  async (_: any, {usernameOrEmail}: { usernameOrEmail: string}): Promise<User> => {
       const client = await pool.connect();
       try {
-        console.log("resolvers 1")
         await client.query("BEGIN");
         const selectUserText = 'SELECT * FROM "user" WHERE email = $1 or username = $1';
         const selectUserValues = [usernameOrEmail];
@@ -258,7 +246,6 @@ const resolvers = {
           lastName: result.rows[0].last_name || "",
           username: result.rows[0].username || "",
         };
-        console.log({...user})
         return user;
       } catch (error) {
         client.query("ROLLBACK");
@@ -669,9 +656,8 @@ const resolvers = {
 
         const selectCommentsText = 'SELECT * FROM "comments" WHERE user_id = $1 ORDER BY created_at ASC;';
         const selectCommentsValues = [context.user.id];
-        console.log(selectCommentsValues)
+
         const result = await client.query(selectCommentsText, selectCommentsValues);
-        console.log(result)
 
         await client.query("COMMIT");
 
@@ -1075,9 +1061,7 @@ const resolvers = {
             RETURNING company;
           `;
           const updateUserValues = [context.user.id, true];
-          const userCompanyRes = await client.query(updateUserText, updateUserValues);
-    
-          console.log(userCompanyRes);
+          await client.query(updateUserText, updateUserValues);
         }
     
         await client.query("COMMIT");
@@ -1412,7 +1396,6 @@ const resolvers = {
         return friend;
       } catch (error: any) {
         await client.query("ROLLBACK");
-        console.error("Error creating friend:", error);
         throw new Error("Error creating friend: " + error.message);
       } finally {
         client.release();
@@ -1475,7 +1458,6 @@ const resolvers = {
           userId2: result.rows[0].user_id2,
           request: result.rows[0].request
         };
-console.log('here return')
         return friend;
       } catch (error: any) {
         await client.query("ROLLBACK");
@@ -1488,7 +1470,6 @@ console.log('here return')
       const client = await pool.connect();
 
       try {
-        console.log("Entering resolver");
 
         await client.query("BEGIN");
 
