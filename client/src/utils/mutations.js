@@ -114,6 +114,21 @@ export const CREATE_PUBLISHED_CODE = gql`
   }
 `;
 
+export const APPROVE_CODE = gql`
+  mutation approvePublishedCode($codeId: String!) {
+    approvePublishedCode(codeId: $codeId) {
+        id
+        userId
+        inUse
+        companyId
+        code
+        createdAt
+        firstName
+        lastName
+        username
+    }
+  }
+`
 export const CREATE_FRIENDSHIP = gql`
   mutation createFriendship($id: ID!) {
     createFriendship(id: $id) {

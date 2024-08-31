@@ -139,6 +139,7 @@ type Mutation {
   updateComment(id: ID!, content: String!): Comment
   deleteComment(id: ID!): Comment
   createPublishedCode(userId: ID!, companyId: ID!, code: String!): PublishedCode
+  approvePublishedCode(codeId: String!): PublishedCode
   createFriendship(id: ID!): Friend
   acceptFriendship(id: ID!): Friend
   declineFriendship(id: ID!): Friend

@@ -1377,6 +1377,50 @@ const resolvers = {
         client.release();
       }
     },
+    approvePublishedCode: async (_: any, { codeId }: { codeId: string }): Promise<PublishedCode> => {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+
+        const insertPublishedCodeText = `
+          UPDATE "published_code"
+          SET in_use = TRUE
+          WHERE id = $1
+          RETURNING id, user_id, in_use, company_id, code, created_at;
+        `;
+
+        const result = await client.query(
+          insertPublishedCodeText,
+          [codeId]
+        );
+
+        const userResults = await client.query(
+          'SELECT first_name, last_name, username FROM "user" WHERE id = $1'
+          , [result.rows[0].user_id])
+          
+        const newPublishedCode = result.rows[0];
+
+        await client.query("COMMIT");
+
+        return {
+          id: newPublishedCode.id,
+          userId: newPublishedCode.user_id,
+          inUse: newPublishedCode.in_use,
+          companyId: newPublishedCode.company_id,
+          code: newPublishedCode.code,
+          createdAt: newPublishedCode.created_at,
+          firstName: userResults.rows[0].firstName,
+          lastName: userResults.rows[0].lastName,
+          username: userResults.rows[0].username
+        } as PublishedCode;
+
+      } catch (error: any) {
+        await client.query("ROLLBACK");
+        throw new Error("Error creating published code: " + error.message);
+      } finally {
+        client.release();
+      }
+    },
     createFriendship: async (_: any, { id }: { id: string }, context: any): Promise<Friend> => {
       const client = await pool.connect();
       try {
