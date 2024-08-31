@@ -77,12 +77,13 @@ export default function UserProfile() {
     console.log(allCode, "93")
   }, [loadingCode, codeData]);
 
-  const handlePublishCode = async (userId: string, companyId: string, code: string) => {
+  const handlePublishCode = async (companyId: string, code: string) => {
     try {
       await createPublishedCode({
-        variables: { userId, companyId, code },
+        variables: { userId: CookieAuth.getTokenId(), companyId, code },
       });
       setCodeSent(true);
+      setCodeLink("")
     } catch (error) {
       console.error('Error publishing code:', error);
     }
@@ -137,23 +138,22 @@ export default function UserProfile() {
         <>
           <div className="bg">{companyData.companyName}</div>
 
-          {codeSent && <div>Code sent successfully!</div>}
+          {codeSent && <p className='bg'>Code sent successfully!</p>}
           <div className="bg">
             <h2>Share code to contribute towards company code bases and earn stars if your code is approved for use!</h2>
             <div className='comment-reply'>
               <textarea 
               placeholder="Link to code here..."
               name="codeLink"
-              rows={2}
+              rows={1}
               cols={35}
               maxLength={35}
-              id={userData.id}
               value={codeLink}
               style={{ overflow: 'hidden', resize: 'none' }}
               onChange={(e) => setCodeLink(e.target.value)}
             /></div>
             <button
-              onClick={() => handlePublishCode(userData.id, companyData.id, codeLink)}
+              onClick={() => handlePublishCode(companyData.id, codeLink)}
               disabled={!codeLink.trim()}
             >
               Submit Code

@@ -37,13 +37,13 @@ CREATE TABLE posts (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES "user"(id)
-    FOREIGN KEY (comment_id) REFERENCES "comment"(id)
 );
 
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     post_id INT NOT NULL,
     user_id INT NOT NULL,
+    comment_reply INT,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(id),
@@ -53,6 +53,7 @@ CREATE TABLE comments (
 CREATE TABLE published_code (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
+    in_use BOOLEAN NOT NULL DEFAULT FALSE,
     company_id INT NOT NULL,
     code TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

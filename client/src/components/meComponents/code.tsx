@@ -2,11 +2,12 @@ import "../../../public/css/style.css";
 import React, { useState, useEffect } from "react";
 import { formatDate } from "../../utils/utils";
 import { useQuery } from "@apollo/client";
-import { GET_PUBLISHED_CODE, GET_PUBLISHED_CODES } from "../../utils/queries";
+import { GET_PUBLISHED_CODE, GET_RECIEVED_CODE } from "../../utils/queries";
 
 interface Code {
   id: string;
   userId: string;
+  inUse?: string;
   companyId: string;
   code: string;
   createdAt: string;
@@ -16,10 +17,11 @@ interface Code {
 }
 
 export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
+  console.log(paramCompanyId)
   const { loading: codeLoading, data: codeData } = useQuery(GET_PUBLISHED_CODE);
   const [pubdCodes, setPubdCodes] = useState<Code[]>([]);  
   const { loading: loadingCode, data: codesData } = useQuery(
-    GET_PUBLISHED_CODES,
+    GET_RECIEVED_CODE,
     {
       variables: { companyId: paramCompanyId },
     }
@@ -29,13 +31,13 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
   useEffect(() => {
     if (codeData) {
       setPubdCodes(codeData.publishedCode);
-      console.log(codeData);
     }
   }, [!codeLoading, codeData]);
   
   useEffect(() => {
     if (!loadingCode && codesData) {
-      setAllCode(codesData.publishedCodesByCompany);
+      setAllCode(codesData.recievedCode);
+      console.log(codesData.recievedCode, "39")
     }
   }, [loadingCode, codesData]);
 
@@ -63,7 +65,7 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
               </p>
             </div>)
           )):(
-            <div>You Have No Recieved Code</div>
+            <p className="bg">No outgoing code</p>
           )}
 
       {allCode.length > 0 && <div className="bg">Recieved Code</div>}
@@ -88,7 +90,7 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
               </p>
             </div>)
           )):(
-            <div>You Have No Recieved Code</div>
+            <p className="bg">No incoming code</p>
           )}
         
       

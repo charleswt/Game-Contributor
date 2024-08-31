@@ -147,17 +147,17 @@ export default function MeFriends() {
                     </button>
                   </>
                 ) : (
-                  <p className="loader">;ojk'</p>
+                  <p className="loader"></p>
                 )}
               </div>
             );
           })
         ) : (
-          <p className="bg">No friends</p>
+          <p className="bg">No friends </p>
         )}
       </div>
       <div>
-      {incomingRequests.length >= 1 && <p className="bg">Received Friend Requests</p>}
+      {incomingRequests.length >= 1 && <p className="bg">Incoming Friend Requests</p>}
         {incomingRequests.length ? (
           incomingRequests.map((request: FriendAndUser) => (
             <div className="bg friend-profile" key={request.friend.id}>
@@ -183,7 +183,7 @@ export default function MeFriends() {
         )}
       </div>
       <div>
-        {outgoingRequests.length && <p className="bg">Sent Friend Requests</p>}
+        {outgoingRequests.length  >= 1 && <p className="bg">Outgoing Friend Requests</p>}
         {outgoingRequests.length ? (
           outgoingRequests.map((request: FriendAndUser) => (
             <div className="bg friend-profile" key={request.user.id}>

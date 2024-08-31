@@ -25,13 +25,17 @@ query publishedCodesByCompany($companyId: String!) {
 `;
 
 export const GET_RECIEVED_CODE = gql`
-query recievedCode {
-    recievedCode {
+query recievedCode($companyId: String!) {
+    recievedCode(companyId: $companyId) {
         id
         userId
+        inUse
         companyId
         code
         createdAt
+        firstName
+        lastName
+        username
     }
 }
 `;

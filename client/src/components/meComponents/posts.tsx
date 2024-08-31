@@ -77,7 +77,7 @@ export default function MePosts() {
 
   return (
     <div>
-      <p className='bg'>Your Posts</p>
+      {userPosts.length >= 1 && <p className='bg'>Your Posts</p>}
       {userPosts.length > 0 ? (
         userPosts.map((post: Post) => (
           <div className='bg' key={post.id}>
@@ -105,7 +105,7 @@ export default function MePosts() {
           </div>
         ))
       ) : (
-        <p>No Posts</p>
+        <p className='bg'>No Posts</p>
       )}
     </div>
   );

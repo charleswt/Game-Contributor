@@ -101,11 +101,10 @@ export default function Main() {
               <div className='postProfile' key={post.user.id}>
                 <p><img src={post.user.profileImage} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
-                <a onClick={() => {
+                <a onClick={() => 
                   CookieAuth.getTokenId() === JSON.parse(post.user.id)?
                   navigate("/me"):
-                  handleNavigateToUserProfile(post.user.id);
-                  console.log(CookieAuth.getTokenId(), JSON.parse(post.user.id))}} >
+                  handleNavigateToUserProfile(post.user.id)} >
                   @{post.user.username}
                 </a>
               </div>
@@ -119,8 +118,7 @@ export default function Main() {
                     <div>
                       <img src={comment.user.profileImage}/>
                     <p>{comment.user.firstName} {comment.user.lastName}</p>
-                    <a onClick={() => {CookieAuth.getTokenId() === JSON.parse(comment.user.id)?navigate("/me"):handleNavigateToUserProfile(comment.user.id);
-                      console.log(CookieAuth.getTokenId(),comment.user.id)}}>
+                    <a onClick={() => CookieAuth.getTokenId() === JSON.parse(comment.user.id)?navigate("/me"):handleNavigateToUserProfile(comment.user.id)}>
                       @{comment.user.username}</a>
                     </div>
                     

@@ -57,6 +57,7 @@ type PostWithUser {
 type PublishedCode {
   id: ID!
   userId: ID!
+  inUse: String
   companyId: ID!
   code: String!
   createdAt: String!
@@ -105,8 +106,8 @@ type SearchQuery {
 
 type Query {
   cloudinaryCreds: Cloudinary
-  publishedCodesByCompany(companyId: String!): [PublishedCode!]
-  recievedCode: [PublishedCode!]
+  publishedCodesByCompany(companyId: String!): [PublishedCode]
+  recievedCode(companyId: String!): [PublishedCode]
   publishedCode: [PublishedCode!]
   users: [User]
   checkUserExists(usernameOrEmail: String): User

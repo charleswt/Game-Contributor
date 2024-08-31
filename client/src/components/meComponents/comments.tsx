@@ -82,7 +82,7 @@ export default function MeComments() {
 
   return (
     <div>
-      <p className='bg'>Your Comments</p>
+      {comments.length >= 1 && <p className='bg'>Your Comments</p>}
       {comments.length > 0 ? (
         comments.map((comment: Comment) => (
           <div className='bg' key={comment.id}>
@@ -113,7 +113,7 @@ export default function MeComments() {
           </div>
         ))
       ) : (
-        <p>No Comments</p>
+        <p className='bg'>No comments</p>
       )}
     </div>
   );

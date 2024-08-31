@@ -77,6 +77,7 @@ interface Comment {
 interface PublishedCode {
   id: string;
   userId: string;
+  inUse?: boolean;
   companyId: string;
   code: string;
   createdAt: string;
@@ -142,30 +143,36 @@ const resolvers = {
         client.release();
       }
     },
-    recievedCode: async (_: any, args: any, context: any): Promise<PublishedCode> => {
+    recievedCode: async (_: any, { companyId }: { companyId: string }): Promise<PublishedCode[]> => {
       const client = await pool.connect();
       try {
         client.query("BEGIN");
-        const selectPublishedCodesText =
-          'SELECT * FROM "published_code" WHERE company_id = $1;';
-        const selectPublishedCodesValues = [context.user.id];
-
+        const selectPublishedCodesText = `
+          SELECT pc.*, u.first_name, u.last_name, u.username
+          FROM "published_code" pc
+          JOIN "user" u ON pc.user_id = u.id
+          WHERE pc.in_use = FALSE AND pc.company_id = $1
+`;
         const result = await client.query(
           selectPublishedCodesText,
-          selectPublishedCodesValues
-        );
-
+          [companyId]
+        ).catch((err)=>{
+          throw err
+        })
+        console.log(result)
         await client.query("COMMIT");
 
-        const publishedCode: PublishedCode = {
-          id: result.rows[0].id,
-          userId: result.rows[0].user_id,
-          companyId: result.rows[0].company_id,
-          code: result.rows[0].code,
-          createdAt: result.rows[0].created_at,
-        };
-
-        return publishedCode;
+        return result.rows.map((row: any) => ({
+          id: row.id,
+          userId: row.user_id,
+          inUse: row.in_use,
+          companyId: row.company_id,
+          code: row.code,
+          createdAt: row.created_at,
+          firstName: row.first_name,
+          lastName: row.last_name,
+          username: row.username
+        }));
       } catch (error) {
         client.query("ROLLBACK");
         throw error;
@@ -185,12 +192,14 @@ const resolvers = {
           selectPublishedCodesText,
           selectPublishedCodesValues
         );
+        console.log(context.user.id)
 
         await client.query("COMMIT");
 
         return result.rows.map((row:any)=>({
           id: row.id,
           userId: row.user_id,
+          inUse: row.in_use,
           companyId: row.company_id,
           code: row.code,
           createdAt: row.created_at
@@ -1334,7 +1343,7 @@ const resolvers = {
         const insertPublishedCodeText = `
           INSERT INTO "published_code" (user_id, company_id, code)
           VALUES ($1, $2, $3)
-          RETURNING id, user_id, company_id, code, created_at;
+          RETURNING id, user_id, in_use, company_id, code, created_at;
         `;
 
         const insertPublishedCodeValues = [
@@ -1354,6 +1363,7 @@ const resolvers = {
         const publishedCode: PublishedCode = {
           id: newPublishedCode.id,
           userId: newPublishedCode.user_id,
+          inUse: newPublishedCode.in_use,
           companyId: newPublishedCode.company_id,
           code: newPublishedCode.code,
           createdAt: newPublishedCode.created_at
