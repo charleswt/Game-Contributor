@@ -109,6 +109,7 @@ type Query {
   publishedCodesByCompany(companyId: String!): [PublishedCode]
   recievedCode(companyId: String!): [PublishedCode]
   publishedCode: [PublishedCode!]
+  approvedCodeByCompany(companyId: String!): [PublishedCode]
   users: [User]
   checkUserExists(usernameOrEmail: String): User
   user(id: ID!): CompanyUser

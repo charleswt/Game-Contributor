@@ -151,7 +151,7 @@ const resolvers = {
           SELECT pc.*, u.first_name, u.last_name, u.username
           FROM "published_code" pc
           JOIN "user" u ON pc.user_id = u.id
-          WHERE pc.in_use = FALSE AND pc.company_id = $1
+          WHERE pc.company_id = $1
 `;
         const result = await client.query(
           selectPublishedCodesText,

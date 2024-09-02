@@ -80,10 +80,6 @@ export default function Main() {
     }
   };
 
-  const handleNavigateToUserProfile = (userId: string) => {
-    navigate(`/user/${userId}`);
-  };
-
   const handleViewMoreComments = (postId: string) => {
     setCommentsToShow({
       ...commentsToShow,
@@ -104,7 +100,7 @@ export default function Main() {
                 <a onClick={() => 
                   CookieAuth.getTokenId() === JSON.parse(post.user.id)?
                   navigate("/me"):
-                  handleNavigateToUserProfile(post.user.id)} >
+                  navigate(`/user/${post.user.id}`)} >
                   @{post.user.username}
                 </a>
               </div>
@@ -118,7 +114,9 @@ export default function Main() {
                     <div>
                       <img src={comment.user.profileImage}/>
                     <p>{comment.user.firstName} {comment.user.lastName}</p>
-                    <a onClick={() => CookieAuth.getTokenId() === JSON.parse(comment.user.id)?navigate("/me"):handleNavigateToUserProfile(comment.user.id)}>
+                    <a onClick={() => CookieAuth.getTokenId() === JSON.parse(comment.user.id)?
+                      navigate("/me"):
+                      navigate(`/user/${comment.user.id}`)}>
                       @{comment.user.username}</a>
                     </div>
                     

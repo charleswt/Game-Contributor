@@ -61,6 +61,17 @@ export default function Search() {
     }
   };
 
+  function handleSearchNavigateMe(){
+    navigate("/me");
+    setSearchInput("");
+  }
+
+  
+  function handleSearchNavigate(userId: string){
+    navigate(`/user/${userId}`);
+    setSearchInput("");
+  }
+
   return (
     <div className="searchFix">
       <div className="searchTextArea">
@@ -100,10 +111,11 @@ export default function Search() {
                     </p>
                     <p
                       style={{ color: "purple" }}
-                      onClick={() => {
-                        navigate(`/user/${user.id}`);
-                        setSearchInput("");
-                      }}
+                      onClick={() =>
+                        CookieAuth.getTokenId() === JSON.parse(user.id)
+                          ? handleSearchNavigateMe()
+                          : handleSearchNavigate(user.id)
+                      }
                     >
                       {" "}
                       @{user.username}
@@ -129,10 +141,11 @@ export default function Search() {
                       </p>
                       <p
                         style={{ color: "purple" }}
-                        onClick={() => {
-                          navigate(`/user/${user.id}`);
-                          setSearchInput("");
-                        }}
+                        onClick={() =>
+                          CookieAuth.getTokenId() === JSON.parse(user.id)
+                            ? handleSearchNavigateMe()
+                            : handleSearchNavigate(user.id)
+                        }
                       >
                         @{user.username}
                       </p>
@@ -158,10 +171,11 @@ export default function Search() {
                       </p>
                       <p
                         style={{ color: "purple" }}
-                        onClick={() => {
-                          navigate(`/user/${user.id}`);
-                          setSearchInput("");
-                        }}
+                        onClick={() =>
+                          CookieAuth.getTokenId() === JSON.parse(user.id)
+                            ? handleSearchNavigateMe()
+                            : handleSearchNavigate(user.id)
+                        }
                       >
                         {" "}
                         @{user.username}

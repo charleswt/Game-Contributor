@@ -160,8 +160,8 @@ export default function UserProfile() {
             </button>
           </div>
 
-          {allCode && <div className='bg'>{allCode?.map((code: allCode)=>(        
-            <div key={code.id}>
+          {allCode?.map((code: allCode)=>(        
+            <div className='bg' key={code.id}>
         <p>
         <strong>Submitted by:</strong> {code.firstName} {code.lastName} (@{code.username})
       </p>
@@ -178,7 +178,7 @@ export default function UserProfile() {
         <strong>Submitted on:</strong> {formatDate(code.createdAt)}
       </p>
       </div>
-      ))}</div>}
+      ))}
 
         </>
       )}
