@@ -7,7 +7,7 @@
     "scripts": {
         "gulp": "cd ./client && npm run gulp",
         "start:dev": "concurrently \"cd server && npm run start:dev\" \"cd client && npm run start\"",
-        "start": "npm run build && cd server && node server.ts",
+        "start": "concurrently \"cd server && npm run start\" \"cd client && npm run start\"",
         "server": "cd server && npm run server",
         "client": "cd client && npm run start",
         "install": "npm run install:server && npm run install:client",
