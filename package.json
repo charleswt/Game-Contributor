@@ -12,7 +12,7 @@
         "client": "cd client && npm run start",
         "install:all": "npm run install && npm run install:server && npm run install:client",
         "install:server": "cd server && npm run install",
-        "install:client": "cd client && npm run install",
+        "install:client": "cd ../client && npm run install",
         "seed": "cd server && npm run seed"
     },
     "dependencies": {
