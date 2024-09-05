@@ -9,7 +9,7 @@
         "start:dev": "nodemon server.ts --ignore client",
         "watch": "nodemon",
         "seed": "ts-node ./sql/seed.ts",
-        "install": "npm i"
+        "server:install": "npm install"
     },
     "dependencies": {
         "@apollo/server": "^4.7.1",

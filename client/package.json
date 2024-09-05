@@ -37,7 +37,7 @@
     "build": "vite build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "install": "npm i"
+    "cli:install": "npm install"
   },
   "eslintConfig": {
     "extends": [

@@ -10,7 +10,7 @@
         "start": "concurrently \"cd server && npm run start\" \"cd client && npm run start\"",
         "server": "cd server && npm run server",
         "client": "cd client && npm run start",
-        "install:all": "concurrently \"cd server && npm run install\" \"cd client && npm run install\"",
+        "install:all": "concurrently \"cd server && npm run server:install\" \"cd client && npm run cli:install\"",
         "root": "npm install",
         "seed": "cd server && npm run seed"
     },
