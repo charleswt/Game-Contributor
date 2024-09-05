@@ -8,7 +8,8 @@
         "start": "node server.ts",
         "start:dev": "nodemon server.ts --ignore client",
         "watch": "nodemon",
-        "seed": "ts-node ./sql/seed.ts"
+        "seed": "ts-node ./sql/seed.ts",
+        "install": "npm i"
     },
     "dependencies": {
         "@apollo/server": "^4.7.1",
