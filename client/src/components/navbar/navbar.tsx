@@ -57,7 +57,7 @@ export default function Navbar() {
         if (
           window.location.href.split("/").find((search) => search === "search")
         ) {
-          navigate("main");
+          navigate("/");
         }
         setInput(
           <div style={{ position: "relative" }}>
@@ -126,7 +126,7 @@ export default function Navbar() {
             <img src="/images/GC.png" alt="Logo" height="60px" />
           </li>
           {input}
-          <li onClick={() => navigate("/main")}>
+          <li onClick={() => navigate("/")}>
             <img src="/images/home.svg" alt="Home" height="60px" />
           </li>
           <li onClick={handleMeClick}>
