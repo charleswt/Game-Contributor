@@ -67,7 +67,5 @@ CREATE TABLE friend (
     user_id2 INT NOT NULL,
     request BOOLEAN NOT NULL DEFAULT TRUE,
     FOREIGN KEY (user_id1) REFERENCES "user"(id),
-    FOREIGN KEY (user_id2) REFERENCES "user"(id),
-    UNIQUE (user_id1, user_id2),
-    CHECK (user_id1 < user_id2)
+    FOREIGN KEY (user_id2) REFERENCES "user"(id)
 );

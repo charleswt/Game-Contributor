@@ -20,8 +20,6 @@ let pool = new Pool(
       rejectUnauthorized: false
     }
   });
-  
-
 
 pool.on("connect", () => {
   console.log("Connected to the database");
