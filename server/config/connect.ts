@@ -16,7 +16,12 @@ let pool = new Pool(
     database: process.env.DB_NAME_AWS,
     password: process.env.DB_PASSWORD_AWS,
     port: Number(process.env.DB_PORT_AWS),
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
+  
+
 
 pool.on("connect", () => {
   console.log("Connected to the database");
