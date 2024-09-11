@@ -30,19 +30,20 @@ const startApolloServer = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(cookiesMiddleware());
+
+  // Add token to request if exists in cookies
   app.use((req: Request, res: Response, next: NextFunction) => {
     req.token = req.universalCookies?.get('token_auth');
     next();
   });
 
+  // Use your custom auth middleware
   app.use(authMiddleware);
 
+  // Serve static files from React app
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  app.get('*', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../client/dist'));
-  });
-
+  // Apollo GraphQL middleware
   app.use(
     '/graphql',
     expressMiddleware(server, {
@@ -52,11 +53,21 @@ const startApolloServer = async () => {
     })
   );
 
+  // Catch-all route handler for React's client-side routing
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'), (err) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+    });
+  });
+
   app.listen(PORT, () => {
     console.log(`API server running on port ${PORT}!`);
     console.log(`Use GraphQL at http://localhost:${PORT}/graphql`);
   });
 
+  // Ensure DB connection
   db.once('open', () => {
     console.log('Connected to PostgreSQL');
   });

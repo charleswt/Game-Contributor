@@ -35,7 +35,7 @@ export default function Login() {
 
       CookieAuth.login(JSON.stringify(data.login.token))
       if(CookieAuth.getToken()){
-        navigate('/main')
+        navigate('/')
       }
     } catch (error) {
       setErrorMessage('Error: Could not login. Please check your credentials.');
