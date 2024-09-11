@@ -75,12 +75,6 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
         pubdCodes.map((code: Code) => (
           <div className="bg" key={code.id}>
             <p>
-              <strong>User ID:</strong> {code.userId}
-            </p>
-            <p>
-              <strong>Company ID:</strong> {code.companyId}
-            </p>
-            <p>
               <strong>Code Snippet:</strong> <code>{code.code}</code>
             </p>
             <p>
@@ -100,12 +94,12 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
               <strong>Submitted by:</strong> {code.firstName} {code.lastName}{" "}
               (@{code.username})
             </p>
-            <p>
+            {/* <p>
               <strong>User ID:</strong> {code.userId}
             </p>
             <p>
               <strong>Company ID:</strong> {code.companyId}
-            </p>
+            </p> */}
             <p>
               <strong>Code Snippet:</strong> <code>{code.code}</code>
             </p>
@@ -129,12 +123,12 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
               <strong>Submitted by:</strong> {code.firstName} {code.lastName}{" "}
               (@{code.username})
             </p>
-            <p>
+            {/* <p>
               <strong>User ID:</strong> {code.userId}
             </p>
             <p>
               <strong>Company ID:</strong> {code.companyId}
-            </p>
+            </p> */}
             <p>
               <strong>Code Snippet:</strong> <code>{code.code}</code>
             </p>

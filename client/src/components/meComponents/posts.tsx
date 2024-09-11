@@ -81,7 +81,7 @@ export default function MePosts() {
       {userPosts.length > 0 ? (
         userPosts.map((post: Post) => (
           <div className='bg' key={post.id}>
-            <div>User ID: {post.userId}</div>
+            {/* <div>User ID: {post.userId}</div> */}
             {editingPostId === post.id ? (
               <textarea
                 name="text"

@@ -5,7 +5,6 @@ import {
   GET_FRIENDS,
   GET_FRIEND_REQUESTS_INCOMING,
   GET_FRIEND_REQUESTS_OUTGOING,
-  GET_USER,
 } from "../../utils/queries";
 import { ACCEPT_FRIENDSHIP, DECLINE_FRIENDSHIP } from "../../utils/mutations";
 import CookieAuth from "../../utils/auth";
@@ -38,13 +37,6 @@ export default function MeFriends() {
     useQuery(GET_FRIEND_REQUESTS_INCOMING);
   const { loading: loadingOutgoingRequests, data: outgoingRequestsData } =
     useQuery(GET_FRIEND_REQUESTS_OUTGOING);
-  const {
-    loading: loadingFriend,
-    data: friendData,
-    refetch: refetchFriend,
-  } = useQuery(GET_USER, {
-    skip: true,
-  });
 
   const [acceptFriendship] = useMutation(ACCEPT_FRIENDSHIP);
   const [declineFriendship] = useMutation(DECLINE_FRIENDSHIP);
@@ -52,20 +44,10 @@ export default function MeFriends() {
   const [friends, setFriends] = useState<FriendAndUser[]>([]);
   const [incomingRequests, setIncomingRequests] = useState<FriendAndUser[]>([]);
   const [outgoingRequests, setOutgoingRequests] = useState<FriendAndUser[]>([]);
-  const [friendDetails, setFriendDetails] = useState<{ [key: string]: User }>(
-    {}
-  );
 
   useEffect(() => {
     if (!loadingFriends && friendsData) {
       setFriends(friendsData.friends);
-      friendsData.friends.forEach((friend: Friend) => {
-        const friendId =
-          JSON.stringify(CookieAuth.getTokenId) === friend.userId1
-            ? friend.userId2
-            : friend.userId1;
-        fetchFriendDetails(friendId);
-      });
     }
   }, [loadingFriends, friendsData]);
 
@@ -80,16 +62,6 @@ export default function MeFriends() {
       setOutgoingRequests(outgoingRequestsData.friendRequestsOutgoing);
     }
   }, [loadingOutgoingRequests, outgoingRequestsData]);
-
-  const fetchFriendDetails = async (friendId: string) => {
-    const { data } = await refetchFriend({ id: friendId });
-    if (data) {
-      setFriendDetails((prevDetails) => ({
-        ...prevDetails,
-        [friendId]: data.user,
-      }));
-    }
-  };
 
   const acceptFriendRequest = async (id: string) => {
     try {
@@ -124,52 +96,38 @@ export default function MeFriends() {
   return (
     <>
       <div>
-      {friends.length >= 1 && <p className="bg">Friends</p>}
+        {friends.length >= 1 && <p className="bg">Friends</p>}
         {friends.length ? (
-          friends.map((friend: FriendAndUser) => {
-            const friendId =
-              JSON.stringify(CookieAuth.getTokenId) === friend.friend.userId1
-                ? friend.friend.userId2
-                : friend.friend.userId1;
-            const details = friendDetails[friendId];
-            return (
-              <div className="bg" key={friend.friend.id}>
-                {friend.user ? (
-                  <>
-                      <img src={friend.user.profileImage} alt="profile picture" />
-                      <p>{friend.user.firstName}</p>
-                      <p>{friend.user.lastName}</p>
-                      <p onClick={() => navigate(`/user/${friend.user.id}`)}>
-                        @{friend.user.username}
-                      </p>
-                    <button onClick={() => deleteFriendship(friend.friend.id)}>
-                      Unfriend
-                    </button>
-                  </>
-                ) : (
-                  <p className="loader"></p>
-                )}
-              </div>
-            );
-          })
+          friends.map((friend: FriendAndUser) => (
+            <div className="bg friend-profile" key={friend.friend.id}>
+              <img src={friend.user.profileImage} alt="profile picture" />
+              <p>{friend.user.firstName}</p>
+              <p>{friend.user.lastName}</p>
+              <p onClick={() => navigate(`/user/${friend.user.id}`)}>
+                @{friend.user.username}
+              </p>
+              <button onClick={() => deleteFriendship(friend.friend.id)}>
+                Unfriend
+              </button>
+            </div>
+          ))
         ) : (
           <p className="bg">No friends </p>
         )}
       </div>
       <div>
-      {incomingRequests.length >= 1 && <p className="bg">Incoming Friend Requests</p>}
+        {incomingRequests.length >= 1 && (
+          <p className="bg">Incoming Friend Requests</p>
+        )}
         {incomingRequests.length ? (
           incomingRequests.map((request: FriendAndUser) => (
             <div className="bg friend-profile" key={request.friend.id}>
-              <img
-                  src={request.user.profileImage}
-                  alt="profile picture"
-                />
-                <p>{request.user.firstName}</p>
-                <p>{request.user.lastName}</p>
-                <p onClick={() => navigate(`/user/${request.user.id}`)}>
-                  @{request.user.username}
-                </p>
+              <img src={request.user.profileImage} alt="profile picture" />
+              <p>{request.user.firstName}</p>
+              <p>{request.user.lastName}</p>
+              <p onClick={() => navigate(`/user/${request.user.id}`)}>
+                @{request.user.username}
+              </p>
               <button onClick={() => acceptFriendRequest(request.friend.id)}>
                 Accept
               </button>
@@ -183,19 +141,18 @@ export default function MeFriends() {
         )}
       </div>
       <div>
-        {outgoingRequests.length  >= 1 && <p className="bg">Outgoing Friend Requests</p>}
+        {outgoingRequests.length >= 1 && (
+          <p className="bg">Outgoing Friend Requests</p>
+        )}
         {outgoingRequests.length ? (
           outgoingRequests.map((request: FriendAndUser) => (
             <div className="bg friend-profile" key={request.user.id}>
-                <img
-                  src={request.user.profileImage}
-                  alt="profile picture"
-                />
-                <p>{request.user.firstName}</p>
-                <p>{request.user.lastName}</p>
-                <p onClick={() => navigate(`/user/${request.user.id}`)}>
-                  @{request.user.username}
-                </p>
+              <img src={request.user.profileImage} alt="profile picture" />
+              <p>{request.user.firstName}</p>
+              <p>{request.user.lastName}</p>
+              <p onClick={() => navigate(`/user/${request.user.id}`)}>
+                @{request.user.username}
+              </p>
               <button onClick={() => deleteFriendship(request.friend.id)}>
                 Cancel
               </button>

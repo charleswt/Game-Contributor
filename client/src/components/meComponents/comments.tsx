@@ -86,8 +86,8 @@ export default function MeComments() {
       {comments.length > 0 ? (
         comments.map((comment: Comment) => (
           <div className='bg' key={comment.id}>
-            <div>Post ID: {comment.postId}</div>
-            <div>User ID: {comment.userId}</div>
+            {/* <div>Post ID: {comment.postId}</div>
+            <div>User ID: {comment.userId}</div> */}
             {editingCommentId === comment.id ? (
               <textarea
                 name="text"
