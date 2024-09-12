@@ -68,7 +68,7 @@ export default function Navbar() {
               cols={32}
               rows={1}
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={(e) => setSearchInput(e.target.value.toLowerCase)}
             />
             {searchInput && (
               <button className="escSearch" onClick={() => setSearchInput("")}>

@@ -50,7 +50,7 @@ export default function Search() {
   );
   useEffect(()=>{
     if (window.innerWidth > 850) {
-        navigate("/main")
+        navigate("/")
     } 
   })
   
@@ -82,7 +82,7 @@ export default function Search() {
           cols={32}
           rows={1}
           value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={(e) => setSearchInput(e.target.value.toLowerCase)}
         />
         {searchInput && (
           <button className="escSearch" onClick={() => setSearchInput("")}>
