@@ -113,7 +113,7 @@ export default function Signup() {
       
       if (data.createUser.token) {
         console.log('Login successful:', data);
-        navigate('/main')
+        navigate('/')
       } else {
         setErrorMessage("Error: Try again later (1)");
       }
