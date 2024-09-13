@@ -99,10 +99,10 @@ export default function Signup() {
     try {
       const { data } = await createUser({
         variables: {
-          firstName: signUp.first.toLowerCase,
-          lastName: signUp.last.toLowerCase,
-          username: signUp.username.toLowerCase,
-          email: signUp.email.toLowerCase,
+          firstName: signUp.first.toLowerCase(),
+          lastName: signUp.last.toLowerCase(),
+          username: signUp.username.toLowerCase(),
+          email: signUp.email.toLowerCase(),
           password: signUp.password,
         },
       }).catch((error)=>{
