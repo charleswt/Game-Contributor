@@ -143,7 +143,7 @@ export default function Me(): JSX.Element {
       {me ? (
         <div className='bg myProfile'>
           <div className='user-pfp'>
-            <img src={me.user.profileImage || '../../../public/images/defaultPfp.png'} alt="profile picture" />
+            <img src={me.user.profileImage || '/images/defaultPfp.png'} alt="profile picture" />
             {!updatePfp && <button onClick={handleShowChangePfp}>Update Photo</button>}
           </div>
           <div className='user-name'>
@@ -151,7 +151,7 @@ export default function Me(): JSX.Element {
               <h1>{me.user.firstName} {me.user.lastName}</h1>
               <p>@{me.user.username}</p>
               <button onClick={() => CookieAuth.logout()}>Logout</button>
-              <Link className='settings-link' to="/settings"><img src="../../../public/images/settings.svg" alt="Settings" height="60px" /></Link>
+              <Link className='settings-link' to="/settings"><img src="/images/settings.svg" alt="Settings" height="60px" /></Link>
             </div>
             {bioValue ? (
               <div className="comment-reply">
