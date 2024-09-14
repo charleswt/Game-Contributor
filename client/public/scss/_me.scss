@@ -6,12 +6,17 @@
 
 .myProfile {
     display: flex;
-
-    img {
+    div {
+       
+    .settings-link {
+        img {
         border-radius: 50%;
         max-height: 100px;
         height: 100%;
+    } 
     }
+    }
+    
 
     h1 {
         font-size: 2rem;
@@ -36,6 +41,11 @@
 }
 
 .user-pfp {
+    img {
+    border-radius: 50%;
+    max-height: 100px;
+    height: 100%;
+    } 
     display: flex;
     flex-direction: column;
     margin-right: 1rem;
@@ -58,7 +68,27 @@
             margin: 0 1rem;
         }
     }
+    
 } 
+
+.img-btn {
+    display: flex;
+    justify-content: end;
+    img {
+    border-radius: 10%;
+    height: 3rem;
+    padding: .3rem .6rem;
+    }
+}
+
+@media screen and (width <= 850px){
+    .img-btn {
+        img {
+        height: 2.4rem;
+        padding: .3rem .6rem;
+        }
+    }
+}
 
 .friend-profile {
     display: flex;

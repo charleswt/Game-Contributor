@@ -147,12 +147,9 @@ export default function Me(): JSX.Element {
             {!updatePfp && <button onClick={handleShowChangePfp}>Update Photo</button>}
           </div>
           <div className='user-name'>
-            <div>
-              <h1>{me.user.firstName} {me.user.lastName}</h1>
+            <h1>{me.user.firstName} {me.user.lastName}</h1>
               <p>@{me.user.username}</p>
-              <button onClick={() => CookieAuth.logout()}>Logout</button>
-              <Link className='settings-link' to="/settings"><img src="/images/settings.svg" alt="Settings" height="60px" /></Link>
-            </div>
+            
             {bioValue ? (
               <div className="comment-reply">
                 <textarea
@@ -175,6 +172,11 @@ export default function Me(): JSX.Element {
                 <button onClick={() => {setBioValue(true); setEditBio(me.user.bio as string)}}>Update Bio</button>
               </div>
             )}
+            
+            <div className='img-btn'>
+              <img onClick={() => CookieAuth.logout()} src="/images/logout.svg" alt="sign out" />
+              <Link to="/settings"><img src="/images/settings.svg" alt="Settings" height="60px" /></Link>
+            </div>
           </div>
         </div>
       ) : (

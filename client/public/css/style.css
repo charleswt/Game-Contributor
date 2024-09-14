@@ -352,7 +352,7 @@ main {
 .myProfile {
   display: flex;
 }
-.myProfile img {
+.myProfile div .settings-link img {
   border-radius: 50%;
   max-height: 100px;
   height: 100%;
@@ -380,6 +380,11 @@ main {
   flex-direction: column;
   margin-right: 1rem;
 }
+.user-pfp img {
+  border-radius: 50%;
+  max-height: 100px;
+  height: 100%;
+}
 .user-pfp button {
   border: none;
   background-color: none;
@@ -392,6 +397,22 @@ main {
   margin: 0 1rem;
 }
 
+.img-btn {
+  display: flex;
+  justify-content: end;
+}
+.img-btn img {
+  border-radius: 10%;
+  height: 3rem;
+  padding: 0.3rem 0.6rem;
+}
+
+@media screen and (width <= 850px) {
+  .img-btn img {
+    height: 2.4rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
 .friend-profile {
   display: flex;
   justify-content: space-between;
