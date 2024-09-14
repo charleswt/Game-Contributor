@@ -123,7 +123,7 @@ export default function Navbar() {
       <header>
         <ul>
           <li className="logo">
-            <img src="/images/GC.png" alt="Logo" height="60px" />
+            <img src={window.innerWidth > 850?"/images/GC.png":"/images/GCsmall.png"} alt="Logo" height="60px" />
           </li>
           {input}
           <li onClick={() => navigate("/")}>
