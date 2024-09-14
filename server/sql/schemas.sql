@@ -16,8 +16,8 @@ CREATE TABLE "user" (
     company BOOLEAN NOT NULL DEFAULT FALSE,
     bio VARCHAR (255),
     profile_image VARCHAR(255),
-    first_name VARCHAR(32) NOT NULL UNIQUE,
-    last_name VARCHAR(32) NOT NULL UNIQUE,
+    first_name VARCHAR(32) NOT NULL,
+    last_name VARCHAR(32) NOT NULL,
     username VARCHAR(32) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
