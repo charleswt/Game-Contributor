@@ -95,7 +95,7 @@ export default function Main() {
           posts.map((post: Post) => (
             <div className='posts bg' key={post.id}>
               <div className='postProfile' key={post.user.id}>
-                <p><img src={post.user.profileImage} alt="Profile" /></p>
+                <p><img src={post.user.profileImage  || '/images/defaultPfp.png'} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
                 <a onClick={() => 
                   CookieAuth.getTokenId() === JSON.parse(post.user.id)?
@@ -112,7 +112,7 @@ export default function Main() {
                 {post.comments.length > 0? (post.comments.slice(0, commentsToShow[post.id]).map((comment: Comment) => (
                   <div className='comment' key={comment.id}>
                     <div>
-                      <img src={comment.user.profileImage}/>
+                      <img src={comment.user.profileImage || '/images/defaultPfp.png'}/>
                     <p>{comment.user.firstName} {comment.user.lastName}</p>
                     <a onClick={() => CookieAuth.getTokenId() === JSON.parse(comment.user.id)?
                       navigate("/me"):
