@@ -283,6 +283,11 @@ textarea {
   height: 37px;
 }
 
+@media screen and (width <= 850px) {
+  .comment-reply textarea {
+    width: 100%;
+  }
+}
 main {
   margin: 0 auto;
   margin-top: 1rem;
