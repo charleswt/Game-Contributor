@@ -1,0 +1,19 @@
+.add-friend-btn-pos {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 0;
+    button {
+        padding: 0.2rem;
+        border: 1px solid grey;
+        border-radius: 4px;
+        height: 37px;
+    }
+}
+
+@media screen and (width <= 500px ){
+    .add-friend-btn-pos {
+        button {
+            height: 32px;
+        }
+    }
+}

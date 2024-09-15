@@ -124,12 +124,16 @@ export default function UserProfile() {
           <div>
             <div>{userData.bio}</div>
           </div>
-        </div>
-        {CookieAuth.getTokenId() !== userData.id && (
+          {CookieAuth.getTokenId() !== userData.id && (
+          <div className='add-friend-btn-pos' >
           <button onClick={handleAddFriend} disabled={friendshipLoading}>
             {friendshipLoading ? 'Adding friend...' : 'Add friend'}
           </button>
+        </div>
+          
         )}
+        </div>
+        
 
         {error && <div>Error adding friend. Please try again later.</div>}
       </div>

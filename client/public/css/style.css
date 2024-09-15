@@ -395,6 +395,9 @@ main {
   background-color: none;
 }
 
+.user-name {
+  width: 100%;
+}
 .user-name div {
   display: flex;
 }
@@ -552,5 +555,22 @@ main {
 @media screen and (width <= 400px) {
   textarea {
     width: 10vw;
+  }
+}
+.add-friend-btn-pos {
+  display: flex;
+  justify-content: end;
+  margin-bottom: 0;
+}
+.add-friend-btn-pos button {
+  padding: 0.2rem;
+  border: 1px solid grey;
+  border-radius: 4px;
+  height: 37px;
+}
+
+@media screen and (width <= 500px) {
+  .add-friend-btn-pos button {
+    height: 32px;
   }
 }

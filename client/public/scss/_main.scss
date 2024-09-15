@@ -1,121 +1,115 @@
 .posts {
-    
 }
 
 .postProfile {
-    display: flex;
+  display: flex;
 
-    img {
-        max-height: 75px;
-        height: 100%;
-        border-radius: 100%;
-    }
+  img {
+    max-height: 75px;
+    height: 100%;
+    border-radius: 100%;
+  }
 
-    p {
-        font-size: 1.7rem;
-    }
+  p {
+    font-size: 1.7rem;
+  }
 
-    a {
-        font-size: 20px;
-    }
+  a {
+    font-size: 20px;
+  }
 }
 
 .postProfile p {
-    margin: 0 1rem;
+  margin: 0 1rem;
 }
 
 .postProfile a {
-    color: purple;
+  color: purple;
 }
 
 textarea {
-    padding: .5rem;
-    background-color: antiquewhite;
+  padding: 0.5rem;
+  background-color: antiquewhite;
 }
 
 .postContent {
-    background-color: white;
-    margin: 1rem 0;
-    border: 1px solid black;
-    box-shadow: 3px 3px 3px 0px black;
+  background-color: white;
+  margin: 1rem 0;
+  border: 1px solid black;
+  box-shadow: 3px 3px 3px 0px black;
 
-    p {
-
-    }
+  p {
+  }
 }
 
 .more-comments {
-    border: none;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
-    background-color: rgb(233, 233, 233);
+  border: none;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+  background-color: rgb(233, 233, 233);
 }
 
 .comment {
-    padding: .5rem;
-    border-top: 1px solid black;
-    border-left: 1px solid black;
+  padding: 0.5rem;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+
+  p {
+    margin: 0.2rem;
+  }
+
+  div {
     display: flex;
-    flex-direction: column;
-    margin: 1rem;
+    border-bottom: 0;
+    img {
+      margin: 0 0.2rem;
+      height: 32px;
+      width: 32px;
+      border-radius: 50%;
+    }
 
     p {
-        margin: .2rem;
+      font-weight: 700;
+      margin: 0 0.2rem;
+      font-size: 20px;
+      padding: 0.1rem;
+      border-bottom: 0;
     }
 
-    div {
-
-        display: flex;
-        border-bottom: 0;
-        img {
-                margin: 0 .2rem;
-                height: 32px;
-                width: 32px;
-                border-radius: 50%;
-            }
-
-            p {
-                font-weight: 700;
-                margin: 0 .2rem;
-                font-size: 20px;
-                padding: .1rem;
-                border-bottom: 0;
-            }
-
-            a {
-                color: blueviolet;
-                text-decoration: underline;
-                margin: .2rem;
-                border-bottom: 0;
-
-            }
-
+    a {
+      color: blueviolet;
+      text-decoration: underline;
+      margin: 0.2rem;
+      border-bottom: 0;
     }
-    
+  }
 }
 
 .comment-reply {
-    display: flex;
-    height: fit-content;
+  display: flex;
+  height: fit-content;
 
-    textarea {
-        background-color: white;
-        border-radius: 4px;
-        margin-right: .5rem;
-    }
+  textarea {
+    background-color: white;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+  }
 
-    button {
-        padding: .2rem;
-        border: 1px solid grey;
-        border-radius: 4px;
-        height: 37px;
-    }
+  button {
+    padding: 0.2rem;
+    border: 1px solid grey;
+    border-radius: 4px;
+    height: 37px;
+  }
 }
 
-@media screen and (width <= 850px){
-    .comment-reply {
-        textarea {
-            width: 100%;
-        }
+@media screen and (width <= 850px) {
+  .comment-reply {
+    textarea {
+      width: 100%;
     }
+  }
 }
