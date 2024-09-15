@@ -87,6 +87,10 @@ export default function Navbar() {
       }
     };
 
+    if(document.location.href === "/me" && !CookieAuth.getToken() || !CookieAuth.checkExpiration()){
+      navigate("/")
+    }
+
     updateInput();
 
     window.addEventListener("resize", updateInput);

@@ -21,7 +21,7 @@ class CookieAuth implements CookieAuthenticate {
     }
 
     getToken() {
-        return cookies.get('token_auth');
+        return cookies.get('token_auth') || undefined;
     }
 
     getTokenId() {
@@ -38,8 +38,10 @@ class CookieAuth implements CookieAuthenticate {
                 if (Date.now() >= decoded.exp * 1000) {
                     this.logout();
                     console.log('Token expired, logging out');
+                    return undefined
                 } else {
                     console.log('Token is valid');
+                    return true
                 }
             } catch (error) {
                 console.error('Error decoding token:', error);
@@ -47,6 +49,7 @@ class CookieAuth implements CookieAuthenticate {
             }
         } else {
             console.log('No token found');
+            return undefined
         }
     }
 }

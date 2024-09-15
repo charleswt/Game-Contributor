@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt' ;
 
 
-const exp = '3h';
+const exp = process.env.JWT_EXP || '3h';
 const secret = process.env.SECRET || 'example';
 
 interface AuthRequest extends Request {
@@ -12,21 +12,22 @@ interface AuthRequest extends Request {
 }
 
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
-    const token = req.token || req.headers.authorization;
+    let token = req.token || req.headers.authorization
 
+    if (token && token.startsWith('Bearer ')) {
+        token = token.split(' ')[1];
+    }
     if (!token) {
         return next();
     }
 
     try {
-        
         const data = jwt.verify(token, secret, { maxAge: exp }) as JwtPayload;
         req.user = data;
     } catch (error) {
-        console.error('Invalid token:', (error as Error).message);
-        return res.status(401).send('Invalid token');
+        req.token = undefined;
+        delete req.headers.authorization;
     }
-
     next();
 };
 
