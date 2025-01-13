@@ -37,7 +37,7 @@ export default function Main() {
   const [commentContent, setCommentContent] = useState<string>();
   const [commentsToShow, setCommentsToShow] = useState<{ [key: string]: number }>({});
   const [numRows, setNumRows] = useState<number>(1);
-  const [imgArr, setImgArr] = useState<string[]>([""])
+  // const [imgArr, setImgArr] = useState<string[]>([""])
   const navigate = useNavigate();
 
   function calculateRows(content: string) {
@@ -48,7 +48,7 @@ export default function Main() {
 
 
   useEffect(() => {
-    if (data) {
+    if (data?.posts) {
       setPosts(data.posts);
       const initialCommentsToShow = data.posts.reduce((acc: { [key: string]: number }, post: Post) => {
         acc[post.id] = 1;
@@ -58,13 +58,17 @@ export default function Main() {
     }
   }, [data]);
 
-  useEffect(()=>{
-    if(!loading && posts.length >= 1){
-      const mapping: string[] = posts.map((post: Post) => post.user.profileImage || '/images/defaultPfp.png')
-      setImgArr(mapping)
-      console.log(imgArr)
-    }
-  },[loading, posts])
+  // useEffect(()=>{
+  //   if(!loading && posts){
+  //     const mapping: string[] = posts.map((post: Post) => post.user.profileImage || '/images/defaultPfp.png')
+  //     setImgArr(mapping)
+  //     if(imgArr.length >= 2){
+  //       console.log(imgArr)
+  //     }
+      
+  //     console.log(mapping)
+  //   }
+  // },[loading, posts])
 
   const handleCreateComment = async (postId: string) => {
     try {
@@ -104,7 +108,7 @@ export default function Main() {
           posts.map((post: Post, index: number) => (
             <div className='posts bg' key={index}>
               <div className='postProfile' key={post.user.id}>
-                <p><img src={imgArr[index]} alt="Profile" /></p>
+                <p><img src={post.user.profileImage || '/images/defaultPfp.png'} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
                 <a onClick={() => {
                       if(CookieAuth.getTokenId() === JSON.parse(post.user.id)){
