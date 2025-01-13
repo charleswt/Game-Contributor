@@ -31,13 +31,15 @@ interface Post {
 }
 
 export default function Main() {
-  const { loading, data } = useQuery(GET_POSTS);
+  const { loading: loadingPosts, data: postsData } = useQuery<{posts: Post[]}>(GET_POSTS, {
+// THIS IS A SIDE STEP FROM CHACHE ISSUES GETTING NEW DATA EVERY TIME IS EXPENSIVE FINANCIALLY AND IN PROCESSING
+    fetchPolicy: 'no-cache'
+  });
   const [posts, setPosts] = useState<Post[]>([]);
   const [createComment] = useMutation(CREATE_COMMENT);
   const [commentContent, setCommentContent] = useState<string>();
   const [commentsToShow, setCommentsToShow] = useState<{ [key: string]: number }>({});
   const [numRows, setNumRows] = useState<number>(1);
-  // const [imgArr, setImgArr] = useState<string[]>([""])
   const navigate = useNavigate();
 
   function calculateRows(content: string) {
@@ -48,27 +50,19 @@ export default function Main() {
 
 
   useEffect(() => {
-    if (!loading && data && data.posts) {
-      setPosts(data.posts);
-      const initialCommentsToShow = data.posts.reduce((acc: { [key: string]: number }, post: Post) => {
+    if (!loadingPosts && postsData && postsData) {
+      const postsRes: Post[] = postsData.posts;
+  
+      setPosts(postsRes);
+  
+      // Initialize the number of comments to show for each post
+      const initialCommentsToShow = postsRes.reduce((acc: { [key: string]: number }, post: Post) => {
         acc[post.id] = 1;
         return acc;
       }, {});
       setCommentsToShow(initialCommentsToShow);
     }
-  }, [loading, data]);
-
-  // useEffect(()=>{
-  //   if(!loading && posts){
-  //     const mapping: string[] = posts.map((post: Post) => post.user.profileImage || '/images/defaultPfp.png')
-  //     setImgArr(mapping)
-  //     if(imgArr.length >= 2){
-  //       console.log(imgArr)
-  //     }
-      
-  //     console.log(mapping)
-  //   }
-  // },[loading, posts])
+  }, [loadingPosts, postsData]);
 
   const handleCreateComment = async (postId: string) => {
     try {
@@ -102,7 +96,7 @@ export default function Main() {
 
   return (
     <main>
-      {loading ? (
+      {loadingPosts ? (
         <div className="loader"></div>
       ) : (
           posts.map((post: Post, index: number) => (

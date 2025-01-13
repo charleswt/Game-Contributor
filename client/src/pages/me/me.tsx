@@ -57,6 +57,7 @@ export default function Me(): JSX.Element {
   useEffect(() => {
     if (!loading && data) {
       setMe({user: data.me.user, company: data.me.company || null});
+      console.log(data.me.user)
     }
   }, [loading, data]);
 
