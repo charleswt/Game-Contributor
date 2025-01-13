@@ -48,7 +48,7 @@ export default function Main() {
 
 
   useEffect(() => {
-    if (data?.posts) {
+    if (!loading && data && data.posts) {
       setPosts(data.posts);
       const initialCommentsToShow = data.posts.reduce((acc: { [key: string]: number }, post: Post) => {
         acc[post.id] = 1;
@@ -56,7 +56,7 @@ export default function Main() {
       }, {});
       setCommentsToShow(initialCommentsToShow);
     }
-  }, [data]);
+  }, [loading, data]);
 
   // useEffect(()=>{
   //   if(!loading && posts){
