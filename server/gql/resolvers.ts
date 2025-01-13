@@ -486,6 +486,7 @@ const resolvers = {
           c.content AS comment_content,
           c.created_at AS comment_created_at,
           cu.id AS comment_user_id,
+          cu.profile_image AS comment_user_profile_image,
           cu.first_name AS comment_user_first_name,
           cu.last_name AS comment_user_last_name,
           cu.username AS comment_user_username
@@ -531,6 +532,7 @@ const resolvers = {
               createdAt: row.comment_created_at,
               user: {
                 id: row.comment_user_id,
+                profileImage: row.comment_user_profile_image,
                 firstName: row.comment_user_first_name,
                 lastName: row.comment_user_last_name,
                 username: row.comment_user_username,
@@ -538,6 +540,7 @@ const resolvers = {
             });
           }
         });
+        console.log(Object.values(postsMap)[2].comments[0])
 
         return Object.values(postsMap);
       } catch (error) {

@@ -50,7 +50,7 @@ export default function Main() {
 
 
   useEffect(() => {
-    if (!loadingPosts && postsData && postsData) {
+    if (!loadingPosts && postsData && postsData?.posts) {
       const postsRes: Post[] = postsData.posts;
   
       setPosts(postsRes);

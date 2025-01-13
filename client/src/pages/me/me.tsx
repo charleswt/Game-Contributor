@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import MePosts from '../../components/meComponents/posts';
 import MeComments from '../../components/meComponents/comments';
 import MeCode from '../../components/meComponents/code';
@@ -28,7 +28,6 @@ interface Company {
 };
 
 export default function Me(): JSX.Element {
-  const navigate = useNavigate()
   const [updateBio] = useMutation(UPDATE_BIO);
 
   const [bioValue, setBioValue] = useState<boolean>(false);
@@ -57,7 +56,6 @@ export default function Me(): JSX.Element {
   useEffect(() => {
     if (!loading && data) {
       setMe({user: data.me.user, company: data.me.company || null});
-      console.log(data.me.user)
     }
   }, [loading, data]);
 
