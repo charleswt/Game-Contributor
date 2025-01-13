@@ -74,7 +74,7 @@ export default function UserProfile() {
     if (!loadingCode && codeData) {
       setAllCode(codeData.publishedCodesByCompany)
     }
-    console.log(allCode, "93")
+    console.log(allCode)
   }, [loadingCode, codeData]);
 
   const handlePublishCode = async (companyId: string, code: string) => {

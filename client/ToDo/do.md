@@ -22,8 +22,12 @@
 
 11. Style everything Better
 
-12. Fix issue with profile images not loading
+12. Fix issue with profile images not loading ~DONE~
 
 13. Add Texting with friends by web rtc
 
-14. Chnage "created at" under posts to "posted x time_type"
+14. Change "created at" under posts to "posted x time_type"
+
+15. When in Iphone SE mode make sure top of first post isnt cut off
+
+16. Write code such that when adding frind if(friend added) disable add friend button

@@ -37,6 +37,7 @@ export default function Main() {
   const [commentContent, setCommentContent] = useState<string>();
   const [commentsToShow, setCommentsToShow] = useState<{ [key: string]: number }>({});
   const [numRows, setNumRows] = useState<number>(1);
+  const [imgArr, setImgArr] = useState<string[]>([""])
   const navigate = useNavigate();
 
   function calculateRows(content: string) {
@@ -56,6 +57,14 @@ export default function Main() {
       setCommentsToShow(initialCommentsToShow);
     }
   }, [data]);
+
+  useEffect(()=>{
+    if(!loading && posts.length >= 1){
+      const mapping: string[] = posts.map((post: Post) => post.user.profileImage || '/images/defaultPfp.png')
+      setImgArr(mapping)
+      console.log(imgArr)
+    }
+  },[loading, posts])
 
   const handleCreateComment = async (postId: string) => {
     try {
@@ -92,15 +101,18 @@ export default function Main() {
       {loading ? (
         <div className="loader"></div>
       ) : (
-          posts.map((post: Post) => (
-            <div className='posts bg' key={post.id}>
+          posts.map((post: Post, index: number) => (
+            <div className='posts bg' key={index}>
               <div className='postProfile' key={post.user.id}>
-                <p><img src={post.user.profileImage  || '/images/defaultPfp.png'} alt="Profile" /></p>
+                <p><img src={imgArr[index]} alt="Profile" /></p>
                 <p>{post.user.firstName} {post.user.lastName}</p>
-                <a onClick={() => 
-                  CookieAuth.getTokenId() === JSON.parse(post.user.id)?
-                  navigate("/me"):
-                  navigate(`/user/${post.user.id}`)} >
+                <a onClick={() => {
+                      if(CookieAuth.getTokenId() === JSON.parse(post.user.id)){
+                        navigate("/me")
+                      } else if (CookieAuth.getTokenId() && CookieAuth.getTokenId() !== JSON.parse(post.user.id)){
+                        navigate(`/user/${post.user.id}`)
+                      }
+                  }} >
                   @{post.user.username}
                 </a>
               </div>
@@ -114,9 +126,13 @@ export default function Main() {
                     <div>
                       <img src={comment.user.profileImage || '/images/defaultPfp.png'}/>
                     <p>{comment.user.firstName} {comment.user.lastName}</p>
-                    <a onClick={() => CookieAuth.getTokenId() === JSON.parse(comment.user.id)?
-                      navigate("/me"):
-                      navigate(`/user/${comment.user.id}`)}>
+                    <a onClick={() => {
+                      if(CookieAuth.getTokenId() === JSON.parse(comment.user.id)){
+                        navigate("/me")
+                      } else if (CookieAuth.getTokenId() && CookieAuth.getTokenId() !== JSON.parse(comment.user.id)){
+                        navigate(`/user/${comment.user.id}`)
+                      }
+                      }}>
                       @{comment.user.username}</a>
                     </div>
                     

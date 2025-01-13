@@ -5,9 +5,10 @@ const cookies = new Cookies();
 
 type CookieAuthenticate = {
     login: (tokenId: string) => void;
-    getToken: () => string | undefined;
+    getToken: () => string | null;
     logout: () => void;
-    checkExpiration: () => void;
+    getTokenId: () => number | null
+    checkExpiration: () => boolean | null | Error
 }
 
 class CookieAuth implements CookieAuthenticate {
@@ -21,13 +22,14 @@ class CookieAuth implements CookieAuthenticate {
     }
 
     getToken() {
-        return cookies.get('token_auth') || undefined;
+        return cookies.get('token_auth') || null;
     }
 
     getTokenId() {
-        
-        const decoded: any = jwtDecode(cookies.get('token_auth'))
-        return decoded.id
+        const token = cookies.get('token_auth')
+        if(!token) return null;
+        const decoded: any = jwtDecode(token)
+        return decoded.id || null
     }
 
     checkExpiration() {
@@ -38,7 +40,7 @@ class CookieAuth implements CookieAuthenticate {
                 if (Date.now() >= decoded.exp * 1000) {
                     this.logout();
                     console.log('Token expired, logging out');
-                    return undefined
+                    return null
                 } else {
                     console.log('Token is valid');
                     return true
@@ -46,10 +48,11 @@ class CookieAuth implements CookieAuthenticate {
             } catch (error) {
                 console.error('Error decoding token:', error);
                 this.logout();
+                return new Error("Unable to decode token:")
             }
         } else {
             console.log('No token found');
-            return undefined
+            return null
         }
     }
 }

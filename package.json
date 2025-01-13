@@ -1,6 +1,6 @@
 {
-    "name": "Game-Contributor",
-    "description": "description",
+    "name": "game-contributor",
+    "description": "blog site emant for code contribution",
     "authors": "Charles Tiffany",
     "version": "1.0.0",
     "main": "/",
