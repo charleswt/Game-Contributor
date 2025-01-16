@@ -53,7 +53,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const updateInput = () => {
-      if (window.innerWidth > 850) {
+      if (window.innerWidth > 930) {
         if (
           window.location.href.split("/").find((search) => search === "search")
         ) {

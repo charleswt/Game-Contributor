@@ -49,7 +49,7 @@ export default function Search() {
     }
   );
   useEffect(()=>{
-    if (window.innerWidth > 850) {
+    if (window.innerWidth > 930) {
         navigate("/")
     } 
   })

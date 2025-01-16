@@ -182,7 +182,7 @@ header ul .searchSmall {
   color: #333;
 }
 
-@media screen and (width <= 850px) {
+@media screen and (width <= 930px) {
   header ul {
     justify-content: end;
   }
@@ -216,7 +216,8 @@ header ul .searchSmall {
 
 textarea {
   padding: 0.5rem;
-  background-color: antiquewhite;
+  border-radius: 4px;
+  background-color: white;
 }
 
 .postContent {
@@ -225,6 +226,7 @@ textarea {
   border: 1px solid black;
   box-shadow: 3px 3px 3px 0px black;
 }
+
 .more-comments {
   border: none;
   margin-bottom: 1rem;

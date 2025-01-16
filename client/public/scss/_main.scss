@@ -29,7 +29,8 @@
 
 textarea {
   padding: 0.5rem;
-  background-color: antiquewhite;
+  border-radius: 4px;
+  background-color: white;
 }
 
 .postContent {
@@ -37,9 +38,6 @@ textarea {
   margin: 1rem 0;
   border: 1px solid black;
   box-shadow: 3px 3px 3px 0px black;
-
-  p {
-  }
 }
 
 .more-comments {

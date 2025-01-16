@@ -105,9 +105,9 @@ export default function Me(): JSX.Element {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'test-react-uploads');
-    formData.append('api_key', key);
+    formData.append('api_key', import.meta.env.VITE_CLOUD_API_KEY);
     try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${name}/image/upload`, {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`, {
         method: 'POST',
         body: formData,
       });

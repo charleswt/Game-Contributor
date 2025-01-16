@@ -1,10 +1,10 @@
 ### Things To Do
 
-1.  make sure all text area elements have the expected background color
+1.  make sure all text area elements have the expected background color ~DONE~
 
 2.  When code is approved for use, write code such that the code you approved is removed from "reacieved code" area 
 
-3.  ``in the future the code snippet will be a link to but not limit to, a version control sites repo and a cloud storage service``
+3.  in the future the code snippet will be a link to but not limit to, a version control sites repo and a cloud storage service
 
 4.  chnage the update Photo button such that when u hover over the photo it eases in a edit photo button that then opens a small model with a drag and drop pad and a file upload button. be sure to handle errors make sure the photo isnt over a certain amount of storage and only allow certain file types.
 
@@ -30,4 +30,6 @@
 
 15. When in Iphone SE mode make sure top of first post isnt cut off
 
-16. Write code such that when adding frind if(friend added) disable add friend button
+16. Write code such that when adding friend if(friend added) disable add friend button
+
+17. change cloudinary vars from being sent from through network to client side enviroment variables ~DONE~

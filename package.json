@@ -15,6 +15,7 @@
         "seed": "cd server && npm run seed"
     },
     "dependencies": {
-        "concurrently": "^8.2.2"
+        "concurrently": "^8.2.2",
+        "dotenv": "^16.4.7"
     }
 }

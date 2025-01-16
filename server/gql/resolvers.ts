@@ -107,9 +107,6 @@ interface Cloudinary {
 
 const resolvers = {
   Query: {
-    cloudinaryCreds: async (_: any): Promise<Cloudinary> => {
-      return { name: process.env.CLOUD_NAME, key: process.env.CLOUD_API_KEY } as Cloudinary;
-    },
     publishedCodesByCompany: async (_: any, {companyId}: {companyId: string}, context: any): Promise<PublishedCode[]> => {
       const client = await pool.connect();
       try {
