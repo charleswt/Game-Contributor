@@ -149,14 +149,14 @@ const resolvers = {
           FROM "published_code" pc
           JOIN "user" u ON pc.user_id = u.id
           WHERE pc.company_id = $1
-`;
+          `;
         const result = await client.query(
           selectPublishedCodesText,
           [companyId]
         ).catch((err)=>{
           throw err
         })
-        console.log(result)
+
         await client.query("COMMIT");
 
         return result.rows.map((row: any) => ({
@@ -189,7 +189,6 @@ const resolvers = {
           selectPublishedCodesText,
           selectPublishedCodesValues
         );
-        console.log(context.user.id)
 
         await client.query("COMMIT");
 
@@ -398,7 +397,7 @@ const resolvers = {
       try {
         await client.query("BEGIN");
 
-        const selectUserText = 'SELECT * FROM "user" WHERE user_id = $1 AND company = TRUE';
+        const selectUserText = 'SELECT * FROM "user" WHERE id = $1 AND company = TRUE';
         const selectUserValues = [id];
         const userResult = await client.query(selectUserText, selectUserValues);
 
@@ -420,7 +419,7 @@ const resolvers = {
         };
 
         let company: Company | undefined;
-
+        
         if (userRow.company) {
           const selectCompanyText = 'SELECT * FROM "company" WHERE user_id = $1';
           const companyResult = await client.query(selectCompanyText, selectUserValues);
@@ -428,12 +427,12 @@ const resolvers = {
           if (companyResult.rows.length > 0) {
             const companyRow = companyResult.rows[0];
             company = {
-              userId: companyRow.user_id,
+              id: companyRow.id,
               companyName: companyRow.company_name,
+              userId: companyRow.user_id,
             };
           }
         }
-
         await client.query("COMMIT");
 
         return { user, company }
@@ -537,7 +536,6 @@ const resolvers = {
             });
           }
         });
-        console.log(Object.values(postsMap)[2].comments[0])
 
         return Object.values(postsMap);
       } catch (error) {
@@ -1409,8 +1407,8 @@ const resolvers = {
           companyId: newPublishedCode.company_id,
           code: newPublishedCode.code,
           createdAt: newPublishedCode.created_at,
-          firstName: userResults.rows[0].firstName,
-          lastName: userResults.rows[0].lastName,
+          firstName: userResults.rows[0].first_name,
+          lastName: userResults.rows[0].last_name,
           username: userResults.rows[0].username
         } as PublishedCode;
 

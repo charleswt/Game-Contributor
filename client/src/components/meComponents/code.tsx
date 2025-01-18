@@ -49,15 +49,22 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
     }
   }, [loadingCode, codesData]);
 
+  useEffect(()=>{
+    console.log("useEffect",allCode)
+  },[allCode])
+
   async function approveCode(codeId: string) {
     try {
       const { data } = await approvePublishedCode({
         variables: { codeId },
       });
 
-      if (data && data.approveCode) {
+      if (data && data.approvePublishedCode) {
+        let codeArr: any[] = [];
+        console.log("1",allCode)
         setAllCode((prevAllCode) => prevAllCode.filter((code) => code.id !== codeId));
-        setAllApprovedCode((prevAllApprovedCode) => [...prevAllApprovedCode, data.approveCode]);
+        console.log("2",codeArr)
+        setAllApprovedCode((prevAllApprovedCode) => [...prevAllApprovedCode, data.approvePublishedCode]);
       }
     } catch (err) {
       console.error("Error approving code:", err);
@@ -88,8 +95,8 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
 
       {allCode.length > 0 && <div className="bg">Received Code</div>}
       {allCode.length > 0 ? (
-        allCode.map((code: Code) => (
-          <div className="bg" key={code.id}>
+        allCode.map((code: Code, index) => (
+          <div className="bg" key={index}>
             <p>
               <strong>Submitted by:</strong> {code.firstName} {code.lastName}{" "}
               (@{code.username})
@@ -117,8 +124,8 @@ export default function MeCode({ paramCompanyId }: { paramCompanyId: any }) {
 
       {allApprovedCode.length > 0 && <div className="bg">Approved Code</div>}
       {allApprovedCode.length > 0 ? (
-        allApprovedCode.map((code: Code) => (
-          <div className="bg" key={code.id}>
+        allApprovedCode.map((code: Code, index) => (
+          <div className="bg" key={index}>
             <p>
               <strong>Submitted by:</strong> {code.firstName} {code.lastName}{" "}
               (@{code.username})

@@ -32,7 +32,6 @@ export default function Me(): JSX.Element {
 
   const [bioValue, setBioValue] = useState<boolean>(false);
   const [updateUserPfp] = useMutation(UPDATE_USER_PFP);
-  const { loading: cloudinaryLoading, data: cloudinaryData } = useQuery(GET_CLOUDINARY);
   const { loading, data } = useQuery(GET_ME);
   const [me, setMe] = useState<{user: User, company?: Company} | null>(null);
   const [createPost] = useMutation(CREATE_POST);
@@ -101,7 +100,6 @@ export default function Me(): JSX.Element {
   const handleFileSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!file) return;
-    const { name, key } = cloudinaryData.cloudinaryCreds;
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'test-react-uploads');
@@ -195,10 +193,11 @@ export default function Me(): JSX.Element {
       )}
 
       <div className="createPost bg">
+        {!showCreatePostPanel?
         <button onClick={() => setShowCreatePostPanel(!showCreatePostPanel)}>
           Create Post
-        </button>
-        {showCreatePostPanel && (
+        </button>:
+         (
           <div className="comment-reply">
             <textarea
               name="text"
@@ -212,6 +211,7 @@ export default function Me(): JSX.Element {
               onChange={(e) => { setPostContent(e.target.value); calculateRows(e.target.value); }}
             />
             <button onClick={handleCreatePost}>Post</button>
+            <button onClick={()=>setShowCreatePostPanel(false)}>Cancel</button>
           </div>
         )}
       </div>

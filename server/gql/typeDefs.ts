@@ -27,7 +27,7 @@ input FileInput {
 type Company {
   id: ID!
   companyName: String!
-  userId: ID!
+  userId: ID
 }
 
 type Post {
